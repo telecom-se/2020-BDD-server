@@ -1,7 +1,7 @@
-package com.tse.database.aiondb.service;
+package fr.tse.db.storage.service;
 
-import com.tse.database.aiondb.domain.Series;
-import com.tse.database.aiondb.error.BadQueryException;
+import fr.tse.db.storage.domain.Series;
+import fr.tse.db.storage.error.BadQueryException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

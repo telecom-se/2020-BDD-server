@@ -1,8 +1,8 @@
-package com.tse.database.aiondb.controller;
+package fr.tse.db.storage.controller;
 
-import com.tse.database.aiondb.domain.Series;
-import com.tse.database.aiondb.error.BadQueryException;
-import com.tse.database.aiondb.service.QueryService;
+import fr.tse.db.storage.domain.Series;
+import fr.tse.db.storage.error.BadQueryException;
+import fr.tse.db.storage.service.QueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

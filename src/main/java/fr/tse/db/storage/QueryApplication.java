@@ -1,13 +1,13 @@
-package com.tse.database.aiondb;
+package fr.tse.db.storage;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class AionDbApplication {
+public class QueryApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AionDbApplication.class, args);
+		SpringApplication.run(QueryApplication.class, args);
 	}
 
 }

@@ -1,4 +1,4 @@
-package com.tse.database.aiondb.domain;
+package fr.tse.db.storage.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
