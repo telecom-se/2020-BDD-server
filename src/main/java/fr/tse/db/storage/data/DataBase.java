@@ -1,11 +1,11 @@
-package fr.tse.advanced.databases.storage.data;
+package fr.tse.db.storage.data;
+
+import fr.tse.db.storage.exception.SeriesAlreadyExists;
+import fr.tse.db.storage.exception.SeriesNotFound;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import fr.tse.advanced.databases.storage.exception.SeriesAlreadyExists;
-import fr.tse.advanced.databases.storage.exception.SeriesNotFound;
 
 
 public class DataBase {

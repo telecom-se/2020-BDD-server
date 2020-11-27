@@ -1,12 +1,11 @@
-package fr.tse.advanced.databases.storage.data;
+package fr.tse.db.storage.data;
 
-import static org.junit.Assert.*;
-
+import fr.tse.db.storage.exception.SeriesAlreadyExists;
+import fr.tse.db.storage.exception.SeriesNotFound;
 import org.junit.Before;
 import org.junit.Test;
 
-import fr.tse.advanced.databases.storage.exception.SeriesAlreadyExists;
-import fr.tse.advanced.databases.storage.exception.SeriesNotFound;
+import static org.junit.Assert.*;
 
 
 public class DataBaseTest {

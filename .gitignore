@@ -1,3 +1,11 @@
+# manuel
+.mvn
+mvnw
+mvnw.cmd
+.idea
+.classpath
+.project
+.settings
 
 # Created by https://www.toptal.com/developers/gitignore/api/java,maven
 # Edit at https://www.toptal.com/developers/gitignore?templates=java,maven

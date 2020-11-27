@@ -1,11 +1,11 @@
-package fr.tse.advanced.databases.storage.data;
-
-import static org.junit.Assert.*;
-
-import java.util.Map;
+package fr.tse.db.storage.data;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Map;
+
+import static org.junit.Assert.*;
 
 public class SeriesTest {
 
