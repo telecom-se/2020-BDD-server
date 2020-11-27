@@ -1,4 +1,4 @@
-package com.tse.database.aiondb.error;
+package fr.tse.db.query.error;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;

@@ -1,10 +1,10 @@
-package com.tse.database.aiondb;
+package fr.tse.db.query;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class AionDbApplicationTests {
+class QueryApplicationTests {
 
 	@Test
 	void contextLoads() {
