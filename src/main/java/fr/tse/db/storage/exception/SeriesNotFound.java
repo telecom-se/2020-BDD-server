@@ -1,4 +1,4 @@
-package fr.tse.advanced.databases.storage.exception;
+package fr.tse.db.storage.exception;
 
 public class SeriesNotFound extends Exception {
 	public SeriesNotFound(String s){
