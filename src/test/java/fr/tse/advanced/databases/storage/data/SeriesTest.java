@@ -1,0 +1,51 @@
+package fr.tse.advanced.databases.storage.data;
+
+import static org.junit.Assert.*;
+
+import java.util.Map;
+
+import org.junit.Before;
+import org.junit.Test;
+
+public class SeriesTest {
+
+	// Series for test
+	private Series<Int64> series;
+	private Series<Int32> series32;
+	
+	@Before
+	public void initialize() {
+		this.series = new Series<Int64>("seriesTest");
+		this.series32 = new Series<Int32>("seriesTest32");
+	}
+	
+	@Test
+	public void addPointTest() {
+		Long tmp = (long) 1000000;
+		Int64 val = new Int64((long) 658);
+		this.series.addPoint(tmp, val);
+		Map<Long, Int64> result = this.series.getPoints();
+		
+		assertEquals(1, result.size());
+		assertEquals(result.get(tmp), val);
+		
+		
+		Int32 val32 = new Int32(6584);
+		this.series32.addPoint(tmp, val32);
+		Map<Long, Int32> result32 = this.series32.getPoints();
+		
+		assertEquals(1, result32.size());
+		assertEquals(result32.get(tmp), val32);
+	}
+	
+	@Test
+	public void getByTimestampTest() {
+		Long tmp = (long) 1000000;
+		Int64 val = new Int64((long) 658);
+		this.series.getPoints().put(tmp, val);
+		Int64 result = this.series.getByTimestamp(tmp);
+		
+		assertEquals(result, val);
+	}
+
+}
