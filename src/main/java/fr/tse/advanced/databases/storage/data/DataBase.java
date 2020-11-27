@@ -1,12 +1,17 @@
 package fr.tse.advanced.databases.storage.data;
 
-import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import fr.tse.advanced.databases.storage.exception.SeriesAlreadyExists;
+import fr.tse.advanced.databases.storage.exception.SeriesNotFound;
+
 
 public class DataBase {
 
 	// parameters
+
 	private Map<String, Series> series;
 	
 	// constructor
@@ -31,11 +36,25 @@ public class DataBase {
 	}
 	
 	// methods
-	public void addSeries(Series series) {
-		this.series.put(series.getName(), series);
+
+	public void addSeries(Series series) throws SeriesAlreadyExists {
+		
+		if (this.series.get(series.getName())!= null) {
+			throw new SeriesAlreadyExists("S_NAME_EXISTS");
+		}
+		else {
+			this.series.put(series.getName(), series);
+
+		}
 	}
 	
-	public Series getByName(String name) {
-		return this.series.get(name);
+	public Series getByName(String name) throws SeriesNotFound {
+		if (this.series.get(name) != null) {
+			return this.series.get(name);
+		}
+		else {
+			throw new SeriesNotFound("S_NOT_FOUND");
+		}
+		
 	}
 }

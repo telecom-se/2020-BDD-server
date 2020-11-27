@@ -22,6 +22,7 @@ public class SeriesTest {
 	@Test
 	public void addPointTest() {
 		Long tmp = (long) 1000000;
+
 		Int64 val = new Int64((long) 658);
 		this.series.addPoint(tmp, val);
 		Map<Long, Int64> result = this.series.getPoints();
@@ -36,6 +37,7 @@ public class SeriesTest {
 		
 		assertEquals(1, result32.size());
 		assertEquals(result32.get(tmp), val32);
+
 	}
 	
 	@Test
