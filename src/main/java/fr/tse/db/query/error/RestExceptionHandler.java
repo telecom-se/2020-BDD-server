@@ -1,4 +1,4 @@
-package fr.tse.db.storage.error;
+package fr.tse.db.query.error;
 
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;

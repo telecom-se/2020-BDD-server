@@ -1,7 +1,7 @@
-package fr.tse.db.storage.service;
+package fr.tse.db.query.service;
 
-import fr.tse.db.storage.domain.Series;
-import fr.tse.db.storage.error.BadQueryException;
+import fr.tse.db.query.domain.Series;
+import fr.tse.db.query.error.BadQueryException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

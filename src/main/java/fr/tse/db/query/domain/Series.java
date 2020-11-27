@@ -1,4 +1,4 @@
-package fr.tse.db.storage.domain;
+package fr.tse.db.query.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
