@@ -1,17 +1,18 @@
 package fr.tse.advanced.databases.storage.data;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import fr.tse.advanced.databases.storage.exception.SeriesAlreadyExists;
 import fr.tse.advanced.databases.storage.exception.SeriesNotFound;
 
-import java.util.HashMap;
-import java.util.List;
 
 public class DataBase {
 
 	// parameters
-	Map<String, Series> series;
+
+	private Map<String, Series> series;
 	
 	// constructor
 	public DataBase() {
@@ -35,6 +36,7 @@ public class DataBase {
 	}
 	
 	// methods
+
 	public void addSeries(Series series) throws SeriesAlreadyExists {
 		
 		if (this.series.get(series.getName())!= null) {

@@ -10,30 +10,44 @@ import org.junit.Test;
 public class SeriesTest {
 
 	// Series for test
-	private Series series;
+	private Series<Int64> series;
+	private Series<Int32> series32;
 	
 	@Before
 	public void initialize() {
-		this.series = new Series("seriesTest");
+		this.series = new Series<Int64>("seriesTest");
+		this.series32 = new Series<Int32>("seriesTest32");
 	}
 	
 	@Test
 	public void addPointTest() {
 		Long tmp = (long) 1000000;
-		this.series.addPoint(tmp, 30.8);
-		Map<Long, Double> result = this.series.getPoints();
+
+		Int64 val = new Int64((long) 658);
+		this.series.addPoint(tmp, val);
+		Map<Long, Int64> result = this.series.getPoints();
 		
 		assertEquals(1, result.size());
-		assertEquals(result.get(tmp), (Double) 30.8);
+		assertEquals(result.get(tmp), val);
+		
+		
+		Int32 val32 = new Int32(6584);
+		this.series32.addPoint(tmp, val32);
+		Map<Long, Int32> result32 = this.series32.getPoints();
+		
+		assertEquals(1, result32.size());
+		assertEquals(result32.get(tmp), val32);
+
 	}
 	
 	@Test
 	public void getByTimestampTest() {
 		Long tmp = (long) 1000000;
-		this.series.getPoints().put(tmp, 3.14159);
-		Double result = this.series.getByTimestamp(tmp);
+		Int64 val = new Int64((long) 658);
+		this.series.getPoints().put(tmp, val);
+		Int64 result = this.series.getByTimestamp(tmp);
 		
-		assertEquals(result, (Double) 3.14159);
+		assertEquals(result, val);
 	}
 
 }
