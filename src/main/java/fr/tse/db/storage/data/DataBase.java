@@ -7,11 +7,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+* This DataBase class implements the main structure that stores all
+* the data using series (in memory only for now)
+* 
+* Implemented methods:
+* - getByName() returns a series from its given name
+* - addSeries() creates a series in the database
+* 
+* @writer  Arnaud
+* @author  Arnaud, Valentin
+* @since   2020-11
+*/
 public class DataBase {
 
 	// parameters
-
 	private Map<String, Series> series;
 	
 	// constructor
@@ -20,6 +30,7 @@ public class DataBase {
 	}
 	
 	public DataBase(List<Series> series) {
+		
 		this.series = new HashMap<String, Series>();
 		for (int i=0 ; i<series.size() ; i++) {
 			this.series.put(series.get(i).getName(), series.get(i));
@@ -36,7 +47,6 @@ public class DataBase {
 	}
 	
 	// methods
-
 	public void addSeries(Series series) throws SeriesAlreadyExists {
 		
 		if (this.series.get(series.getName())!= null) {
@@ -44,17 +54,16 @@ public class DataBase {
 		}
 		else {
 			this.series.put(series.getName(), series);
-
 		}
 	}
 	
 	public Series getByName(String name) throws SeriesNotFound {
+		
 		if (this.series.get(name) != null) {
 			return this.series.get(name);
 		}
 		else {
 			throw new SeriesNotFound("S_NOT_FOUND");
 		}
-		
 	}
 }

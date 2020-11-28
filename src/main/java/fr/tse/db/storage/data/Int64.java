@@ -1,5 +1,12 @@
 package fr.tse.db.storage.data;
 
+/**
+* This Int64 class encapsulates an int of 64-bits
+*
+* @writer  Arnaud
+* @author  Valentin, Alexandre, Youssef
+* @since   2020-11
+*/
 public class Int64 implements ValueType {
 
 	private Long val;

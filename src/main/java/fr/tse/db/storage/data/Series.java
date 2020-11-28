@@ -3,6 +3,17 @@ package fr.tse.db.storage.data;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+* This Series class is a general container for points to store in the database
+* 
+* Implemented methods:
+* - addPoint() inserts a point in the series
+* - getByTimestamp() searches a point with the given timestamp in the series
+* 
+* @writer  Arnaud
+* @author  Arnaud, Valentin
+* @since   2020-11
+*/
 public class Series<ValType extends ValueType> {
 
 	// Parameters
@@ -11,12 +22,12 @@ public class Series<ValType extends ValueType> {
 	
 	// Constructor
 	public Series(String name) {
+		
 		this.name = name;
 		this.points = new HashMap<Long, ValType>();
 	}
 
 	// Getters and Setters
-
 	public String getName() {
 		return name;
 	}
@@ -24,9 +35,16 @@ public class Series<ValType extends ValueType> {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public Map<Long, ValType> getPoints() {
+		return points;
+	}
 
+	public void setPoints(Map<Long, ValType> points) {
+		this.points = points;
+	}
 	
-	
+	// hashCode() and equals()
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -58,14 +76,6 @@ public class Series<ValType extends ValueType> {
 		return true;
 	}
 
-	public Map<Long, ValType> getPoints() {
-		return points;
-	}
-
-	public void setPoints(Map<Long, ValType> points) {
-		this.points = points;
-	}
-	
 	// Custom methods
 	public void addPoint(Long key, ValType value) {
 		this.points.put(key, value);
@@ -74,6 +84,5 @@ public class Series<ValType extends ValueType> {
 	public ValType getByTimestamp(Long key) {
 		return this.points.get(key);
 	}
-	
 }
 
