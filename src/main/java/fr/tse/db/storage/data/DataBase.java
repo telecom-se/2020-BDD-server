@@ -9,13 +9,8 @@ import java.util.Map;
 
 /**
 * This DataBase class implements the main structure that stores all
-* the data using series (in memory only for now)
+* the data using {@link Series} (in memory only for now)
 * 
-* Implemented methods:
-* - getByName() returns a series from its given name
-* - addSeries() creates a series in the database
-* 
-* @writer  Arnaud
 * @author  Arnaud, Valentin
 * @since   2020-11
 */
@@ -46,7 +41,12 @@ public class DataBase {
 		this.series = series;
 	}
 	
-	// methods
+	/**
+	* A method that adds a new {@link Series} in the database
+	* 
+	* @param series is the Series you want to add
+	* @exception SeriesAlreadyExists if the series is already in your database
+	*/
 	public void addSeries(Series series) throws SeriesAlreadyExists {
 		
 		if (this.series.get(series.getName())!= null) {
@@ -57,6 +57,13 @@ public class DataBase {
 		}
 	}
 	
+	/**
+	* A method that gets a {@link Series} from your database
+	* 
+	* @param name the name of the series you want to retrieve
+	* @return the corresponding Series in the database
+	* @exception SeriesNotFound if the series is not in your database
+	*/
 	public Series getByName(String name) throws SeriesNotFound {
 		
 		if (this.series.get(name) != null) {

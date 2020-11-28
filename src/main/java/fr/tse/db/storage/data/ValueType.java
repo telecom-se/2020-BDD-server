@@ -1,10 +1,9 @@
 package fr.tse.db.storage.data;
 
 /**
-* This ValueType is a general interface extended by three types:
-* Int32, Int64 and Float32
+* This ValueType is a general interface extended by the
+* {@link Int32}, {@link Int64} and {@link Float32} subclasses
 *
-* @writer  Arnaud
 * @author  Valentin, Alexandre, Youssef
 * @since   2020-11
 */
