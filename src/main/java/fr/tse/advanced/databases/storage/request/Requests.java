@@ -75,6 +75,7 @@ public interface Requests {
 	 * @param seriesName series name
 	 * @param points list of timestamp/value points
 	 * @throws SeriesNotFound When series with specified name does not exist
+	 * @see 2 Errors missing (Timestamp already exists & WrongValueType)
 	 */
 	public void insertValue(String seriesName, List<DataPoint> points) throws SeriesNotFound;
 	

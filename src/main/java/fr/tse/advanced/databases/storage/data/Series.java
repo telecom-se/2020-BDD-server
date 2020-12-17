@@ -71,6 +71,13 @@ public class Series<ValType extends ValueType> {
 		this.points.put(key, value);
 	}
 	
+	public void deletePoint(Long key) {
+		ValType value = this.points.remove(key);
+		if(value == null) {
+			// Not implemented Yet
+		}
+	}
+	
 	public ValType getByTimestamp(Long key) {
 		return this.points.get(key);
 	}

@@ -50,6 +50,13 @@ public class DataBase {
 		}
 	}
 	
+	public void deleteSeries(String seriesName) throws SeriesNotFound {
+		Series series = this.series.remove(seriesName);
+		if(series == null) {
+			throw new SeriesNotFound(seriesName);
+		}
+	}
+	
 	public Series getByName(String name) throws SeriesNotFound {
 		if (this.series.get(name) != null) {
 			return this.series.get(name);
