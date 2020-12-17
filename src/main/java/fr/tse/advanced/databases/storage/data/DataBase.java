@@ -10,8 +10,10 @@ import fr.tse.advanced.databases.storage.exception.SeriesNotFound;
 
 public class DataBase {
 
+	private static DataBase instance = new DataBase();
+	public static DataBase getInstance() {return instance;}
+	
 	// parameters
-
 	private Map<String, Series> series;
 	
 	// constructor
@@ -57,4 +59,7 @@ public class DataBase {
 		}
 		
 	}
+	
+	
+	
 }
