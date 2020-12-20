@@ -23,6 +23,11 @@ public class Int32 implements ValueType, Comparable<Int32>{
 			return 1;
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "Int32[" + val + "]";
+	}
 	
 	
 }

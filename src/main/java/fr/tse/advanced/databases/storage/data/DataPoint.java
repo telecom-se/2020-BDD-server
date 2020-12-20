@@ -1,12 +1,12 @@
 package fr.tse.advanced.databases.storage.data;
 
-public class DataPoint {
+public class DataPoint<ValType extends ValueType> {
 
 	private Long timestamp;
-	private ValueType value;
+	private ValType value;
 	
 	
-	public DataPoint(Long timestamp, ValueType value) {
+	public DataPoint(Long timestamp, ValType value) {
 		this.timestamp = timestamp;
 		this.value = value;
 	}
@@ -17,11 +17,16 @@ public class DataPoint {
 	public void setTimestamp(Long timestamp) {
 		this.timestamp = timestamp;
 	}
-	public ValueType getValue() {
+	public ValType getValue() {
 		return value;
 	}
-	public void setValue(ValueType value) {
+	public void setValue(ValType value) {
 		this.value = value;
+	}
+
+	@Override
+	public String toString() {
+		return "DataPoint [timestamp=" + timestamp + ", value=" + value + "]";
 	}
 	
 	

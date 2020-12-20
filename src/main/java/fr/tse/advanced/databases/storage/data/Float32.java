@@ -27,6 +27,11 @@ public class Float32 implements ValueType, Comparable<Float32>{
 			return 1;
 		}
 	}
+
+	@Override
+	public String toString() {
+		return "Float32[" + val + "]";
+	}
 	
 	
 }

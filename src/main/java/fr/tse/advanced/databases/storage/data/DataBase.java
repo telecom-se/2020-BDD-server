@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import fr.tse.advanced.databases.storage.exception.SeriesAlreadyExists;
-import fr.tse.advanced.databases.storage.exception.SeriesNotFound;
+import fr.tse.advanced.databases.storage.exception.SeriesAlreadyExistsException;
+import fr.tse.advanced.databases.storage.exception.SeriesNotFoundException;
 
 
 public class DataBase {
@@ -39,10 +39,10 @@ public class DataBase {
 	
 	// methods
 
-	public void addSeries(Series series) throws SeriesAlreadyExists {
+	public void addSeries(Series series) throws SeriesAlreadyExistsException {
 		
 		if (this.series.get(series.getName())!= null) {
-			throw new SeriesAlreadyExists("S_NAME_EXISTS");
+			throw new SeriesAlreadyExistsException(series.getName());
 		}
 		else {
 			this.series.put(series.getName(), series);
@@ -50,19 +50,19 @@ public class DataBase {
 		}
 	}
 	
-	public void deleteSeries(String seriesName) throws SeriesNotFound {
+	public void deleteSeries(String seriesName) throws SeriesNotFoundException {
 		Series series = this.series.remove(seriesName);
 		if(series == null) {
-			throw new SeriesNotFound(seriesName);
+			throw new SeriesNotFoundException(seriesName);
 		}
 	}
 	
-	public Series getByName(String name) throws SeriesNotFound {
+	public Series getByName(String name) throws SeriesNotFoundException {
 		if (this.series.get(name) != null) {
 			return this.series.get(name);
 		}
 		else {
-			throw new SeriesNotFound("S_NOT_FOUND");
+			throw new SeriesNotFoundException(name);
 		}
 		
 	}

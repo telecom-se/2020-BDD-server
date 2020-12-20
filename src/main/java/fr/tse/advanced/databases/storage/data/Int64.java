@@ -25,7 +25,10 @@ public class Int64 implements ValueType, Comparable<Int64>{
 			return 1;
 		}
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "Int64[" + val + "]";
+	}
 	
 }
