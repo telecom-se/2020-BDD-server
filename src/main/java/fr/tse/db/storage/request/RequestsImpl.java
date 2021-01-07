@@ -1,19 +1,19 @@
-package fr.tse.advanced.databases.storage.request;
+package fr.tse.db.storage.request;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import fr.tse.advanced.databases.storage.data.DataBase;
-import fr.tse.advanced.databases.storage.data.DataPoint;
-import fr.tse.advanced.databases.storage.data.Series;
-import fr.tse.advanced.databases.storage.data.ValueType;
-import fr.tse.advanced.databases.storage.exception.EmptyCollectionException;
-import fr.tse.advanced.databases.storage.exception.SeriesAlreadyExistsException;
-import fr.tse.advanced.databases.storage.exception.SeriesNotFoundException;
-import fr.tse.advanced.databases.storage.exception.TimestampAlreadyExistsException;
-import fr.tse.advanced.databases.storage.exception.WrongSeriesValueTypeException;
+import fr.tse.db.storage.data.DataBase;
+import fr.tse.db.storage.data.DataPoint;
+import fr.tse.db.storage.data.Series;
+import fr.tse.db.storage.data.ValueType;
+import fr.tse.db.storage.exception.EmptyCollectionException;
+import fr.tse.db.storage.exception.SeriesAlreadyExistsException;
+import fr.tse.db.storage.exception.SeriesNotFoundException;
+import fr.tse.db.storage.exception.TimestampAlreadyExistsException;
+import fr.tse.db.storage.exception.WrongSeriesValueTypeException;
 
 public class RequestsImpl implements Requests {
 

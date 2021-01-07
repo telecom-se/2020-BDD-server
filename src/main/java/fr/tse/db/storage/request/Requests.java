@@ -1,15 +1,14 @@
-package fr.tse.advanced.databases.storage.request;
+package fr.tse.db.storage.request;
 
 import java.util.Collection;
-import java.util.List;
 
-import fr.tse.advanced.databases.storage.data.DataPoint;
-import fr.tse.advanced.databases.storage.data.ValueType;
-import fr.tse.advanced.databases.storage.exception.EmptyCollectionException;
-import fr.tse.advanced.databases.storage.exception.SeriesAlreadyExistsException;
-import fr.tse.advanced.databases.storage.exception.SeriesNotFoundException;
-import fr.tse.advanced.databases.storage.exception.TimestampAlreadyExistsException;
-import fr.tse.advanced.databases.storage.exception.WrongSeriesValueTypeException;
+import fr.tse.db.storage.data.DataPoint;
+import fr.tse.db.storage.data.ValueType;
+import fr.tse.db.storage.exception.EmptyCollectionException;
+import fr.tse.db.storage.exception.SeriesAlreadyExistsException;
+import fr.tse.db.storage.exception.SeriesNotFoundException;
+import fr.tse.db.storage.exception.TimestampAlreadyExistsException;
+import fr.tse.db.storage.exception.WrongSeriesValueTypeException;
 
 /**
  * This interface will be used by query and list all CRUD requests possible

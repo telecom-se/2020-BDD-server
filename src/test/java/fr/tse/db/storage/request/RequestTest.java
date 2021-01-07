@@ -1,20 +1,21 @@
-package fr.tse.advanced.databases.storage.request;
+package fr.tse.db.storage.request;
 
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import fr.tse.advanced.databases.storage.data.DataBase;
-import fr.tse.advanced.databases.storage.data.DataPoint;
-import fr.tse.advanced.databases.storage.data.Int32;
-import fr.tse.advanced.databases.storage.data.Int64;
-import fr.tse.advanced.databases.storage.data.Series;
-import fr.tse.advanced.databases.storage.data.ValueType;
-import fr.tse.advanced.databases.storage.exception.SeriesAlreadyExistsException;
-import fr.tse.advanced.databases.storage.exception.SeriesNotFoundException;
+import fr.tse.db.storage.data.DataBase;
+import fr.tse.db.storage.data.DataPoint;
+import fr.tse.db.storage.data.Int32;
+import fr.tse.db.storage.data.Int64;
+import fr.tse.db.storage.data.Series;
+import fr.tse.db.storage.data.ValueType;
+import fr.tse.db.storage.exception.SeriesAlreadyExistsException;
+import fr.tse.db.storage.exception.SeriesNotFoundException;
 
 public class RequestTest {
 

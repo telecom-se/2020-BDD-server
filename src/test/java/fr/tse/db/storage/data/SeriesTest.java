@@ -1,4 +1,4 @@
-package fr.tse.advanced.databases.storage.data;
+package fr.tse.db.storage.data;
 
 import static org.junit.Assert.*;
 

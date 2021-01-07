@@ -1,8 +1,6 @@
-package fr.tse.advanced.databases.storage.data;
+package fr.tse.db.storage.data;
 
-import java.lang.Comparable;
-
-import fr.tse.advanced.databases.storage.exception.WrongValueTypeException;
+import fr.tse.db.storage.exception.WrongValueTypeException;
 
 public class Float32 implements ValueType<Float> {
 

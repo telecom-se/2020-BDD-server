@@ -1,10 +1,10 @@
-package fr.tse.advanced.databases.storage.data;
+package fr.tse.db.storage.data;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import fr.tse.advanced.databases.storage.exception.TimestampAlreadyExistsException;
-import fr.tse.advanced.databases.storage.exception.WrongSeriesValueTypeException;
+import fr.tse.db.storage.exception.TimestampAlreadyExistsException;
+import fr.tse.db.storage.exception.WrongSeriesValueTypeException;
 
 public class Series<ValType extends ValueType> {
 

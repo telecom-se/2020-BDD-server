@@ -1,6 +1,6 @@
-package fr.tse.advanced.databases.storage.exception;
+package fr.tse.db.storage.exception;
 
-import fr.tse.advanced.databases.storage.data.ValueType;
+import fr.tse.db.storage.data.ValueType;
 
 public class WrongSeriesValueTypeException extends RuntimeException {
 	
