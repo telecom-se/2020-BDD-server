@@ -4,7 +4,7 @@ import java.lang.Comparable;
 
 import fr.tse.advanced.databases.storage.exception.WrongValueTypeException;
 
-public class Float32 implements ValueType, Comparable<Float32>{
+public class Float32 implements ValueType {
 
 	private Float val;
 
@@ -20,14 +20,16 @@ public class Float32 implements ValueType, Comparable<Float32>{
 		this.val = val;
 	}
 	
-	public int compareTo(Float32 o) {
-		if(this.val == o.val) {
-			return 0;
-		} else if(this.val < o.val) {
-			return -1;
-		} else {
-			return 1;
-		}
+	public int compareTo(ValueType o) {
+		if (o instanceof Float32) {
+			if(this.val == ((Float32)o).val) {
+				return 0;
+			} else if(this.val < ((Float32)o).val) {
+				return -1;
+			} else {
+				return 1;
+			}
+		} else throw new WrongValueTypeException(this.getClass(),o.getClass());
 	}
 
 	@Override

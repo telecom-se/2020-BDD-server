@@ -2,7 +2,7 @@ package fr.tse.advanced.databases.storage.data;
 
 import fr.tse.advanced.databases.storage.exception.WrongValueTypeException;
 
-public class Int64 implements ValueType, Comparable<Int64>{
+public class Int64 implements ValueType {
 
 	private Long val;
 	
@@ -18,14 +18,16 @@ public class Int64 implements ValueType, Comparable<Int64>{
 		this.val = val;
 	}
 
-	public int compareTo(Int64 o) {
-		if(this.val == o.val) {
-			return 0;
-		} else if(this.val < o.val) {
-			return -1;
-		} else {
-			return 1;
-		}
+	public int compareTo(ValueType o) {
+		if (o instanceof Int64) {
+			if(this.val == ((Int64)o).val) {
+				return 0;
+			} else if(this.val < ((Int64)o).val) {
+				return -1;
+			} else {
+				return 1;
+			}
+		} else throw new WrongValueTypeException(this.getClass(),o.getClass());
 	}
 
 	@Override

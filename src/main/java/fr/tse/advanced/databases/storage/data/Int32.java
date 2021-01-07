@@ -1,10 +1,8 @@
 package fr.tse.advanced.databases.storage.data;
 
-import java.lang.Comparable;
-
 import fr.tse.advanced.databases.storage.exception.WrongValueTypeException;
 
-public class Int32 implements ValueType, Comparable<Int32>{
+public class Int32 implements ValueType {
 
 	private Integer val;
 
@@ -16,14 +14,16 @@ public class Int32 implements ValueType, Comparable<Int32>{
 		return val;
 	}
 
-	public int compareTo(Int32 o) {
-		if(this.val == o.val) {
-			return 0;
-		} else if(this.val < o.val) {
-			return -1;
-		} else {
-			return 1;
-		}
+	public int compareTo(ValueType o) {
+		if (o instanceof Int32) {
+			if(this.val == ((Int32)o).val) {
+				return 0;
+			} else if(this.val < ((Int32)o).val) {
+				return -1;
+			} else {
+				return 1;
+			}
+		} else throw new WrongValueTypeException(this.getClass(),o.getClass());
 	}
 
 	@Override
