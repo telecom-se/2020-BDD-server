@@ -1,5 +1,7 @@
 package fr.tse.advanced.databases.storage.data;
 
+import fr.tse.advanced.databases.storage.exception.WrongValueTypeException;
+
 public class Int64 implements ValueType, Comparable<Int64>{
 
 	private Long val;
@@ -29,6 +31,18 @@ public class Int64 implements ValueType, Comparable<Int64>{
 	@Override
 	public String toString() {
 		return "Int64[" + val + "]";
+	}
+	
+	public void sum(ValueType i) throws WrongValueTypeException{
+		if (i instanceof Int64) {
+			this.val+= ((Int64) i).getVal();
+		} else {
+			throw new WrongValueTypeException(this.getClass(),i.getClass());
+		}
+	}
+
+	public float divide(int denom) {
+		return (float) this.val/denom;
 	}
 	
 }

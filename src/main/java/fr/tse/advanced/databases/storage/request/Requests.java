@@ -8,7 +8,7 @@ import fr.tse.advanced.databases.storage.data.ValueType;
 import fr.tse.advanced.databases.storage.exception.SeriesAlreadyExistsException;
 import fr.tse.advanced.databases.storage.exception.SeriesNotFoundException;
 import fr.tse.advanced.databases.storage.exception.TimestampAlreadyExistsException;
-import fr.tse.advanced.databases.storage.exception.WrongValueTypeException;
+import fr.tse.advanced.databases.storage.exception.WrongSeriesValueTypeException;
 
 /**
  * This interface will be used by query and list all CRUD requests possible
@@ -79,7 +79,7 @@ public interface Requests {
 	 * @throws SeriesNotFoundException When series with specified name does not exist
 	 * @see 2 Errors missing (Timestamp already exists & WrongValueType)
 	 */
-	public <ValType extends ValueType> void insertValue(String seriesName, Collection<DataPoint<ValType>> points) throws SeriesNotFoundException, WrongValueTypeException, TimestampAlreadyExistsException;
+	public <ValType extends ValueType> void insertValue(String seriesName, Collection<DataPoint<ValType>> points) throws SeriesNotFoundException, WrongSeriesValueTypeException, TimestampAlreadyExistsException;
 	
 	/**
 	 * Create a series with specified name and specified type
@@ -141,7 +141,7 @@ public interface Requests {
 	 * @param seriesValues
 	 * @return
 	 */
-	public ValueType average(Collection<ValueType> seriesValues);
+	public Float average(Collection<ValueType> seriesValues);
 	
 	/**
 	 * Returns min value of the entry

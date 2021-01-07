@@ -12,7 +12,7 @@ import fr.tse.advanced.databases.storage.data.ValueType;
 import fr.tse.advanced.databases.storage.exception.SeriesAlreadyExistsException;
 import fr.tse.advanced.databases.storage.exception.SeriesNotFoundException;
 import fr.tse.advanced.databases.storage.exception.TimestampAlreadyExistsException;
-import fr.tse.advanced.databases.storage.exception.WrongValueTypeException;
+import fr.tse.advanced.databases.storage.exception.WrongSeriesValueTypeException;
 
 public class RequestsImpl implements Requests {
 
@@ -102,7 +102,7 @@ public class RequestsImpl implements Requests {
 		return values;
 	}
 
-	public <ValType extends ValueType> void insertValue(String seriesName, Collection<DataPoint<ValType>> points) throws SeriesNotFoundException, WrongValueTypeException, TimestampAlreadyExistsException {
+	public <ValType extends ValueType> void insertValue(String seriesName, Collection<DataPoint<ValType>> points) throws SeriesNotFoundException, WrongSeriesValueTypeException, TimestampAlreadyExistsException {
 		DataBase dataBase = DataBase.getInstance();
 		Series series = dataBase.getByName(seriesName);
 
@@ -111,7 +111,7 @@ public class RequestsImpl implements Requests {
 		while(pointIterator.hasNext()) {
 			DataPoint<ValType> point = pointIterator.next();
 			if(!point.getValue().getClass().equals(series.getType())) {
-				throw new WrongValueTypeException(point.getValue().getClass(), series.getType());
+				throw new WrongSeriesValueTypeException(point.getValue().getClass(), series.getType());
 			}
 			if(series.getByTimestamp(point.getTimestamp()) != null) {
 				throw new TimestampAlreadyExistsException(point.getTimestamp());
@@ -196,27 +196,81 @@ public class RequestsImpl implements Requests {
 		}
 	}
 
-	public ValueType average(Collection<ValueType> seriesValues) {
-		
+	public Float average(Collection<ValueType> seriesValues) {
+		Iterator<ValueType> iterator = seriesValues.iterator();
+		if(iterator.hasNext()) {
+			ValueType sum=iterator.next();
+			int count=1;
+			while(iterator.hasNext()) {
+				ValueType entry = iterator.next();
+				sum.sum(entry);
+				count++;
+			}
+			return sum.divide(count);
+		} else {
+			return null;
+		}
 	}
 
 
 	public ValueType min(Collection<ValueType> seriesValues) {
-		
+		Iterator<ValueType> iterator = seriesValues.iterator();
+		if(iterator.hasNext()) {
+			ValueType min=iterator.next();
+			while(iterator.hasNext()) {
+				ValueType entry = iterator.next();
+				if (entry.compareTo(min)==-1) min=entry; 
+			}
+			return min;
+		} else {
+			return null;
+		}
 	}
 
 
 	public ValueType max(Collection<ValueType> seriesValues) {
-		
+		Iterator<ValueType> iterator = seriesValues.iterator();
+		if(iterator.hasNext()) {
+			ValueType max=iterator.next();
+			while(iterator.hasNext()) {
+				ValueType entry = iterator.next();
+				if (entry.compareTo(max)==1) max=entry; 
+			}
+			return max;
+		} else {
+			return null;
+		}
 	}
 
 
 	public int count(Collection<ValueType> seriesValues) {
+		Iterator<ValueType> iterator = seriesValues.iterator();
+		if(iterator.hasNext()) {
+			ValueType entry=iterator.next();
+			int count=1;
+			while(iterator.hasNext()) {
+				entry = iterator.next();
+				count++;
+			}
+			return count;
+		} else {
+			return 0;
+		}
 	}
 
 
 	public ValueType sum(Collection<ValueType> seriesValues) {
-		
+		Iterator<ValueType> iterator = seriesValues.iterator();
+		if(iterator.hasNext()) {
+			ValueType sum=iterator.next();
+			while(iterator.hasNext()) {
+				ValueType entry = iterator.next();
+				sum.sum(entry);
+			}
+			return sum;
+		} else {
+			return null;
+		}
 	}
 
 

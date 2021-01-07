@@ -2,6 +2,8 @@ package fr.tse.advanced.databases.storage.data;
 
 import java.lang.Comparable;
 
+import fr.tse.advanced.databases.storage.exception.WrongValueTypeException;
+
 public class Int32 implements ValueType, Comparable<Int32>{
 
 	private Integer val;
@@ -27,6 +29,18 @@ public class Int32 implements ValueType, Comparable<Int32>{
 	@Override
 	public String toString() {
 		return "Int32[" + val + "]";
+	}
+
+	public void sum(ValueType i) throws WrongValueTypeException{
+		if (i instanceof Int32) {
+			this.val+= ((Int32) i).getVal();
+		} else {
+			throw new WrongValueTypeException(this.getClass(),i.getClass());
+		}
+	}
+
+	public float divide(int denom) {
+		return (float) this.val/denom;
 	}
 	
 	

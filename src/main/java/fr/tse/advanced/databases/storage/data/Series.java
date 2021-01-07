@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import fr.tse.advanced.databases.storage.exception.TimestampAlreadyExistsException;
-import fr.tse.advanced.databases.storage.exception.WrongValueTypeException;
+import fr.tse.advanced.databases.storage.exception.WrongSeriesValueTypeException;
 
 public class Series<ValType extends ValueType> {
 
@@ -26,9 +26,9 @@ public class Series<ValType extends ValueType> {
 	public Map<Long, ValType> getPoints() {return points;}
 	public void clearPoints() {this.points.clear();}
 
-	public void addPoint(Long key, ValType value) throws WrongValueTypeException, TimestampAlreadyExistsException {
+	public void addPoint(Long key, ValType value) throws WrongSeriesValueTypeException, TimestampAlreadyExistsException {
 		if(value.getClass() != type) {
-			throw new WrongValueTypeException(value.getClass(), this.getType());
+			throw new WrongSeriesValueTypeException(value.getClass(), this.getType());
 		}
 		if(this.points.get(key) != null) {
 			throw new TimestampAlreadyExistsException(key);
