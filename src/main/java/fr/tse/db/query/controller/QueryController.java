@@ -21,7 +21,7 @@ public class QueryController {
     @PostMapping(value = "/query",produces = "application/json")
     public ResponseEntity<?> postQuery(@RequestParam("query") String query) throws BadQueryException {
         // Get object
-        List<Series> series = this.queryService.parseQuery(query);
+        List<Series> series = this.queryService.handleQuery(query);
         return new ResponseEntity<>(series, HttpStatus.OK);
     }
 }

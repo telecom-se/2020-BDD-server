@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,36 +28,60 @@ public class QueryService {
         this.actions.add("SELECT");
     }
 
-    public List<Series> parseQuery(String query) throws BadQueryException {
+    public List handleQuery(String query) throws BadQueryException {
+        HashMap<String, Object> result = this.parseQuery(query);
+        List<Series> series = new ArrayList<>();
+        switch(result.get("action").toString()) {
+            case "select": {
+
+                break;
+            }
+            case "create": {
+                return null;
+            }
+            case "delete": {
+                return null;
+            }
+            case "insert": {
+                return null;
+            }
+            default: return null;
+        }
+        return series;
+    }
+
+    public HashMap<String, Object> parseQuery(String query) throws BadQueryException {
         String[] commands = query.toLowerCase().split("\\s*;\\s*");
         System.out.println(commands.length + " command(s) found");
         for (String command : commands) {
+            HashMap<String, Object> result = new HashMap<>();
             Pattern p = Pattern.compile("^(create|update|select|delete|show)");
             Matcher m = p.matcher(command);
             if(!m.find()) {
                 throw new BadQueryException("Bad action provided");
             }
-            switch (m.group(0)) {
+            switch (m.group(1)) {
                 case "select": {
-                    System.out.println("SELECT");
                     // Check if the select query is correct
-                    Pattern selectPattern = Pattern.compile("^\\s*select\\s*(.*?)\\s*from\\s*(.*?)(?:(?:\\s*where\\s*)(.*?))?$");
+                    Pattern selectPattern = Pattern.compile("^\\s*select\\s+(.*?)\\s+from\\s+(.*?)(?:(?:\\s+where\\s+)(.*?))?$");
                     Matcher selectMatcher = selectPattern.matcher(command);
-                    System.out.println("Groups: " + selectMatcher.groupCount());
-                    if(!selectMatcher.find() || selectMatcher.groupCount() <= 2) {
+                    if(!selectMatcher.find()) {
                         throw new BadQueryException("Error in SELECT query");
                     };
                     // If no series is provided
                     if(selectMatcher.group(1).isEmpty()) {
-                        throw new BadQueryException("Error in SELECT query");
+                        throw new BadQueryException("Error in SELECT query: No timestamp provided");
                     }
-                    for(int i = 0; i < selectMatcher.groupCount(); i++) {
+                    result.put("function", selectMatcher.group(1));
+                    for(int i = 0; i <= selectMatcher.groupCount(); i++) {
                         System.out.println(i + " " + selectMatcher.group(i));
                     }
                     String series = selectMatcher.group(2);
+                    result.put("series", series);
                     System.out.println("Series " + series);
+
                     // Check if conditions were provided
-                    if(!selectMatcher.group(2).isEmpty()) {
+                    if(selectMatcher.group(3) != null) {
                         String conditions = selectMatcher.group(3);
                         int count = parseConditions(conditions);
                         System.out.println(count + " condition(s)");
@@ -97,11 +122,31 @@ public class QueryService {
                     break;
                 }
                 case "insert": {
-                    Pattern selectPattern = Pattern.compile("^insert\\s*(.*?)\\s*from\\s*(.*?)((?:\\s*where\\s*)(.*?))?$");
+                    Pattern selectPattern = Pattern.compile("^insert\\s+into\\s+(.*?)\\s+values\\s+\\(\\((.*?)\\)\\)\\s*$");
                     Matcher selectMatcher = selectPattern.matcher(command);
-                    if(selectMatcher.find()) {
-                        throw new BadQueryException("Error in query");
+                    if(!selectMatcher.find() || selectMatcher.group(1).isEmpty() || selectMatcher.group(2).isEmpty()) {
+                        throw new BadQueryException("Error in INSERT query");
                     };
+                    result.put("action", "insert");
+                    String series = selectMatcher.group(1);
+                    result.put("series", series);
+                    String values = selectMatcher.group(2);
+                    String[] splitedValues = values.split("\\)\\,\\s+\\(");
+                    ArrayList<String[]> pairs = new ArrayList<>();
+                    for (String splitedValue : splitedValues) {
+                        String[] pair = splitedValue.split(",\\s*");
+                        if (pair.length != 2) {
+                            throw new BadQueryException("Error in inserted values");
+                        }
+                        try {
+                            Integer.parseInt(pair[0]);
+                            Float.parseFloat(pair[1]);
+                        } catch (NumberFormatException nfe) {
+                            throw new BadQueryException("Wrong type provided for insert");
+                        }
+                        pairs.add(pair);
+                    }
+                    result.put("pairs", pairs);
                     break;
                 }
                 case "delete": {
@@ -110,30 +155,30 @@ public class QueryService {
                     if(selectMatcher.find()) {
                         throw new BadQueryException("Error in query");
                     };
+                    result.put("action", "delete");
 
                     break;
                 }
                 case "show": {
-                    Pattern selectPattern = Pattern.compile("^show\\s*(.*?)\\s*from\\s*(.*?)((?:\\s*where\\s*)(.*?))?$");
+                    Pattern selectPattern = Pattern.compile("^show\\s+(.*?)\\s*$");
                     Matcher selectMatcher = selectPattern.matcher(command);
-                    if(selectMatcher.find()) {
-                        throw new BadQueryException("Error in query");
+                    if(!selectMatcher.find() || selectMatcher.group(1).isEmpty()) {
+                        throw new BadQueryException("Error in SHOW query");
                     };
+                    result.put("action", "show");
+                    result.put("series", selectMatcher.group(1));
                     break;
                 }
                 default: {
                     throw new BadQueryException("Error in query action");
                 }
             }
+            return result;
         }
-
-        List<Series> series = new ArrayList<>();
-        series.add(new Series((long) 12, 1));
-        return series;
+        return null;
     }
 
     public int parseConditions(String conditions) {
-        System.out.println(conditions);
         Pattern p = Pattern.compile("(timestamp|value)\\s+(<|>|=|<=|>=)\\s+([0-9]+)\\s*(and|or)?\\s*");
         Matcher m = p.matcher(conditions);
         int count = 0;
