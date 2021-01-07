@@ -4,12 +4,8 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.hamcrest.CoreMatchers.is;
 
 import fr.tse.advanced.databases.storage.data.DataBase;
 import fr.tse.advanced.databases.storage.data.DataPoint;
@@ -286,5 +282,91 @@ public class RequestTest {
 		assertEquals(database.getByName("seriesTest").getPoints().get(tmp2 + (long)1), null);
 	}
 	
+	@Test
+	public void averageTest() {
+		
+	Int64 val1 = new Int64((long) 20);
+	Int64 val2 = new Int64((long) 30);
 	
+	ArrayList<ValueType> seriesValues = new ArrayList<ValueType>();
+	
+	seriesValues.add(val1);
+	seriesValues.add(val2);
+	
+	Int64 av= (Int64) req.average(seriesValues );
+	
+	assertEquals( 25,(long)av.getVal());
+	}
+	
+	
+	@Test
+	public void minTest() {
+		Int64 val1 = new Int64((long) 20);
+		Int64 val2 = new Int64((long) 30);
+		Int64 val3 = new Int64((long) 10);
+
+		ArrayList<ValueType> seriesValues = new ArrayList<ValueType>();
+		
+		seriesValues.add(val1);
+		seriesValues.add(val2);
+		seriesValues.add(val3);
+		
+		Int64 min = (Int64) req.min(seriesValues);
+		
+		assertEquals(10,(long)min.getVal());
+	}
+
+	@Test
+	public void maxTest() {
+		Int64 val1 = new Int64((long) 20);
+		Int64 val2 = new Int64((long) 30);
+		Int64 val3 = new Int64((long) 10);
+
+		ArrayList<ValueType> seriesValues = new ArrayList<ValueType>();
+		
+		seriesValues.add(val1);
+		seriesValues.add(val2);
+		seriesValues.add(val3);
+		
+		Int64 min = (Int64) req.max(seriesValues);
+		
+		assertEquals(30,(long)min.getVal());
+	}
+	
+	@Test
+	public void countTest() {
+		Int64 val1 = new Int64((long) 20);
+		Int64 val2 = new Int64((long) 30);
+		Int64 val3 = new Int64((long) 10);
+
+		ArrayList<ValueType> seriesValues = new ArrayList<ValueType>();
+		
+		seriesValues.add(val1);
+		seriesValues.add(val2);
+		seriesValues.add(val3);
+		
+		int count = req.count(seriesValues);
+		
+		assertEquals(3,count);
+	}
+	
+	@Test
+	public void sumTest() {
+		Int64 val1 = new Int64((long) 20);
+		Int64 val2 = new Int64((long) 30);
+		Int64 val3 = new Int64((long) 10);
+
+		ArrayList<ValueType> seriesValues = new ArrayList<ValueType>();
+		
+		seriesValues.add(val1);
+		seriesValues.add(val2);
+		seriesValues.add(val3);
+		
+		Int64 sum = (Int64) req.sum(seriesValues);
+		
+		assertEquals(60,(long)sum.getVal());
+	}
+	
+	
+
 }
