@@ -15,9 +15,8 @@ public class SeriesTest {
 	
 	@Before
 	public void initialize() {
-		
-		this.series = new Series<Int64>("seriesTest");
-		this.series32 = new Series<Int32>("seriesTest32");
+		this.series = new Series<Int64>("seriesTest", Int64.class);
+		this.series32 = new Series<Int32>("seriesTest32", Int32.class);
 	}
 	
 	@Test
