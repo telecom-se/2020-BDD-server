@@ -27,7 +27,7 @@ public class QueryService {
         String[] commands = query.toLowerCase().split("\\s*;\\s*");
         System.out.println(commands.length + " command(s) found");
         for (String command : commands) {
-            Pattern p = Pattern.compile("^(create|update|select|delete)");
+            Pattern p = Pattern.compile("^(create|update|select|delete|show)");
             Matcher m = p.matcher(command);
             if(!m.find()) {
                 throw new BadQueryException("Bad action provided");
@@ -38,15 +38,16 @@ public class QueryService {
                     // Check if the select query is correct
                     Pattern selectPattern = Pattern.compile("^\\s*select\\s*(.*?)\\s*from\\s*(.*?)(?:(?:\\s*where\\s*)(.*?))?$");
                     Matcher selectMatcher = selectPattern.matcher(command);
-                    if(!selectMatcher.find() || selectMatcher.groupCount() == 0) {
+                    System.out.println("Groups: " + selectMatcher.groupCount());
+                    if(!selectMatcher.find() || selectMatcher.groupCount() <= 2) {
                         throw new BadQueryException("Error in SELECT query");
                     };
                     // If no series is provided
                     if(selectMatcher.group(1).isEmpty()) {
                         throw new BadQueryException("Error in SELECT query");
                     }
-                    for(int i = 0; i <= selectMatcher.groupCount(); i++) {
-                        System.out.println(i + selectMatcher.group(i));
+                    for(int i = 0; i < selectMatcher.groupCount(); i++) {
+                        System.out.println(i + " " + selectMatcher.group(i));
                     }
                     String series = selectMatcher.group(2);
                     System.out.println("Series " + series);
@@ -81,6 +82,14 @@ public class QueryService {
                         throw new BadQueryException("Error in query");
                     };
 
+                    break;
+                }
+                case "show": {
+                    Pattern selectPattern = Pattern.compile("^show\\s*(.*?)\\s*from\\s*(.*?)((?:\\s*where\\s*)(.*?))?$");
+                    Matcher selectMatcher = selectPattern.matcher(command);
+                    if(selectMatcher.find()) {
+                        throw new BadQueryException("Error in query");
+                    };
                     break;
                 }
                 default: {
