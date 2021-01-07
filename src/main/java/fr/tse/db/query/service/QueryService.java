@@ -2,10 +2,10 @@ package fr.tse.db.query.service;
 
 import fr.tse.db.query.domain.Series;
 import fr.tse.db.query.error.BadQueryException;
-import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,7 +16,11 @@ import java.util.regex.Pattern;
 public class QueryService {
 
     private Set<String> actions = new HashSet<>();
-
+    
+    // TODO A mettre dans un fichier constante
+    public List<String> typeList = Arrays.asList(new String[]{"int32", "int64", "float32", "float64"});
+    
+    
     QueryService() {
         this.actions.add("CREATE");
         this.actions.add("INSERT");
@@ -60,11 +64,36 @@ public class QueryService {
                     break;
                 }
                 case "create": {
-                    Pattern selectPattern = Pattern.compile("^create\\s*(.*?)\\s*from\\s*(.*?)((?:\\s*where\\s*)(.*?))?$");
+                    Pattern selectPattern = Pattern.compile("^\\s*create\\s+(.+?)\\s+(.+?)\\s*$");
                     Matcher selectMatcher = selectPattern.matcher(command);
-                    if(selectMatcher.find()) {
-                        throw new BadQueryException("Error in query");
-                    };
+                    
+                    // Check if regex matchs the command and respect two entities
+                    if(!selectMatcher.find() || selectMatcher.groupCount() < 2) {
+                        throw new BadQueryException("Error in CREATE query");
+                    }
+                    
+                    // Get the name and the type given in the command
+                    String name = selectMatcher.group(1);
+                    String type = selectMatcher.group(2);
+                    
+                    // Check name or type contains one or more spaces
+                    if(name.contains(" ")) {
+                        throw new BadQueryException("Error in CREATE query (space in name)");
+                    }
+
+                    // Check if type exist
+                    if (!typeList.contains(type)) {
+                    	throw new BadQueryException("Error in CREATE query (type not exist)");
+                    }
+                    
+                    // Check the name and type synthax
+                    Pattern selectPatternSynthax = Pattern.compile("[a-zA-Z0-9_-]+");
+                    Matcher selectMatcherSynthaxName = selectPatternSynthax.matcher(name);
+                    
+                    if (!selectMatcherSynthaxName.matches()) {
+                    	throw new BadQueryException("Error in CREATE query (special characters not allowed in name)");
+                    }
+
                     break;
                 }
                 case "insert": {
