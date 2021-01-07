@@ -136,7 +136,38 @@ public interface Requests {
 	 * @throws SeriesNotFoundException When series with specified name does not exist
 	 */
 	public void deleteHigherOrEqualThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException;
+	/**
+	 * Returns average of the values in entry
+	 * @param seriesValues
+	 * @return
+	 */
+	public ValueType average(Collection<ValueType> seriesValues);
 	
+	/**
+	 * Returns min value of the entry
+	 * @param seriesValues
+	 * @return
+	 */
+	public ValueType min(Collection<ValueType> seriesValues);
 	
+	/**
+	 * Returns max value of the entry
+	 * @param seriesValues
+	 * @return
+	 */
+	public ValueType max(Collection<ValueType> seriesValues);
 	
+	/**
+	 * Returns number of entries
+	 * @param seriesValues
+	 * @return
+	 */
+	public int count(Collection<ValueType> seriesValues);
+	
+	/**
+	 * Returns the sum of the entries
+	 * @param seriesValues
+	 * @return
+	 */
+	public ValueType sum(Collection<ValueType> seriesValues);
 }

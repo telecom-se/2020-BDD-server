@@ -25,7 +25,7 @@ public class RequestsImpl implements Requests {
 	public Collection<ValueType> selectLowerThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException {
 		DataBase dataBase = DataBase.getInstance();
 		Series series = dataBase.getByName(seriesName);
-		
+
 		Collection<ValueType> values = new ArrayList<ValueType>();
 		Iterator<Entry<Long, ValueType>> iterator = series.getPoints().entrySet().iterator();
 		while(iterator.hasNext()) {
@@ -34,14 +34,14 @@ public class RequestsImpl implements Requests {
 				values.add(entry.getValue());
 			}
 		}
-		
+
 		return values;
 	}
 
 	public Collection<ValueType> selectLowerOrEqualThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException {
 		DataBase dataBase = DataBase.getInstance();
 		Series series = dataBase.getByName(seriesName);
-		
+
 		Collection<ValueType> values = new ArrayList<ValueType>();
 		Iterator<Entry<Long, ValueType>> iterator = series.getPoints().entrySet().iterator();
 		while(iterator.hasNext()) {
@@ -50,14 +50,14 @@ public class RequestsImpl implements Requests {
 				values.add(entry.getValue());
 			}
 		}
-		
+
 		return values;
 	}
 
 	public Collection<ValueType> selectHigherThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException {
 		DataBase dataBase = DataBase.getInstance();
 		Series series = dataBase.getByName(seriesName);
-		
+
 		Collection<ValueType> values = new ArrayList<ValueType>();
 		Iterator<Entry<Long, ValueType>> iterator = series.getPoints().entrySet().iterator();
 		while(iterator.hasNext()) {
@@ -66,14 +66,14 @@ public class RequestsImpl implements Requests {
 				values.add(entry.getValue());
 			}
 		}
-		
+
 		return values;
 	}
 
 	public Collection<ValueType> selectHigherOrEqualThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException {
 		DataBase dataBase = DataBase.getInstance();
 		Series series = dataBase.getByName(seriesName);
-		
+
 		Collection<ValueType> values = new ArrayList<ValueType>();
 		Iterator<Entry<Long, ValueType>> iterator = series.getPoints().entrySet().iterator();
 		while(iterator.hasNext()) {
@@ -82,14 +82,14 @@ public class RequestsImpl implements Requests {
 				values.add(entry.getValue());
 			}
 		}
-		
+
 		return values;
 	}
 
 	public Collection<ValueType> selectBetweenTimestampBothIncluded(String seriesName, Long timestamp1, Long timestamp2) throws SeriesNotFoundException {
 		DataBase dataBase = DataBase.getInstance();
 		Series series = dataBase.getByName(seriesName);
-		
+
 		Collection<ValueType> values = new ArrayList<ValueType>();
 		Iterator<Entry<Long, ValueType>> iterator = series.getPoints().entrySet().iterator();
 		while(iterator.hasNext()) {
@@ -98,14 +98,14 @@ public class RequestsImpl implements Requests {
 				values.add(entry.getValue());
 			}
 		}
-		
+
 		return values;
 	}
 
 	public <ValType extends ValueType> void insertValue(String seriesName, Collection<DataPoint<ValType>> points) throws SeriesNotFoundException, WrongValueTypeException, TimestampAlreadyExistsException {
 		DataBase dataBase = DataBase.getInstance();
 		Series series = dataBase.getByName(seriesName);
-		
+
 		// Pre-Check types
 		Iterator<DataPoint<ValType>> pointIterator = points.iterator();
 		while(pointIterator.hasNext()) {
@@ -117,7 +117,7 @@ public class RequestsImpl implements Requests {
 				throw new TimestampAlreadyExistsException(point.getTimestamp());
 			}
 		}
-		
+
 		pointIterator = points.iterator();
 		while(pointIterator.hasNext()) {
 			DataPoint<ValType> point = pointIterator.next();
@@ -129,7 +129,7 @@ public class RequestsImpl implements Requests {
 		DataBase dataBase = DataBase.getInstance();
 		Series<ValType> series = new Series<ValType>(seriesName, type);
 		dataBase.addSeries(series);
-		
+
 	}
 
 	public void deleteSeries(String seriesName) throws SeriesNotFoundException {
@@ -140,14 +140,14 @@ public class RequestsImpl implements Requests {
 	public void deleteByTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException {
 		DataBase dataBase = DataBase.getInstance();
 		Series series = dataBase.getByName(seriesName);
-		
+
 		series.deletePoint(timestamp);
 	}
 
 	public void deleteLowerThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException {
 		DataBase dataBase = DataBase.getInstance();
 		Series series = dataBase.getByName(seriesName);
-		
+
 		Iterator<Entry<Long, ValueType>> iterator = series.getPoints().entrySet().iterator();
 		while(iterator.hasNext()) {
 			Entry<Long, ValueType> entry = iterator.next();
@@ -160,7 +160,7 @@ public class RequestsImpl implements Requests {
 	public void deleteLowerOrEqualThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException {
 		DataBase dataBase = DataBase.getInstance();
 		Series series = dataBase.getByName(seriesName);
-		
+
 		Iterator<Entry<Long, ValueType>> iterator = series.getPoints().entrySet().iterator();
 		while(iterator.hasNext()) {
 			Entry<Long, ValueType> entry = iterator.next();
@@ -173,7 +173,7 @@ public class RequestsImpl implements Requests {
 	public void deleteHigherThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException {
 		DataBase dataBase = DataBase.getInstance();
 		Series series = dataBase.getByName(seriesName);
-		
+
 		Iterator<Entry<Long, ValueType>> iterator = series.getPoints().entrySet().iterator();
 		while(iterator.hasNext()) {
 			Entry<Long, ValueType> entry = iterator.next();
@@ -186,7 +186,7 @@ public class RequestsImpl implements Requests {
 	public void deleteHigherOrEqualThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException {
 		DataBase dataBase = DataBase.getInstance();
 		Series series = dataBase.getByName(seriesName);
-		
+
 		Iterator<Entry<Long, ValueType>> iterator = series.getPoints().entrySet().iterator();
 		while(iterator.hasNext()) {
 			Entry<Long, ValueType> entry = iterator.next();
@@ -196,6 +196,29 @@ public class RequestsImpl implements Requests {
 		}
 	}
 
+	public ValueType average(Collection<ValueType> seriesValues) {
+		
+	}
 
-	
+
+	public ValueType min(Collection<ValueType> seriesValues) {
+		
+	}
+
+
+	public ValueType max(Collection<ValueType> seriesValues) {
+		
+	}
+
+
+	public int count(Collection<ValueType> seriesValues) {
+	}
+
+
+	public ValueType sum(Collection<ValueType> seriesValues) {
+		
+	}
+
+
+
 }
