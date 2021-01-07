@@ -32,20 +32,28 @@ public class RequestTest {
 	Int64 val = new Int64((long) 658);
 	Int32 val32 = new Int32((45));
 
-	private RequestsImpl req= new RequestsImpl();
+	private RequestsImpl req;
 
-	@BeforeClass
-	public static  void initialize() throws SeriesAlreadyExistsException {
-		
+	@Before
+	public void initialize() throws SeriesAlreadyExistsException {
+		req= new RequestsImpl();
 		DataBase database = DataBase.getInstance();
-		Series<Int64> series = new Series<Int64>("seriesTest", Int64.class);
-		Series<Int32> series32 = new Series<Int32>("seriesTest32", Int32.class);
+		try {
+			database.deleteSeries("seriesTest");
+			database.deleteSeries("seriesTest32");
+		}catch(SeriesNotFoundException e) {
+			System.out.println("base not initialised");
+		}
 		
 
-		series.addPoint((long) 1000000, new Int64((long) 658));
+		series = new Series<Int64>("seriesTest", Int64.class);
+		series32 = new Series<Int32>("seriesTest32", Int32.class);
+		
+
+		series.addPoint(tmp, val);
 		
 		
-		series32.addPoint((long) 1000000, new Int32((45)));
+		series32.addPoint(tmp, val32);
 		
 		database.addSeries(series);
 		database.addSeries(series32);
@@ -217,7 +225,7 @@ public class RequestTest {
 		assertEquals(database.getByName("seriesTest").getPoints().get(tmp3), null);
 	}
 	
-	
+	@Test
 	public void deleteLowerThanTimestampTest() throws SeriesNotFoundException{
 		
 		Int64 nuVal = new Int64((long) 666);
