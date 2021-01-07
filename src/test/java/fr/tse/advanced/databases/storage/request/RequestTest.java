@@ -285,17 +285,17 @@ public class RequestTest {
 	@Test
 	public void averageTest() {
 		
-	Int64 val1 = new Int64((long) 20);
-	Int64 val2 = new Int64((long) 30);
-	
-	ArrayList<ValueType> seriesValues = new ArrayList<ValueType>();
-	
-	seriesValues.add(val1);
-	seriesValues.add(val2);
-	
-	Int64 av= (Int64) req.average(seriesValues );
-	
-	assertEquals( 25,(long)av.getVal());
+		Int64 val1 = new Int64((long) 20);
+		Int64 val2 = new Int64((long) 30);
+		
+		ArrayList<ValueType> seriesValues = new ArrayList<ValueType>();
+		
+		seriesValues.add(val1);
+		seriesValues.add(val2);
+		
+		Float av= req.average(seriesValues );
+		
+		assertEquals(Float.valueOf(25),  av);
 	}
 	
 	
@@ -311,7 +311,7 @@ public class RequestTest {
 		seriesValues.add(val2);
 		seriesValues.add(val3);
 		
-		Int64 min = (Int64) req.min(seriesValues);
+		ValueType min = req.min(seriesValues);
 		
 		assertEquals(10,(long)min.getVal());
 	}
@@ -328,7 +328,7 @@ public class RequestTest {
 		seriesValues.add(val2);
 		seriesValues.add(val3);
 		
-		Int64 min = (Int64) req.max(seriesValues);
+		ValueType min = req.max(seriesValues);
 		
 		assertEquals(30,(long)min.getVal());
 	}
@@ -362,9 +362,9 @@ public class RequestTest {
 		seriesValues.add(val2);
 		seriesValues.add(val3);
 		
-		Int64 sum = (Int64) req.sum(seriesValues);
+		ValueType sum = req.sum(seriesValues);
 		
-		assertEquals(60,(long)sum.getVal());
+		assertEquals(60, (long)sum.getVal());
 	}
 	
 	

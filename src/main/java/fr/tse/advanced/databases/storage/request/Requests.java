@@ -5,6 +5,7 @@ import java.util.List;
 
 import fr.tse.advanced.databases.storage.data.DataPoint;
 import fr.tse.advanced.databases.storage.data.ValueType;
+import fr.tse.advanced.databases.storage.exception.EmptyCollectionException;
 import fr.tse.advanced.databases.storage.exception.SeriesAlreadyExistsException;
 import fr.tse.advanced.databases.storage.exception.SeriesNotFoundException;
 import fr.tse.advanced.databases.storage.exception.TimestampAlreadyExistsException;
@@ -139,35 +140,39 @@ public interface Requests {
 	/**
 	 * Returns average of the values in entry
 	 * @param seriesValues
-	 * @return
+	 * @return average as float
+	 * @throws EmptyCollectionException if collection is empty
 	 */
-	public Float average(Collection<ValueType> seriesValues);
+	public float average(Collection<ValueType> seriesValues) throws EmptyCollectionException;
 	
 	/**
 	 * Returns min value of the entry
 	 * @param seriesValues
-	 * @return
+	 * @return minimum of collection
+	 * @throws EmptyCollectionException if collection is empty
 	 */
-	public ValueType min(Collection<ValueType> seriesValues);
+	public ValueType min(Collection<ValueType> seriesValues) throws EmptyCollectionException;
 	
 	/**
 	 * Returns max value of the entry
 	 * @param seriesValues
-	 * @return
+	 * @return maximum of collection
+	 * @throws EmptyCollectionException if collection is empty
 	 */
-	public ValueType max(Collection<ValueType> seriesValues);
+	public ValueType max(Collection<ValueType> seriesValues) throws EmptyCollectionException;
 	
 	/**
 	 * Returns number of entries
 	 * @param seriesValues
-	 * @return
+	 * @return count as int
 	 */
 	public int count(Collection<ValueType> seriesValues);
 	
 	/**
 	 * Returns the sum of the entries
 	 * @param seriesValues
-	 * @return
+	 * @return sum of collection
+	 * @throws EmptyCollectionException if collection is empty
 	 */
-	public ValueType sum(Collection<ValueType> seriesValues);
+	public ValueType sum(Collection<ValueType> seriesValues) throws EmptyCollectionException;
 }

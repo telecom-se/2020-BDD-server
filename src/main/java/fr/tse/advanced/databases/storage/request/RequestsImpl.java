@@ -9,6 +9,7 @@ import fr.tse.advanced.databases.storage.data.DataBase;
 import fr.tse.advanced.databases.storage.data.DataPoint;
 import fr.tse.advanced.databases.storage.data.Series;
 import fr.tse.advanced.databases.storage.data.ValueType;
+import fr.tse.advanced.databases.storage.exception.EmptyCollectionException;
 import fr.tse.advanced.databases.storage.exception.SeriesAlreadyExistsException;
 import fr.tse.advanced.databases.storage.exception.SeriesNotFoundException;
 import fr.tse.advanced.databases.storage.exception.TimestampAlreadyExistsException;
@@ -196,7 +197,7 @@ public class RequestsImpl implements Requests {
 		}
 	}
 
-	public Float average(Collection<ValueType> seriesValues) {
+	public float average(Collection<ValueType> seriesValues) throws EmptyCollectionException {
 		Iterator<ValueType> iterator = seriesValues.iterator();
 		if(iterator.hasNext()) {
 			ValueType sum=iterator.next();
@@ -208,12 +209,12 @@ public class RequestsImpl implements Requests {
 			}
 			return sum.divide(count);
 		} else {
-			return null;
+			throw new EmptyCollectionException();
 		}
 	}
 
 
-	public ValueType min(Collection<ValueType> seriesValues) {
+	public ValueType min(Collection<ValueType> seriesValues) throws EmptyCollectionException{
 		Iterator<ValueType> iterator = seriesValues.iterator();
 		if(iterator.hasNext()) {
 			ValueType min=iterator.next();
@@ -223,12 +224,12 @@ public class RequestsImpl implements Requests {
 			}
 			return min;
 		} else {
-			return null;
+			throw new EmptyCollectionException();
 		}
 	}
 
 
-	public ValueType max(Collection<ValueType> seriesValues) {
+	public ValueType max(Collection<ValueType> seriesValues) throws EmptyCollectionException{
 		Iterator<ValueType> iterator = seriesValues.iterator();
 		if(iterator.hasNext()) {
 			ValueType max=iterator.next();
@@ -238,7 +239,7 @@ public class RequestsImpl implements Requests {
 			}
 			return max;
 		} else {
-			return null;
+			throw new EmptyCollectionException();
 		}
 	}
 
@@ -259,7 +260,7 @@ public class RequestsImpl implements Requests {
 	}
 
 
-	public ValueType sum(Collection<ValueType> seriesValues) {
+	public ValueType sum(Collection<ValueType> seriesValues) throws EmptyCollectionException{
 		Iterator<ValueType> iterator = seriesValues.iterator();
 		if(iterator.hasNext()) {
 			ValueType sum=iterator.next();
@@ -269,7 +270,7 @@ public class RequestsImpl implements Requests {
 			}
 			return sum;
 		} else {
-			return null;
+			throw new EmptyCollectionException();
 		}
 	}
 
