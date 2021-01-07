@@ -1,8 +1,10 @@
 package fr.tse.db.storage.data;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import fr.tse.db.storage.exception.TimestampAlreadyExistsException;
+import fr.tse.db.storage.exception.WrongSeriesValueTypeException;
 
 /**
 * This Series class is a general container for points to store in the database
@@ -13,40 +15,47 @@ import java.util.Map;
 public class Series<ValType extends ValueType> {
 
 	// Parameters
+	private Class<ValType> type;
 	private String name;
 	private Map<Long, ValType> points;
 	
 	// Constructor
-	public Series(String name) {
-		
+	public Series(String name, Class<ValType> type) {
 		this.name = name;
+		this.type = type;
 		this.points = new HashMap<Long, ValType>();
 	}
 
-	// Getters and Setters
-	public String getName() {
-		return name;
-	}
+	public String getName() {return name;}
+	public void setName(String name) {this.name = name;}
+	public Class<ValType> getType() {return type;}
+	public Map<Long, ValType> getPoints() {return points;}
+	public void clearPoints() {this.points.clear();}
 
-	public void setName(String name) {
-		this.name = name;
+	public void addPoint(Long key, ValType value) throws WrongSeriesValueTypeException, TimestampAlreadyExistsException {
+		if(value.getClass() != type) {
+			throw new WrongSeriesValueTypeException(value.getClass(), this.getType());
+		}
+		if(this.points.get(key) != null) {
+			throw new TimestampAlreadyExistsException(key);
+		}
+		this.points.put(key, value);
 	}
 	
-	public Map<Long, ValType> getPoints() {
-		return points;
-	}
-
-	public void setPoints(Map<Long, ValType> points) {
-		this.points = points;
+	public void deletePoint(Long key) {
+		ValType value = this.points.remove(key);
+		if(value == null) {
+			// Not implemented Yet
+		}
 	}
 	
-	// hashCode() and equals()
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((points == null) ? 0 : points.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
 		return result;
 	}
 
@@ -69,40 +78,27 @@ public class Series<ValType extends ValueType> {
 				return false;
 		} else if (!points.equals(other.points))
 			return false;
+		if (type == null) {
+			if (other.type != null)
+				return false;
+		} else if (!type.equals(other.type))
+			return false;
 		return true;
 	}
 
-	/**
-	* A method that adds a point (timestamp + value) in your Series
-	* 
-	* @param key the timestamp of the point
-	* @param value the value of the point
-	*/
-	public void addPoint(Long key, ValType value) {
-		this.points.put(key, value);
-	}
-	
-	/**
-	* A method that gets a point from a given timestamp
-	* 
-	* @param key the timestamp of the point you want to retrieve
-	* @return the value matching the given timestamp
-	*/
 	public ValType getByTimestamp(Long key) {
 		return this.points.get(key);
 	}
-	
-	/**
-	* A method that gets all the points between two given timestamps.
-	* Currently not implemented.
-	* 
-	* @param key1 the timestamp of the oldest date
-	* @param key2 the timestamp of the most recent date
-	* @return all the values between the given timestamps
-	*/
-	public List<ValType> getBetweenTimsetamps(Long key1, Long key2) {
-		// TODO
-		return null;
+
+	@Override
+	public String toString() {
+		return "Series [type=" + type.getSimpleName() + ", name=" + name + ", points=" + points + "]";
 	}
+	
+	
+	
 }
+
+
+
 
