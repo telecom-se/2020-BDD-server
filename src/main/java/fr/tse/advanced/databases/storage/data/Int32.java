@@ -2,7 +2,7 @@ package fr.tse.advanced.databases.storage.data;
 
 import fr.tse.advanced.databases.storage.exception.WrongValueTypeException;
 
-public class Int32 implements ValueType {
+public class Int32 implements ValueType<Integer> {
 
 	private Integer val;
 
@@ -13,7 +13,11 @@ public class Int32 implements ValueType {
 	public Integer getVal() {
 		return val;
 	}
-
+	
+	public void setVal(Integer val) {
+		this.val=val;
+	}
+	
 	public int compareTo(ValueType o) {
 		if (o instanceof Int32) {
 			if(this.val == ((Int32)o).val) {
@@ -42,6 +46,8 @@ public class Int32 implements ValueType {
 	public float divide(int denom) {
 		return (float) this.val/denom;
 	}
+
+
 	
 	
 }

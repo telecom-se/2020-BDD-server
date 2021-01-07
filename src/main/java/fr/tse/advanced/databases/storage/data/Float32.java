@@ -4,7 +4,7 @@ import java.lang.Comparable;
 
 import fr.tse.advanced.databases.storage.exception.WrongValueTypeException;
 
-public class Float32 implements ValueType {
+public class Float32 implements ValueType<Float> {
 
 	private Float val;
 

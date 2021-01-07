@@ -2,7 +2,7 @@ package fr.tse.advanced.databases.storage.data;
 
 import fr.tse.advanced.databases.storage.exception.WrongValueTypeException;
 
-public class Int64 implements ValueType {
+public class Int64 implements ValueType<Long> {
 
 	private Long val;
 	
