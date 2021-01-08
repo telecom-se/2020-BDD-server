@@ -1,30 +1,26 @@
 package fr.tse.db.query.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+
+import fr.tse.db.query.error.BadQueryException;
+import fr.tse.db.storage.data.ValueType;
+import fr.tse.db.storage.request.Requests;
+import fr.tse.db.storage.request.RequestsImpl;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.springframework.stereotype.Service;
-
-import fr.tse.db.query.domain.Series;
-import fr.tse.db.query.error.BadQueryException;
-import fr.tse.db.query.error.SeriesAlreadyExistsQueryException;
 import fr.tse.db.storage.data.Float32;
 import fr.tse.db.storage.data.Int32;
 import fr.tse.db.storage.data.Int64;
 import fr.tse.db.storage.exception.SeriesAlreadyExistsException;
-import fr.tse.db.storage.request.Requests;
-import fr.tse.db.storage.request.RequestsImpl;
 
 @Service
 public class QueryService {
 
     private Set<String> actions = new HashSet<>();
+    private Requests request = new RequestsImpl();
     
     // TODO A mettre dans un fichier constante
     public List<String> typeList = Arrays.asList(new String[]{"int32", "int64", "float32"});
@@ -36,33 +32,97 @@ public class QueryService {
         this.actions.add("SELECT");
     }
 
-    public List handleQuery(String query) throws BadQueryException, SeriesAlreadyExistsQueryException {
+    public Object handleQuery(String query) throws BadQueryException {
         String[] commands = query.toLowerCase().split("\\s*;\\s*");
         System.out.println(commands.length + " command(s) found");
         HashMap<String, Object> result = this.parseQuery(commands[0]);
-        List<Series> series = new ArrayList<>();
-        
-        Requests requests = new RequestsImpl();
-        		
         switch(result.get("action").toString()) {
             case "select": {
+                String series = result.get("series").toString();
+                String function = result.get("function").toString();
+                List<String> operators = result.get("operators") != null ? (List<String>) result.get("operators") : null;
+                List<Long> timestamps = result.get("timestamps") != null ? (List<Long>) result.get("timestamps") : null;
+                String join = result.get("join") != null ? result.get("join").toString(): null;
+                Collection<ValueType> seriesResult = new ArrayList<>();
+                if (operators == null || operators.isEmpty() || timestamps == null || timestamps.isEmpty()) {
 
-                break;
+                } else {
+                    if(join == null) {
+                        seriesResult = handleOperatorsCondition(operators.get(0), series, timestamps.get(0));
+                    } else if(join.equals("and")) {
+                        Long time1 = timestamps.get(0);
+                        Long time2 = timestamps.get(1);
+                        String op1 = operators.get(0);
+                        String op2 = operators.get(1);
+                        if(time1.equals(time2)) {
+                            if(op1.equals("<") && op2.equals(">") || op1.equals(">") && op2.equals("<")) {
+                                throw new BadQueryException("Condition is not valid");
+                            }
+                            if(!op1.contains("=") && !op2.contains("=")) {
+                                seriesResult = handleOperatorsCondition(op1, series, time1);
+                            } else {
+                                seriesResult = handleOperatorsCondition(op1.substring(0,1), series, time1);
+                            }
+                        } else if(time1 <= time2) {
+                            if(op1.equals("<") || op1.equals("<=") || op2.equals(">") || op2.equals(">=")) {
+                                throw new BadQueryException("Intervals do not overlap");
+                            }
+                            seriesResult = request.selectBetweenTimestampBothIncluded(series, time1, time2);
+                        } else {
+                            if(op2.equals("<") || op2.equals("<=") || op1.equals(">") || op1.equals(">=")) {
+                                throw new BadQueryException("Intervals do not overlap");
+                            }
+                            seriesResult = request.selectBetweenTimestampBothIncluded(series, time2, time1);
+                        }
+                    } else {
+                        Long time1 = timestamps.get(0);
+                        Long time2 = timestamps.get(1);
+                        String op1 = operators.get(0);
+                        String op2 = operators.get(1);
+                        Set<ValueType> resultset = new HashSet<>();
+                        resultset.addAll(handleOperatorsCondition(op1, series, time1));
+                        resultset.addAll(handleOperatorsCondition(op2, series, time2));
+                        seriesResult = resultset;
+                    }
+                }
+                HashMap<String, Object> resultMap = new HashMap<>();
+                resultMap.put("values", seriesResult.toArray());
+                if (function.contains("min")) {
+                    resultMap.put("min", request.min(seriesResult));
+                    break;
+                }
+                if (function.contains("max")) {
+                    resultMap.put("max", request.max(seriesResult));
+                    break;
+                }
+                if (function.contains("average")) {
+                    resultMap.put("average", request.average(seriesResult));
+                    break;
+                }
+                if (function.contains("sum")) {
+                    resultMap.put("sum", request.sum(seriesResult));
+                    break;
+                }
+                if (function.contains("count")) {
+                    resultMap.put("count", request.count(seriesResult));
+                    break;
+                }
+                return resultMap;
             }
             case "create": {
             	try {
                 	// Int32 type
                 	if (typeList.get(0).equals((String) result.get("type"))) {
-                		requests.createSeries((String) result.get("name"), Int32.class);
+                		request.createSeries((String) result.get("name"), Int32.class);
                 	// Int64 type
                     }else if(typeList.get(1).equals((String) result.get("type"))) {
-                    	requests.createSeries((String) result.get("name"), Int64.class); 
+                    	request.createSeries((String) result.get("name"), Int64.class);
                     // Float32 type
                     }else if(typeList.get(2).equals((String) result.get("type"))) {
-                    	requests.createSeries((String) result.get("name"), Float32.class);
+                    	request.createSeries((String) result.get("name"), Float32.class);
                     }
             	} catch (SeriesAlreadyExistsException seriesAlreadyExistsException) {
-            		throw new SeriesAlreadyExistsQueryException("Serie already exist");
+            		throw new SeriesAlreadyExistsException("Serie already exist");
             	}
                 return null;
             }
@@ -72,9 +132,15 @@ public class QueryService {
             case "insert": {
                 return null;
             }
+            case "show": {
+                return null;
+            }
+            case "drop": {
+                return null;
+            }
             default: return null;
         }
-        return series;
+        return null;
     }
 
     public HashMap<String, Object> parseQuery(String command) throws BadQueryException {
@@ -104,10 +170,12 @@ public class QueryService {
                 result.put("series", series);
                 System.out.println("Series " + series);
                 // Check if conditions were provided
-                if(selectMatcher.group(3) != null) {
+                if(selectMatcher.group(3) != null && !selectMatcher.group(3).isEmpty()) {
                     String conditions = selectMatcher.group(3);
-                    int count = parseConditions(conditions);
-                    System.out.println(count + " condition(s)");
+                    HashMap<String, Object> whereConditions = parseConditions(conditions);
+                    result.put("timestamps", whereConditions.get("timestamps"));
+                    result.put("operators", whereConditions.get("operators"));
+                    result.put("join", whereConditions.get("join"));
                 }
                 break;
             }
@@ -203,13 +271,53 @@ public class QueryService {
         return result;
     }
 
-    public int parseConditions(String conditions) {
-        Pattern p = Pattern.compile("(timestamp|value)\\s+(<|>|=|<=|>=)\\s+([0-9]+)\\s*(and|or)?\\s*");
-        Matcher m = p.matcher(conditions);
-        int count = 0;
-        while(m.find()) {
-            count++;
+    public HashMap<String, Object> parseConditions(String conditions) throws BadQueryException {
+        String[] splitConditions = conditions.split("(and|or)");
+        if(splitConditions.length > 2) {
+            throw new BadQueryException("Too many conditions");
         }
-        return count;
+        List<Long> timestamps = new ArrayList<>();
+        List<String> operators = new ArrayList<>();
+        String joinCondition = null;
+        if(conditions.contains("and")) {
+            joinCondition = "and";
+        }
+        if(conditions.contains("or")) {
+            joinCondition = "or";
+        }
+        for(int i = 0; i < splitConditions.length; i++) {
+            Pattern p = Pattern.compile("timestamp\\s+(<|>|=|<=|>=)\\s+([0-9]+)\\s*");
+            Matcher m = p.matcher(conditions);
+            if(!m.find()) {
+                throw new BadQueryException("Error in conditions " + i);
+            }
+            operators.add(m.group(2));
+            timestamps.add(Long.parseLong(m.group(3)));
+        }
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("operators", operators);
+        map.put("timestamps", timestamps);
+        map.put("join", joinCondition);
+        return map;
+    }
+
+    public Collection<ValueType> handleOperatorsCondition(String condition, String series, Long timestamp) {
+        switch(condition) {
+            case "<": {
+                return this.request.selectLowerThanTimestamp(series, timestamp);
+            }
+            case "<=": {
+                return request.selectLowerOrEqualThanTimestamp(series, timestamp);
+            }
+            case ">": {
+                return request.selectHigherThanTimestamp(series, timestamp);
+            }
+            case ">=": {
+                return request.selectHigherOrEqualThanTimestamp(series, timestamp);
+            }
+            default: {
+                return new ArrayList<>();
+            }
+        }
     }
 }
