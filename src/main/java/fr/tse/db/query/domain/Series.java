@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Series {
-    Long timestamps;
+	Long timestamps;
     Integer value;
 }
