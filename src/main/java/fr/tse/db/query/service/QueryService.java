@@ -1,17 +1,25 @@
 package fr.tse.db.query.service;
 
-import fr.tse.db.query.domain.Series;
-import fr.tse.db.query.error.BadQueryException;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.springframework.stereotype.Service;
+
+import fr.tse.db.query.domain.Series;
+import fr.tse.db.query.error.BadQueryException;
+import fr.tse.db.query.error.SeriesAlreadyExistsQueryException;
+import fr.tse.db.storage.data.Float32;
+import fr.tse.db.storage.data.Int32;
+import fr.tse.db.storage.data.Int64;
+import fr.tse.db.storage.exception.SeriesAlreadyExistsException;
+import fr.tse.db.storage.request.Requests;
+import fr.tse.db.storage.request.RequestsImpl;
 
 @Service
 public class QueryService {
@@ -19,7 +27,7 @@ public class QueryService {
     private Set<String> actions = new HashSet<>();
     
     // TODO A mettre dans un fichier constante
-    public List<String> typeList = Arrays.asList(new String[]{"int32", "int64", "float32", "float64"});
+    public List<String> typeList = Arrays.asList(new String[]{"int32", "int64", "float32"});
     
     
     QueryService() {
@@ -28,17 +36,34 @@ public class QueryService {
         this.actions.add("SELECT");
     }
 
-    public List handleQuery(String query) throws BadQueryException {
+    public List handleQuery(String query) throws BadQueryException, SeriesAlreadyExistsQueryException {
         String[] commands = query.toLowerCase().split("\\s*;\\s*");
         System.out.println(commands.length + " command(s) found");
         HashMap<String, Object> result = this.parseQuery(commands[0]);
         List<Series> series = new ArrayList<>();
+        
+        Requests requests = new RequestsImpl();
+        		
         switch(result.get("action").toString()) {
             case "select": {
 
                 break;
             }
             case "create": {
+            	try {
+                	// Int32 type
+                	if (typeList.get(0).equals((String) result.get("type"))) {
+                		requests.createSeries((String) result.get("name"), Int32.class);
+                	// Int64 type
+                    }else if(typeList.get(1).equals((String) result.get("type"))) {
+                    	requests.createSeries((String) result.get("name"), Int64.class); 
+                    // Float32 type
+                    }else if(typeList.get(2).equals((String) result.get("type"))) {
+                    	requests.createSeries((String) result.get("name"), Float32.class);
+                    }
+            	} catch (SeriesAlreadyExistsException seriesAlreadyExistsException) {
+            		throw new SeriesAlreadyExistsQueryException("Serie already exist");
+            	}
                 return null;
             }
             case "delete": {
@@ -103,6 +128,7 @@ public class QueryService {
                 if(name.contains(" ")) {
                     throw new BadQueryException("Error in CREATE query (space in name)");
                 }
+                
                 // Check if type exist
                 if (!typeList.contains(type)) {
                     throw new BadQueryException("Error in CREATE query (type not exist)");
@@ -115,6 +141,12 @@ public class QueryService {
                 if (!selectMatcherSynthaxName.matches()) {
                     throw new BadQueryException("Error in CREATE query (special characters not allowed in name)");
                 }
+                
+                // Insert in hashmap the action, the serie name and the type
+                result.put("action", "create");
+                result.put("name", name);
+                result.put("type", type);
+
                 break;
             }
             case "insert": {
