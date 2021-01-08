@@ -25,8 +25,8 @@ public class RequestsImpl implements Requests {
 	@Override
 	public Series selectByTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException {
 		Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
-		Map<Long, ValueType> result = series.getPoints().entrySet().stream().filter(map -> map.getKey() == timestamp)
-				.collect(Collectors.toMap(map -> map.getKey(), map -> map.getValue()));
+		Map<Long, ValueType> result = series.getPoints().entrySet().stream().filter(map -> map.getKey().equals(timestamp))
+				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 		return new Series<>(null, series.getType(), result);
 	}
 
@@ -34,7 +34,7 @@ public class RequestsImpl implements Requests {
 	public Series selectLowerThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException {
 		Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
 		Map<Long, ValueType> result = series.getPoints().entrySet().stream().filter(map -> map.getKey() < timestamp)
-				.collect(Collectors.toMap(map -> map.getKey(), map -> map.getValue()));
+				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 		return new Series<>(null, series.getType(), result);
 	}
 
@@ -42,7 +42,7 @@ public class RequestsImpl implements Requests {
 	public Series selectLowerOrEqualThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException {
 		Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
 		Map<Long, ValueType> result = series.getPoints().entrySet().stream().filter(map -> map.getKey() <= timestamp) 
-				.collect(Collectors.toMap(map -> map.getKey(), map -> map.getValue()));
+				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 		return new Series<>(null, series.getType(), result);
 	}
 
@@ -50,7 +50,7 @@ public class RequestsImpl implements Requests {
 	public Series selectHigherThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException {
 		Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
 		Map<Long, ValueType> result = series.getPoints().entrySet().stream().filter(map -> map.getKey() > timestamp)
-				.collect(Collectors.toMap(map -> map.getKey(), map -> map.getValue()));
+				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 		return new Series<>(null, series.getType(), result);
 	}
 
@@ -58,7 +58,7 @@ public class RequestsImpl implements Requests {
 	public Series selectHigherOrEqualThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException {
 		Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
 		Map<Long, ValueType> result = series.getPoints().entrySet().stream().filter(map -> map.getKey() >= timestamp) 
-				.collect(Collectors.toMap(map -> map.getKey(), map -> map.getValue()));
+				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 		return new Series<>(null, series.getType(), result);
 	}
 
@@ -68,7 +68,7 @@ public class RequestsImpl implements Requests {
 		Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
 		Map<Long, ValueType> result = series.getPoints().entrySet().stream()
 				.filter(map -> (map.getKey() >= timestamp1 && map.getKey() <= timestamp2))
-				.collect(Collectors.toMap(map -> map.getKey(), map -> map.getValue()));
+				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 		return new Series<>(null, series.getType(), result);
 	}
 
@@ -78,7 +78,7 @@ public class RequestsImpl implements Requests {
 		Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
 		Map<Long, ValueType> result = series.getPoints().entrySet().stream()
 				.filter(map -> (map.getKey() <= timestamp1 || map.getKey() >= timestamp2))
-				.collect(Collectors.toMap(map -> map.getKey(), map -> map.getValue()));
+				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 		return new Series<>(null, series.getType(), result);
 	}
 
@@ -124,102 +124,49 @@ public class RequestsImpl implements Requests {
 	}
 
 	public void deleteLowerThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException {
-		DataBase dataBase = DataBase.getInstance();
-		Series series = dataBase.getByName(seriesName);
-
-		Iterator<Entry<Long, ValueType>> iterator = series.getPoints().entrySet().iterator();
-		while (iterator.hasNext()) {
-			Entry<Long, ValueType> entry = iterator.next();
-			if (entry.getKey() < timestamp) {
-				iterator.remove();
-			}
-		}
+		Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
+		series.getPoints().entrySet().removeIf(entry -> entry.getKey() < timestamp);
 	}
 
 	public void deleteLowerOrEqualThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException {
-		DataBase dataBase = DataBase.getInstance();
-		Series series = dataBase.getByName(seriesName);
-
-		Iterator<Entry<Long, ValueType>> iterator = series.getPoints().entrySet().iterator();
-		while (iterator.hasNext()) {
-			Entry<Long, ValueType> entry = iterator.next();
-			if (entry.getKey() <= timestamp) {
-				iterator.remove();
-			}
-		}
+		Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
+		series.getPoints().entrySet().removeIf(entry -> entry.getKey() <= timestamp);
 	}
 
 	public void deleteHigherThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException {
-		DataBase dataBase = DataBase.getInstance();
-		Series series = dataBase.getByName(seriesName);
+		Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
 
-		Iterator<Entry<Long, ValueType>> iterator = series.getPoints().entrySet().iterator();
-		while (iterator.hasNext()) {
-			Entry<Long, ValueType> entry = iterator.next();
-			if (entry.getKey() > timestamp) {
-				iterator.remove();
-			}
-		}
+		series.getPoints().entrySet().removeIf(entry -> entry.getKey() > timestamp);
 	}
 
 	public void deleteHigherOrEqualThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException {
-		DataBase dataBase = DataBase.getInstance();
-		Series series = dataBase.getByName(seriesName);
+		Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
 
-		Iterator<Entry<Long, ValueType>> iterator = series.getPoints().entrySet().iterator();
-		while (iterator.hasNext()) {
-			Entry<Long, ValueType> entry = iterator.next();
-			if (entry.getKey() >= timestamp) {
-				iterator.remove();
-			}
-		}
+		series.getPoints().entrySet().removeIf(entry -> entry.getKey() >= timestamp);
 	}
 
 	@Override
 	public void deleteBetweenTimestampBothIncluded(String seriesName, Long timestamp1, Long timestamp2)
 			throws SeriesNotFoundException {
-		DataBase dataBase = DataBase.getInstance();
-		Series series = dataBase.getByName(seriesName);
+		Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
 
-		Iterator<Entry<Long, ValueType>> iterator = series.getPoints().entrySet().iterator();
-		while (iterator.hasNext()) {
-			Entry<Long, ValueType> entry = iterator.next();
-			if (entry.getKey() >= timestamp1 && entry.getKey() <= timestamp2) {
-				iterator.remove();
-			}
-		}
+		series.getPoints().entrySet()
+		.removeIf(entry -> (entry.getKey() >= timestamp1) && (entry.getKey() <= timestamp2));
 	}
 
 	@Override
 	public void deleteNotInBetweenTimestampBothIncluded(String seriesName, Long timestamp1, Long timestamp2)
 			throws SeriesNotFoundException {
-		DataBase dataBase = DataBase.getInstance();
-		Series series = dataBase.getByName(seriesName);
+		Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
 
-		Iterator<Entry<Long, ValueType>> iterator = series.getPoints().entrySet().iterator();
-		while (iterator.hasNext()) {
-			Entry<Long, ValueType> entry = iterator.next();
-			if (entry.getKey() <= timestamp1 && entry.getKey() >= timestamp2) {
-				iterator.remove();
-			}
-		}
+		series.getPoints().entrySet()
+		.removeIf(entry -> (entry.getKey() <= timestamp1) || (entry.getKey() >= timestamp2));
 	}
 
 	@Override
 	public float average(Series series) throws EmptySeriesException {
-		Iterator<ValueType> iterator = series.getPoints().values().iterator();
-		if (iterator.hasNext()) {
-			ValueType sum = iterator.next();
-			int count = 1;
-			while (iterator.hasNext()) {
-				ValueType entry = iterator.next();
-				sum.sum(entry);
-				count++;
-			}
-			return sum.divide(count);
-		} else {
-			throw new EmptySeriesException();
-		}
+		if(series.getPoints().isEmpty()) throw new EmptySeriesException();
+		return ((Number)sum(series).getVal()).floatValue() / series.getPoints().size();
 	}
 
 	@Override

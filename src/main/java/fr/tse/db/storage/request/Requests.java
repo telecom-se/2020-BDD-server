@@ -80,7 +80,7 @@ public interface Requests {
 	
 	/**
 	 * Select all values not in between given timestamps 
-	 * @param seriesName
+	 * @param seriesName series name
 	 * @param timestamp1 requested lower timestamp
 	 * @param timestamp2 requested lower timestamp
 	 * @return new Series
@@ -91,7 +91,7 @@ public interface Requests {
 	/**
 	 * Insert values in a series at given timestamps
 	 * @param seriesName series name
-	 * @param points list of timestamp/value points
+	 * @param insertedPoints series which values are to be inserted into the series defined by seriesName
 	 * @throws SeriesNotFoundException When series with specified name does not exist
 	 */
 	public void insertValue(String seriesName, Series insertedPoints) throws SeriesNotFoundException, WrongSeriesValueTypeException, TimestampAlreadyExistsException;

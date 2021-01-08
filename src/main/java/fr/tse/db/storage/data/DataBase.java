@@ -3,11 +3,22 @@ package fr.tse.db.storage.data;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import fr.tse.db.storage.exception.SeriesAlreadyExistsException;
 import fr.tse.db.storage.exception.SeriesNotFoundException;
 
-
+/**
+* This DataBase class implements the main structure that stores all
+* the data using series (in memory only for now)
+* the data using {@link Series} (in memory only for now)
+* 
+* Implemented methods:
+* - getByName() returns a series from its given name
+* - addSeries() creates a series in the database
+* 
+* @writer  Arnaud
+* @author  Arnaud, Valentin
+* @since   2020-11
+*/
 public class DataBase {
 
 	private static DataBase instance = new DataBase();
@@ -17,11 +28,11 @@ public class DataBase {
 	private Map<String, Series> series;
 	
 	// constructor
-	public DataBase() {
+	private DataBase() {
 		this.series = new HashMap<String, Series>();
 	}
 	
-	public DataBase(List<Series> series) {
+	private DataBase(List<Series> series) {
 		
 		this.series = new HashMap<String, Series>();
 		for (int i=0 ; i<series.size() ; i++) {
