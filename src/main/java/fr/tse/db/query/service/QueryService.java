@@ -86,23 +86,31 @@ public class QueryService {
                     }
                 }
                 HashMap<String, Object> resultMap = new HashMap<>();
-                resultMap.put("values", seriesResult.toArray());
+                // Add all the series to response
+                if(function.contains("all")) {
+                    resultMap.put("values", seriesResult.toArray());
+                }
+                // Add minimum to response
                 if (function.contains("min")) {
                     resultMap.put("min", request.min(seriesResult));
                     break;
                 }
+                // Add maximum to response
                 if (function.contains("max")) {
                     resultMap.put("max", request.max(seriesResult));
                     break;
                 }
+                // Add average to response
                 if (function.contains("average")) {
                     resultMap.put("average", request.average(seriesResult));
                     break;
                 }
+                // Add sum to response
                 if (function.contains("sum")) {
                     resultMap.put("sum", request.sum(seriesResult));
                     break;
                 }
+                // Add count to response
                 if (function.contains("count")) {
                     resultMap.put("count", request.count(seriesResult));
                     break;
@@ -246,12 +254,22 @@ public class QueryService {
                 break;
             }
             case "delete": {
-                Pattern selectPattern = Pattern.compile("^delete\\s*(.*?)\\s*from\\s*(.*?)((?:\\s*where\\s*)(.*?))?$");
+                Pattern selectPattern = Pattern.compile("^delete\\s+(.*?)\\s*from\\s*(.*?)((?:\\s*where\\s*)(.*?))?$");
                 Matcher selectMatcher = selectPattern.matcher(command);
-                if(selectMatcher.find()) {
+                if(!selectMatcher.find()) {
                     throw new BadQueryException("Error in query");
                 };
                 result.put("action", "delete");
+                break;
+            }
+            case "drop": {
+                Pattern selectPattern = Pattern.compile("^drop\\s+(.*?)\\s*$");
+                Matcher selectMatcher = selectPattern.matcher(command);
+                if(!selectMatcher.find() || selectMatcher.group(1).isEmpty()) {
+                    throw new BadQueryException("Error in query");
+                };
+                result.put("action", "drop");
+                result.put("series", selectMatcher.group(1));
                 break;
             }
             case "show": {

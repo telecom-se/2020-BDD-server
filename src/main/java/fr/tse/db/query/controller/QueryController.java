@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.List;
 
 @RestController
@@ -24,7 +25,10 @@ public class QueryController {
     @PostMapping(value = "/query",produces = "application/json")
     public ResponseEntity<?> postQuery(@RequestParam("query") String query) throws BadQueryException, SeriesAlreadyExistsQueryException {
         // Get object
-        List<Series> series = this.queryService.handleQuery(query);
-        return new ResponseEntity<>(series, HttpStatus.OK);
+        Object response = this.queryService.handleQuery(query);
+        HashMap<String, Object> responseGlobal = new HashMap<>();
+        responseGlobal.put("success", true);
+        responseGlobal.put("data", response);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
