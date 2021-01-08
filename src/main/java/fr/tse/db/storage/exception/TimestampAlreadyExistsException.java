@@ -2,7 +2,7 @@ package fr.tse.db.storage.exception;
 
 public class TimestampAlreadyExistsException extends RuntimeException {
 
-	public TimestampAlreadyExistsException(Long timestamp) {
-		super("\""+timestamp+"\"");
+	public TimestampAlreadyExistsException() {
+		super();
 	}
 }

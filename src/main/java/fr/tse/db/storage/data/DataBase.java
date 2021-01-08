@@ -1,19 +1,9 @@
 package fr.tse.db.storage.data;
 
-import fr.tse.db.storage.exception.SeriesAlreadyExists;
-import fr.tse.db.storage.exception.SeriesNotFound;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
-* This DataBase class implements the main structure that stores all
-* the data using {@link Series} (in memory only for now)
-* 
-* @author  Arnaud, Valentin
-* @since   2020-11
-*/
 import fr.tse.db.storage.exception.SeriesAlreadyExistsException;
 import fr.tse.db.storage.exception.SeriesNotFoundException;
 
