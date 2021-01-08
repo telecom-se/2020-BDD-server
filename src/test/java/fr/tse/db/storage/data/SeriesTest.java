@@ -15,12 +15,13 @@ public class SeriesTest {
 	
 	@Before
 	public void initialize() {
-		this.series = new Series<Int64>("seriesTest");
-		this.series32 = new Series<Int32>("seriesTest32");
+		this.series = new Series<Int64>("seriesTest", Int64.class);
+		this.series32 = new Series<Int32>("seriesTest32", Int32.class);
 	}
 	
 	@Test
 	public void addPointTest() {
+		
 		Long tmp = (long) 1000000;
 
 		Int64 val = new Int64((long) 658);
@@ -37,17 +38,15 @@ public class SeriesTest {
 		
 		assertEquals(1, result32.size());
 		assertEquals(result32.get(tmp), val32);
-
 	}
 	
 	@Test
 	public void getByTimestampTest() {
+		
 		Long tmp = (long) 1000000;
 		Int64 val = new Int64((long) 658);
 		this.series.getPoints().put(tmp, val);
 		Int64 result = this.series.getByTimestamp(tmp);
-		
 		assertEquals(result, val);
 	}
-
 }
