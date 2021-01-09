@@ -1,18 +1,14 @@
 package fr.tse.db.storage.request;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-
 import fr.tse.db.storage.data.DataBase;
 import fr.tse.db.storage.data.Series;
 import fr.tse.db.storage.data.ValueType;
-import fr.tse.db.storage.exception.EmptySeriesException;
-import fr.tse.db.storage.exception.SeriesAlreadyExistsException;
-import fr.tse.db.storage.exception.SeriesNotFoundException;
-import fr.tse.db.storage.exception.TimestampAlreadyExistsException;
-import fr.tse.db.storage.exception.WrongSeriesValueTypeException;
+import fr.tse.db.storage.exception.*;
+
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class RequestsImpl implements Requests {
 
@@ -25,7 +21,7 @@ public class RequestsImpl implements Requests {
 	@Override
 	public Series selectByTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException {
 		Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
-		Map<Long, ValueType> result = series.getPoints().entrySet().stream().filter(map -> map.getKey().equals(timestamp))
+		Map<Long, ValueType> result = series.getPoints().entrySet().parallelStream().filter(map -> map.getKey().equals(timestamp))
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 		return new Series<>(null, series.getType(), result);
 	}
@@ -33,7 +29,7 @@ public class RequestsImpl implements Requests {
 	@Override
 	public Series selectLowerThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException {
 		Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
-		Map<Long, ValueType> result = series.getPoints().entrySet().stream().filter(map -> map.getKey() < timestamp)
+		Map<Long, ValueType> result = series.getPoints().entrySet().parallelStream().filter(map -> map.getKey() < timestamp)
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 		return new Series<>(null, series.getType(), result);
 	}
@@ -41,7 +37,7 @@ public class RequestsImpl implements Requests {
 	@Override
 	public Series selectLowerOrEqualThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException {
 		Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
-		Map<Long, ValueType> result = series.getPoints().entrySet().stream().filter(map -> map.getKey() <= timestamp) 
+		Map<Long, ValueType> result = series.getPoints().entrySet().parallelStream().filter(map -> map.getKey() <= timestamp) 
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 		return new Series<>(null, series.getType(), result);
 	}
@@ -49,7 +45,7 @@ public class RequestsImpl implements Requests {
 	@Override
 	public Series selectHigherThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException {
 		Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
-		Map<Long, ValueType> result = series.getPoints().entrySet().stream().filter(map -> map.getKey() > timestamp)
+		Map<Long, ValueType> result = series.getPoints().entrySet().parallelStream().filter(map -> map.getKey() > timestamp)
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 		return new Series<>(null, series.getType(), result);
 	}
@@ -57,7 +53,7 @@ public class RequestsImpl implements Requests {
 	@Override
 	public Series selectHigherOrEqualThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException {
 		Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
-		Map<Long, ValueType> result = series.getPoints().entrySet().stream().filter(map -> map.getKey() >= timestamp) 
+		Map<Long, ValueType> result = series.getPoints().entrySet().parallelStream().filter(map -> map.getKey() >= timestamp) 
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 		return new Series<>(null, series.getType(), result);
 	}
@@ -66,7 +62,7 @@ public class RequestsImpl implements Requests {
 	public Series selectBetweenTimestampBothIncluded(String seriesName, Long timestamp1, Long timestamp2)
 			throws SeriesNotFoundException {
 		Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
-		Map<Long, ValueType> result = series.getPoints().entrySet().stream()
+		Map<Long, ValueType> result = series.getPoints().entrySet().parallelStream()
 				.filter(map -> (map.getKey() >= timestamp1 && map.getKey() <= timestamp2))
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 		return new Series<>(null, series.getType(), result);
@@ -76,7 +72,7 @@ public class RequestsImpl implements Requests {
 	public Series selectNotInBetweenTimestampBothIncluded(String seriesName, Long timestamp1, Long timestamp2)
 			throws SeriesNotFoundException {
 		Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
-		Map<Long, ValueType> result = series.getPoints().entrySet().stream()
+		Map<Long, ValueType> result = series.getPoints().entrySet().parallelStream()
 				.filter(map -> (map.getKey() <= timestamp1 || map.getKey() >= timestamp2))
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 		return new Series<>(null, series.getType(), result);
@@ -89,7 +85,7 @@ public class RequestsImpl implements Requests {
 		if (!series.getType().equals(insertedPoints.getType())) {
 			throw new WrongSeriesValueTypeException(series.getType(), insertedPoints.getType());
 		}
-		if (((Series<ValueType>) insertedPoints).getPoints().entrySet().stream()
+		if (((Series<ValueType>) insertedPoints).getPoints().entrySet().parallelStream()
 				.allMatch(map -> !series.getPoints().containsKey(map.getKey()))) {
 			series.getPoints().putAll(insertedPoints.getPoints());
 		} else {
@@ -186,17 +182,7 @@ public class RequestsImpl implements Requests {
 
 	@Override
 	public ValueType sum(Series series) throws EmptySeriesException {
-		Iterator<ValueType> iterator = series.getPoints().values().iterator();
-		if (iterator.hasNext()) {
-			ValueType sum = iterator.next();
-			while (iterator.hasNext()) {
-				ValueType entry = iterator.next();
-				sum.sum(entry);
-			}
-			return sum;
-		} else {
-			throw new EmptySeriesException();
-		}
+		Optional<ValueType> x = series.getPoints().values().parallelStream().reduce((a, b) -> ((ValueType)a).sum((ValueType) b));
+		return x.orElseThrow(EmptySeriesException::new);
 	}
-
 }

@@ -40,12 +40,13 @@ public class Int64 implements ValueType<Long> {
 		return "Int64[" + val + "]";
 	}
 	
-	public void sum(ValueType i) throws WrongValueTypeException{
+	public ValueType sum(ValueType i) throws WrongValueTypeException{
 		if (i instanceof Int64) {
 			this.val+= ((Int64) i).getVal();
 		} else {
 			throw new WrongValueTypeException(this.getClass(),i.getClass());
 		}
+		return new Int64(val);
 	}
 
 	public float divide(int denom) {
