@@ -19,7 +19,7 @@ public interface ValueType<T> extends Comparable<ValueType>{
 	 * @param i another ValueType object
 	 * @throws WrongValueTypeException if types do not match
 	 */
-	public void sum(ValueType i) throws WrongValueTypeException;
+	public ValueType sum(ValueType i) throws WrongValueTypeException;
 	
 	/**
 	 * Divide this object by an int

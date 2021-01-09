@@ -12,26 +12,25 @@ import fr.tse.db.storage.exception.SeriesNotFoundException;
 public class DataBaseTest {
 
 	// Series for test
-	private DataBase database;
+	private DataBase database=DataBase.getInstance();
 	
 	@Before
 	public void initialize() {
-		this.database = new DataBase();
 	}
 	
 	@Test
 	public void addSeriesTestValid() throws SeriesAlreadyExistsException {
-		Series<Int64> s = new Series<Int64>("name", Int64.class);
-
+		Series<Int64> s = new Series<Int64>("name1", Int64.class);
+		int dbSize=this.database.getSeries().size();
 		this.database.addSeries(s);
 		
-		assertEquals(this.database.getSeries().size(), 1);
-		assertEquals(this.database.getSeries().get("name"), s);
+		assertEquals(dbSize+1,this.database.getSeries().size());
+		assertEquals(s,this.database.getSeries().get("name1"));
 	}
 	
 	@Test(expected= SeriesAlreadyExistsException.class)
 	public void addSeriesTestInvalid() throws SeriesAlreadyExistsException{
-		Series<Int64> s = new Series<Int64>("name", Int64.class);
+		Series<Int64> s = new Series<Int64>("name2", Int64.class);
 		this.database.addSeries(s);
 		this.database.addSeries(s);
 	
