@@ -48,7 +48,7 @@ public class QueryService {
 
                 } else {
                     if(join == null) {
-                        seriesResult = handleOperatorsCondition(operators.get(0), series, timestamps.get(0));
+                        seriesResult = handleOperatorsCondition("select", operators.get(0), series, timestamps.get(0));
                     } else if(join.equals("and")) {
                         Long time1 = timestamps.get(0);
                         Long time2 = timestamps.get(1);
@@ -59,9 +59,9 @@ public class QueryService {
                                 throw new BadQueryException("Condition is not valid");
                             }
                             if(!op1.contains("=") && !op2.contains("=")) {
-                                seriesResult = handleOperatorsCondition(op1, series, time1);
+                                seriesResult = handleOperatorsCondition("select", op1, series, time1);
                             } else {
-                                seriesResult = handleOperatorsCondition(op1.substring(0,1), series, time1);
+                                seriesResult = handleOperatorsCondition("select", op1.substring(0,1), series, time1);
                             }
                         } else if(time1 <= time2) {
                             if(op1.equals("<") || op1.equals("<=") || op2.equals(">") || op2.equals(">=")) {
@@ -80,8 +80,8 @@ public class QueryService {
                         String op1 = operators.get(0);
                         String op2 = operators.get(1);
                         Set<ValueType> resultset = new HashSet<>();
-                        resultset.addAll(handleOperatorsCondition(op1, series, time1));
-                        resultset.addAll(handleOperatorsCondition(op2, series, time2));
+                        resultset.addAll(handleOperatorsCondition("select", op1, series, time1));
+                        resultset.addAll(handleOperatorsCondition("select", op2, series, time2));
                         seriesResult = resultset;
                     }
                 }
@@ -135,6 +135,18 @@ public class QueryService {
                 return null;
             }
             case "delete": {
+                String series = result.get("series").toString();
+                List<String> operators = result.get("operators") != null ? (List<String>) result.get("operators") : null;
+                List<Long> timestamps = result.get("timestamps") != null ? (List<Long>) result.get("timestamps") : null;
+                String join = result.get("join") != null ? result.get("join").toString(): null;
+                if (operators == null || operators.isEmpty() || timestamps == null || timestamps.isEmpty()) {
+                    // TODO delete all from series
+                } else
+                if(join == null) {
+                    handleOperatorsCondition("delete", operators.get(0), series, timestamps.get(0));
+                } else {
+
+                }
                 return null;
             }
             case "insert": {
@@ -254,11 +266,31 @@ public class QueryService {
                 break;
             }
             case "delete": {
-                Pattern selectPattern = Pattern.compile("^delete\\s+(.*?)\\s*from\\s*(.*?)((?:\\s*where\\s*)(.*?))?$");
-                Matcher selectMatcher = selectPattern.matcher(command);
-                if(!selectMatcher.find()) {
+                Pattern deletePattern = Pattern.compile("^delete\\s+(.*?)\\s*from\\s*(.*?)((?:\\s*where\\s*)(.*?))?$");
+                Matcher deleteMatcher = deletePattern.matcher(command);
+                if(!deleteMatcher.find()) {
                     throw new BadQueryException("Error in query");
                 };
+                if(deleteMatcher.group(1).isEmpty()) {
+                    result.put("all", false);
+                } else if(deleteMatcher.group(1).equals("all")) {
+                    result.put("all", true);
+                } else {
+                    throw new BadQueryException("Error in delete query");
+                }
+                if(deleteMatcher.group(2).isEmpty()) {
+                    throw new BadQueryException("Incorrect series name provided");
+                }
+                String conditions = deleteMatcher.group(3);
+                if(conditions.isEmpty()) {
+                    result.put("conditions", null);
+                } else {
+                    HashMap<String, Object> whereConditions = parseConditions(conditions);
+                    result.put("timestamps", whereConditions.get("timestamps"));
+                    result.put("operators", whereConditions.get("operators"));
+                    result.put("join", whereConditions.get("join"));
+                }
+                result.put("series", deleteMatcher.group(2));
                 result.put("action", "delete");
                 break;
             }
@@ -304,7 +336,7 @@ public class QueryService {
             joinCondition = "or";
         }
         for(int i = 0; i < splitConditions.length; i++) {
-            Pattern p = Pattern.compile("timestamp\\s+(<|>|=|<=|>=)\\s+([0-9]+)\\s*");
+            Pattern p = Pattern.compile("timestamp\\s+(<|>|==|<=|>=)\\s+([0-9]+)\\s*");
             Matcher m = p.matcher(conditions);
             if(!m.find()) {
                 throw new BadQueryException("Error in conditions " + i);
@@ -319,19 +351,44 @@ public class QueryService {
         return map;
     }
 
-    public Collection<ValueType> handleOperatorsCondition(String condition, String series, Long timestamp) {
+    public Collection<ValueType> handleOperatorsCondition(String action, String condition, String series, Long timestamp) {
         switch(condition) {
             case "<": {
-                return this.request.selectLowerThanTimestamp(series, timestamp);
+                if(action.equals("select")) {
+                    return this.request.selectLowerThanTimestamp(series, timestamp);
+                } else {
+                    // return request.deleteLowerThanTimestamp(series, timestamp);
+                }
             }
             case "<=": {
-                return request.selectLowerOrEqualThanTimestamp(series, timestamp);
+                if(action.equals("select")) {
+                    return request.selectLowerOrEqualThanTimestamp(series, timestamp);
+                } else {
+                    // return request.deleteHigherOrEqualThanTimestamp(series, timestamp);
+                }
             }
             case ">": {
-                return request.selectHigherThanTimestamp(series, timestamp);
+                if(action.equals("select")) {
+                    return request.selectHigherThanTimestamp(series, timestamp);
+                } else {
+                    // return request.deleteHigherThanTimestamp(series, timestamp);
+                }
             }
             case ">=": {
-                return request.selectHigherOrEqualThanTimestamp(series, timestamp);
+                if(action.equals("select")) {
+                    return request.selectHigherOrEqualThanTimestamp(series, timestamp);
+                } else {
+                    // return request.deleteHigherOrEqualThanTimestamp(series, timestamp);
+                }
+            }
+            case "==": {
+                if(action.equals("select")) {
+                    Collection<ValueType> coll = new ArrayList<>();
+                    coll.add(request.selectByTimestamp(series, timestamp));
+                    return coll;
+                } else {
+                    // return request.deleteByTimestamp(series, timestamp);
+                }
             }
             default: {
                 return new ArrayList<>();
