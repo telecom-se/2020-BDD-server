@@ -13,6 +13,7 @@ import fr.tse.db.storage.data.DataPoint;
 import fr.tse.db.storage.data.Int32;
 import fr.tse.db.storage.data.Int64;
 import fr.tse.db.storage.data.Series;
+import fr.tse.db.storage.data.SeriesUnComp;
 import fr.tse.db.storage.data.ValueType;
 import fr.tse.db.storage.exception.SeriesAlreadyExistsException;
 import fr.tse.db.storage.exception.SeriesNotFoundException;
@@ -20,8 +21,8 @@ import fr.tse.db.storage.exception.SeriesNotFoundException;
 public class RequestTest {
 
 	// Series for test
-	private Series<Int64> series= new Series<Int64>("seriesTest", Int64.class);
-	private Series<Int32> series32= new Series<Int32>("seriesTest32", Int32.class);
+	private SeriesUnComp<Int64> series= new SeriesUnComp<Int64>("seriesTest", Int64.class);
+	private SeriesUnComp<Int32> series32= new SeriesUnComp<Int32>("seriesTest32", Int32.class);
 	private DataBase database= DataBase.getInstance();
 	Long tmp = (long) 1000000;
 	Long tmp2 =  (long) 1000001;
@@ -43,8 +44,8 @@ public class RequestTest {
 		}
 		
 
-		series = new Series<Int64>("seriesTest", Int64.class);
-		series32 = new Series<Int32>("seriesTest32", Int32.class);
+		series = new SeriesUnComp<Int64>("seriesTest", Int64.class);
+		series32 = new SeriesUnComp<Int32>("seriesTest32", Int32.class);
 		
 
 		series.addPoint(tmp, val);
@@ -196,7 +197,7 @@ public class RequestTest {
 	@Test()
 	public void deleteSeriesTest() throws SeriesNotFoundException, SeriesAlreadyExistsException{
 		
-		Series<Int64> toDel = new Series<Int64>("toDel", Int64.class);
+		SeriesUnComp<Int64> toDel = new SeriesUnComp<Int64>("toDel", Int64.class);
 		
 		database.addSeries(toDel);
 

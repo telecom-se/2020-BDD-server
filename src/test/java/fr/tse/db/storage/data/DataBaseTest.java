@@ -21,7 +21,7 @@ public class DataBaseTest {
 	
 	@Test
 	public void addSeriesTestValid() throws SeriesAlreadyExistsException {
-		Series<Int64> s = new Series<Int64>("name", Int64.class);
+		SeriesUnComp<Int64> s = new SeriesUnComp<Int64>("name", Int64.class);
 
 		this.database.addSeries(s);
 		
@@ -31,7 +31,7 @@ public class DataBaseTest {
 	
 	@Test(expected= SeriesAlreadyExistsException.class)
 	public void addSeriesTestInvalid() throws SeriesAlreadyExistsException{
-		Series<Int64> s = new Series<Int64>("name", Int64.class);
+		SeriesUnComp<Int64> s = new SeriesUnComp<Int64>("name", Int64.class);
 		this.database.addSeries(s);
 		this.database.addSeries(s);
 	
@@ -40,7 +40,7 @@ public class DataBaseTest {
 	
 	@Test
 	public void getByNameTestValid() throws SeriesNotFoundException {
-		Series<Int64> s = new Series<Int64>("name_test", Int64.class);
+		SeriesUnComp<Int64> s = new SeriesUnComp<Int64>("name_test", Int64.class);
 		this.database.getSeries().put("name_test", s);
 		Series<Int64> result=this.database.getByName("name_test");;
 		
