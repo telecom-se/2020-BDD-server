@@ -41,9 +41,12 @@ public class SeriesComp<ValType extends ValueType> implements Series {
 	public Map<Long, ValType> getPoints() {
 		Map<Long, ValType> pointsMap = new  HashMap<Long, ValType>();
 		for (Long key : points.keySet()) {
-			Map<Long, ValType> keyPoints = points.get(key).getAllPoints();
+			Map<Long, ValType> keyPoints = points.get(key).getAllPoints(type.getSimpleName());
 
-			pointsMap.putAll(keyPoints);
+			//pareil
+			for (Long key2 : keyPoints.keySet()) {
+				pointsMap.put(key2, keyPoints.get(key2) ) ;
+			}
 		}
 
 		return pointsMap;
@@ -55,9 +58,12 @@ public class SeriesComp<ValType extends ValueType> implements Series {
 		if(value.getClass() != type) {
 			throw new WrongSeriesValueTypeException(value.getClass(), this.getType());
 		}
-		if(this.points.get(troncTime(key)).getVal(key) != null) {
-			throw new TimestampAlreadyExistsException(key);
+		if(this.points.get(troncTime(key)) != null) {
+			if(this.points.get(troncTime(key)).getVal(key, type.getName()) != null) {
+				throw new TimestampAlreadyExistsException(key);
+			}
 		}
+		
 		Long trunc = troncTime(key);
 		if (points.get(trunc)==null){
 			this.points.put(trunc, new SerieQueue(trunc));
@@ -67,10 +73,7 @@ public class SeriesComp<ValType extends ValueType> implements Series {
 	}
 
 	public void deletePoint(Long key) {
-		ValType value = this.points.get(troncTime(key)).remove(key);
-		if(value == null) {
-			// Not implemented Yet
-		}
+		this.points.get(troncTime(key)).remove(key);
 	}
 
 	@Override
@@ -111,7 +114,7 @@ public class SeriesComp<ValType extends ValueType> implements Series {
 	}
 
 	public ValType getByTimestamp(Long key) {
-		return  this.points.get(troncTime(key)).getVal(key);
+		return  this.points.get(troncTime(key)).getVal(key, type.getSimpleName());
 	}
 
 
@@ -127,10 +130,10 @@ public class SeriesComp<ValType extends ValueType> implements Series {
 	 * @param time
 	 * @return
 	 */
-	private long troncTime(long time ) {
+	public long troncTime(long time ) {
 		long rangeSize = 1000;
 
-		return (time*rangeSize)/rangeSize;
+		return (time/rangeSize)*rangeSize;
 	}
 
 }

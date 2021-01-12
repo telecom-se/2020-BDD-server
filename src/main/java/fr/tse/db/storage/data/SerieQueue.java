@@ -26,6 +26,8 @@ public class SerieQueue<ValType extends ValueType> {
 		serie = new LinkedList<DataPointComp>();
 	}
 
+	public LinkedList<DataPointComp> getSerie(){ return serie;}
+	
 	/**
 	 * add value at the end of the linkedlist 
 	 * @param key
@@ -52,30 +54,34 @@ public class SerieQueue<ValType extends ValueType> {
 		serie.add(new DataPointComp(NuTime, NuVal));
 	}
 
-	/**
-	 * return value specified by timestamp or null if the timestamp does not exists.
-	 * @param timestamp
-	 * @return
-	 */
-	public ValType getVal(long timestamp) {
+/**
+ * return value specified by timestamp or null if the timestamp does not exists.
+ * The String parameter can be "Int32", "Int64" or "Float32"
+ * @param timestamp
+ * @param valtype
+ * @return
+ */
+	public ValType getVal(long timestamp, String valtype) {
 
 		BitSet timestampBit = LongToBitSet(timestamp);
 
-		BitSet timeItBit = LongToBitSet(0L);
+		BitSet timeItBit = LongToBitSet(top);
 		BitSet valItBit = LongToBitSet(0L);
 
 		Iterator<DataPointComp> I = serie.iterator();
 
-		while( I.hasNext() &&  timeItBit !=timestampBit ) {
-			DataPointComp last = (DataPointComp) I.next();
+		DataPointComp last = (DataPointComp) I.next();
+		timeItBit.xor(last.getTimestamp());
+		valItBit.xor(last.getValue());
+		
+		while( I.hasNext() &&  !timeItBit.equals(timestampBit) ) {
+			last = (DataPointComp) I.next();
 			timeItBit.xor(last.getTimestamp());
 			valItBit.xor(last.getValue());
 		}
 
-		if(timeItBit ==timestampBit) {
-			ValType val = null;
-			val = (ValType) BitSetToValType(valItBit, val.getClass().getSimpleName());
-			return val;
+		if(timeItBit.equals(timestampBit)) {
+			return  (ValType) BitSetToValType(valItBit, valtype);
 		}
 		else {
 			return null;
@@ -87,41 +93,37 @@ public class SerieQueue<ValType extends ValueType> {
 	 * @param timestamp
 	 * @return
 	 */
-	public ValType remove(long timestamp) {
+	public void remove(long timestamp) {
 		BitSet timestampBit = LongToBitSet(timestamp);
 
-		BitSet timeItBit = LongToBitSet(0L);
+		BitSet timeItBit = LongToBitSet(top);
 		BitSet valItBit = LongToBitSet(0L);
 
 		Iterator<DataPointComp> I = serie.iterator();
 
-		while( I.hasNext() &&  timeItBit !=timestampBit ) {
+		while( I.hasNext() &&  !timeItBit.equals(timestampBit) ) {
 			DataPointComp last = (DataPointComp) I.next();
 			timeItBit.xor(last.getTimestamp());
 			valItBit.xor(last.getValue());
 		}
 
-		if(timeItBit ==timestampBit) {
-			ValType val = null;
-			val = (ValType) BitSetToValType(valItBit, val.getClass().getSimpleName());
+		if(timeItBit.equals(timestampBit)) {	
 			I.remove();
-			return val;
 		}
-		else {
-			return null;
-		}	
+			
 	}
 
 	/**
 	 * return all points from the list as an uncompressed map
+	 * The String parameter can be "Int32", "Int64" or "Float32"
+	 * @param valtype
 	 * @return
 	 */
-	public Map<Long, ValType> getAllPoints(){
+	public Map<Long, ValType> getAllPoints(String valtype){
 
 		Map<Long, ValType> AllPoints = new HashMap<Long, ValType>();
-		ValType val = null;
 
-		BitSet timeItBit = LongToBitSet(0L);
+		BitSet timeItBit = LongToBitSet(top);
 		BitSet valItBit = LongToBitSet(0L);
 
 		Iterator<DataPointComp> I = serie.iterator();
@@ -131,7 +133,7 @@ public class SerieQueue<ValType extends ValueType> {
 			timeItBit.xor(last.getTimestamp());
 			valItBit.xor(last.getValue());
 
-			AllPoints.put(BitSetToLong(timeItBit), (ValType) BitSetToValType(valItBit, val.getClass().getSimpleName()));
+			AllPoints.put(BitSetToLong(timeItBit), (ValType) BitSetToValType(valItBit, valtype)) ;
 
 		}
 		return  AllPoints;

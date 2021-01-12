@@ -30,8 +30,7 @@ public class BitsConverter {
 		return value;
 	}
 
-	public static BitSet ValTypeToBitSet(ValueType value) {
-		
+	public static BitSet ValTypeToBitSet(ValueType value) {		
 		String cl = value.getVal().getClass().getSimpleName();  
 		BitSet bits = new BitSet();
 		int index;
