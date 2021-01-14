@@ -13,12 +13,19 @@ import fr.tse.db.storage.exception.SeriesNotFoundException;
 import fr.tse.db.storage.exception.TimestampAlreadyExistsException;
 import fr.tse.db.storage.exception.WrongSeriesValueTypeException;
 
+import java.util.HashMap;
+
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {
-        return new ResponseEntity<>(apiError, apiError.getStatus());
+        HashMap<String, Object> responseGlobal = new HashMap<>();
+        responseGlobal.put("success", false);
+        if(apiError != null) {
+            responseGlobal.put("error", apiError);
+        }
+        return new ResponseEntity<>(responseGlobal, apiError.getStatus());
     }
 
     @ExceptionHandler(BadQueryException.class)
