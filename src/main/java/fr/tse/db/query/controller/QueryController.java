@@ -25,10 +25,12 @@ public class QueryController {
     @PostMapping(value = "/query",produces = "application/json")
     public ResponseEntity<?> postQuery(@RequestParam("query") String query) throws BadQueryException, SeriesAlreadyExistsQueryException {
         // Get object
-        Object response = this.queryService.handleQuery(query);
+        HashMap<String, Object> response = this.queryService.handleQuery(query);
         HashMap<String, Object> responseGlobal = new HashMap<>();
         responseGlobal.put("success", true);
-        responseGlobal.put("data", response);
+        if(response.size() > 0) {
+            responseGlobal.put("data", response);
+        }
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

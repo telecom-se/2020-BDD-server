@@ -16,7 +16,6 @@ import fr.tse.db.storage.exception.SeriesAlreadyExistsException;
 @Service
 public class QueryService {
 
-    private Set<String> actions = new HashSet<>();
     private Requests request = new RequestsImpl();
     
     // TODO A mettre dans un fichier constante
@@ -24,15 +23,13 @@ public class QueryService {
     
     
     QueryService() {
-        this.actions.add("CREATE");
-        this.actions.add("INSERT");
-        this.actions.add("SELECT");
     }
 
-    public Object handleQuery(String query) throws BadQueryException {
+    public HashMap<String, Object> handleQuery(String query) throws BadQueryException {
         String[] commands = query.toLowerCase().split("\\s*;\\s*");
         System.out.println(commands.length + " command(s) found");
         HashMap<String, Object> result = this.parseQuery(commands[0]);
+        HashMap<String, Object> resultMap = new HashMap<>();
         switch(result.get("action").toString()) {
             case "select": {
                 String series = result.get("series").toString();
@@ -40,50 +37,18 @@ public class QueryService {
                 List<String> operators = result.get("operators") != null ? (List<String>) result.get("operators") : null;
                 List<Long> timestamps = result.get("timestamps") != null ? (List<Long>) result.get("timestamps") : null;
                 String join = result.get("join") != null ? result.get("join").toString(): null;
-                Series seriesResult = null;
+                Series seriesResult;
                 if (operators == null || operators.isEmpty() || timestamps == null || timestamps.isEmpty()) {
                     seriesResult = request.selectSeries(series);
                 } else {
                     if(join == null) {
                         seriesResult = handleOperatorsCondition("select", operators.get(0), series, timestamps.get(0));
                     } else if(join.equals("and")) {
-                        Long time1 = timestamps.get(0);
-                        Long time2 = timestamps.get(1);
-                        String op1 = operators.get(0);
-                        String op2 = operators.get(1);
-                        if(time1.equals(time2)) {
-                            if(op1.equals("<") && op2.equals(">") || op1.equals(">") && op2.equals("<")) {
-                                throw new BadQueryException("Condition is not valid");
-                            }
-                            if(!op1.contains("=") && !op2.contains("=")) {
-                                seriesResult = handleOperatorsCondition("select", op1, series, time1);
-                            } else {
-                                seriesResult = handleOperatorsCondition("select", op1.substring(0,1), series, time1);
-                            }
-                        } else if(time1 <= time2) {
-                            if(op1.equals("<") || op1.equals("<=") || op2.equals(">") || op2.equals(">=")) {
-                                throw new BadQueryException("Intervals do not overlap");
-                            }
-                            seriesResult = request.selectBetweenTimestampBothIncluded(series, time1, time2);
-                        } else {
-                            if(op2.equals("<") || op2.equals("<=") || op1.equals(">") || op1.equals(">=")) {
-                                throw new BadQueryException("Intervals do not overlap");
-                            }
-                            seriesResult = request.selectBetweenTimestampBothIncluded(series, time2, time1);
-                        }
+                        seriesResult = this.handleAndCondition("select", timestamps, operators, series);
                     } else {
-                        Long time1 = timestamps.get(0);
-                        Long time2 = timestamps.get(1);
-                        String op1 = operators.get(0);
-                        String op2 = operators.get(1);
-                        if(time1 < time2) {
-                            seriesResult = request.selectNotInBetweenTimestampBothIncluded(series, time1, time2);
-                        } else {
-                            seriesResult = request.selectNotInBetweenTimestampBothIncluded(series, time2, time1);
-                        }
+                        seriesResult = this.handleOrCondition("select", timestamps, operators, series);
                     }
                 }
-                HashMap<String, Object> resultMap = new HashMap<>();
                 // Add all the series to response
                 if(function.contains("all")) {
                     resultMap.put("values", seriesResult);
@@ -138,12 +103,14 @@ public class QueryService {
                 List<Long> timestamps = result.get("timestamps") != null ? (List<Long>) result.get("timestamps") : null;
                 String join = result.get("join") != null ? result.get("join").toString(): null;
                 if (operators == null || operators.isEmpty() || timestamps == null || timestamps.isEmpty()) {
-                    // TODO delete all from series
+                    request.deleteAllPoints(series);
                 } else
                 if(join == null) {
                     handleOperatorsCondition("delete", operators.get(0), series, timestamps.get(0));
+                } else if(join.equals("and")) {
+                    handleAndCondition("delete", timestamps, operators, series);
                 } else {
-
+                    handleOrCondition("delete", timestamps, operators, series);
                 }
                 return null;
             }
@@ -154,16 +121,25 @@ public class QueryService {
                 return null;
             }
             case "drop": {
-                return null;
+                String series = result.get("series").toString();
+                request.deleteSeries(series);
+                resultMap.put("name", series);
+                return resultMap;
             }
             default: return null;
         }
         return null;
     }
 
+    /**
+     * Parse the query given in parameter, and returns an hash map with all the important information
+     * @param command The query to parse
+     * @return
+     * @throws BadQueryException
+     */
     public HashMap<String, Object> parseQuery(String command) throws BadQueryException {
         HashMap<String, Object> result = new HashMap<>();
-        Pattern p = Pattern.compile("^(create|update|select|delete|show)");
+        Pattern p = Pattern.compile("^(create|update|insert|select|delete|drop|show)");
         Matcher m = p.matcher(command);
         if(!m.find()) {
             throw new BadQueryException("Bad action provided");
@@ -392,6 +368,136 @@ public class QueryService {
             }
             default: {
                 return null;
+            }
+        }
+    }
+
+    private Series handleAndCondition(String action, List<Long> timestamps, List<String> operators, String series) throws BadQueryException {
+        Long time1 = timestamps.get(0);
+        Long time2 = timestamps.get(1);
+        String op1 = operators.get(0);
+        String op2 = operators.get(1);
+        if(time1.equals(time2)) {
+            if(op1.equals("<") && op2.equals(">") || op1.equals(">") && op2.equals("<")) {
+                throw new BadQueryException("Condition is not valid");
+            }
+            if(!op1.contains("=") && !op2.contains("=")) {
+                return handleOperatorsCondition(action, op1, series, time1);
+            } else {
+                return handleOperatorsCondition(action, op1.substring(0,1), series, time1);
+            }
+        } else if(time1 <= time2) {
+            if(op1.equals("<") || op1.equals("<=") || op2.equals(">") || op2.equals(">=")) {
+                throw new BadQueryException("Intervals do not overlap");
+            }
+            if(action.equals("select")) {
+                return request.selectBetweenTimestampBothIncluded(series, time1, time2);
+            } else {
+                request.deleteBetweenTimestampBothIncluded(series, time1, time2);
+                return null;
+            }
+
+        } else {
+            if(op2.equals("<") || op2.equals("<=") || op1.equals(">") || op1.equals(">=")) {
+                throw new BadQueryException("Intervals do not overlap");
+            }
+            if(action.equals("select")) {
+                return request.selectBetweenTimestampBothIncluded(series, time2, time1);
+            } else {
+                request.deleteBetweenTimestampBothIncluded(series, time2, time1);
+                return null;
+            }
+
+        }
+    }
+
+    private Series handleOrCondition(String action, List<Long> timestamps, List<String> operators, String series) {
+        Long time1 = timestamps.get(0);
+        Long time2 = timestamps.get(1);
+        String op1 = operators.get(0).substring(0,1);
+        String op2 = operators.get(1).substring(0,1);
+        String fullOp1 = operators.get(0);
+        String fullOp2 = operators.get(1);
+        if(time1 > time2) {
+            if(op2.equals(">")) {
+                if(op1.equals("<")) {
+                    if(action.equals("select")) {
+                        return request.selectSeries(series);
+                    } else {
+                        request.deleteAllPoints(series);
+                        return null;
+                    }
+                } else {
+                    return handleOperatorsCondition(action, fullOp2, series, time2);
+                }
+            } else {
+                if(op1.equals(">")) {
+                    if(action.equals("select")) {
+                        return request.selectNotInBetweenTimestampBothIncluded(series, time2, time1);
+                    } else {
+                        request.deleteNotInBetweenTimestampBothIncluded(series, time2, time1);
+                        return null;
+                    }
+                } else {
+                    return handleOperatorsCondition(action, fullOp1, series, time1);
+                }
+            }
+        } else if(time1 < time2) {
+            if(op1.equals(">")) {
+                if(op2.equals("<")) {
+                    if(action.equals("select")) {
+                        return request.selectSeries(series);
+                    } else {
+                        request.deleteAllPoints(series);
+                        return null;
+                    }
+                } else {
+                    return handleOperatorsCondition(action, fullOp1, series, time1);
+                }
+            } else {
+                if(op2.equals(">")) {
+                    if(action.equals("select")) {
+                        return request.selectNotInBetweenTimestampBothIncluded(series, time1, time2);
+                    } else {
+                        request.deleteNotInBetweenTimestampBothIncluded(series, time1, time2);
+                        return null;
+                    }
+                } else {
+                    return handleOperatorsCondition(action, fullOp2, series, time2);
+                }
+            }
+        } else {
+            // Both timestamps are equal, we only have to check if the conditions are different
+            if(op1.equals(op2)) {
+                if(fullOp1.length() > fullOp2.length()) {
+                    return handleOperatorsCondition(action, fullOp1, series, time1);
+                } else {
+                    return handleOperatorsCondition(action, fullOp2, series, time2);
+                }
+            } else {
+                // Conditions are different, we check if one of them have the symbol = to return the whole series,
+                // or just every point but the provided timestamp.
+                if(op1.equals("=")) {
+                    return handleOperatorsCondition(action, op2 + "=", series, time2);
+                } else if(op2.equals("=")) {
+                    return handleOperatorsCondition(action, op1 + "=", series, time1);
+                } else {
+                    if(fullOp1.length() > 1 || fullOp2.length() > 1) {
+                        if(action.equals("select")) {
+                            return request.selectSeries(series);
+                        } else {
+                            request.deleteAllPoints(series);
+                            return null;
+                        }
+                    } else {
+                        if(action.equals("select")) {
+                            return request.selectNotInBetweenTimestampBothIncluded(series, time1 -1, time2 +1);
+                        } else {
+                            request.deleteNotInBetweenTimestampBothIncluded(series, time1 -1, time2 +1);
+                            return null;
+                        }
+                    }
+                }
             }
         }
     }
