@@ -12,6 +12,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import fr.tse.db.storage.exception.SeriesAlreadyExistsException;
+import fr.tse.db.storage.exception.SeriesNotFoundException;
+import fr.tse.db.storage.exception.TimestampAlreadyExistsException;
+import fr.tse.db.storage.exception.WrongSeriesValueTypeException;
 
 @Service
 public class QueryService {
@@ -29,7 +32,7 @@ public class QueryService {
         this.actions.add("SELECT");
     }
 
-    public Object handleQuery(String query) throws BadQueryException {
+    public Object handleQuery(String query) throws Exception {
         String[] commands = query.toLowerCase().split("\\s*;\\s*");
         System.out.println(commands.length + " command(s) found");
         HashMap<String, Object> result = this.parseQuery(commands[0]);
@@ -116,21 +119,17 @@ public class QueryService {
                 return resultMap;
             }
             case "create": {
-            	try {
-                	// Int32 type
-                	if (typeList.get(0).equals((String) result.get("type"))) {
-                		request.createSeries((String) result.get("name"), Int32.class);
-                	// Int64 type
-                    }else if(typeList.get(1).equals((String) result.get("type"))) {
-                    	request.createSeries((String) result.get("name"), Int64.class);
-                    // Float32 type
-                    }else if(typeList.get(2).equals((String) result.get("type"))) {
-                    	request.createSeries((String) result.get("name"), Float32.class);
-                    }
-            	} catch (SeriesAlreadyExistsException seriesAlreadyExistsException) {
-            		throw new SeriesAlreadyExistsException("Serie already exist");
-            	}
-                return null;
+            	// Int32 type
+            	if (typeList.get(0).equals((String) result.get("type"))) {
+            		request.createSeries((String) result.get("name"), Int32.class);
+            	// Int64 type
+                }else if(typeList.get(1).equals((String) result.get("type"))) {
+                	request.createSeries((String) result.get("name"), Int64.class);
+                // Float32 type
+                }else if(typeList.get(2).equals((String) result.get("type"))) {
+                	request.createSeries((String) result.get("name"), Float32.class);
+                }
+            	return null;
             }
             case "delete": {
                 String series = result.get("series").toString();
@@ -148,7 +147,39 @@ public class QueryService {
                 return null;
             }
             case "insert": {
-                return null;
+            	// Get serie name
+            	String serieName = (String) result.get("series");
+            	
+            	// Get serie from name
+            	Series series = request.selectSeries(serieName);
+            
+            	// Get the list of pairs <Timestamp, Value>
+            	ArrayList<String[]> pairs = (ArrayList<String[]>) result.get("pairs");
+            	
+            	Series seriesTemp = new Series(serieName, series.getType());
+
+            	// For each pair in pairs list
+            	for(String[] pair : pairs) {
+            		// Get pair timestamp
+            		Long timestamp = Long.parseLong(pair[0]);
+            		
+                	// According to the value type
+                	if(series.getType() == Int32.class) {
+                		Int32 value = new Int32(Integer.parseInt(pair[1]));
+                    	seriesTemp.addPoint(timestamp, value);
+                	}else if(series.getType() == Int64.class) {
+                		Int64 value = new Int64(Long.parseLong(pair[1]));
+                    	seriesTemp.addPoint(timestamp, value);
+                	}else if(series.getType() == Float32.class) {
+                		Float32 value = new Float32(Float.parseFloat(pair[1]));
+                    	seriesTemp.addPoint(timestamp, value);
+                	}
+            	}
+            	
+            	// Insert serie in serie
+            	request.insertValue(serieName, seriesTemp);
+            	
+            	return null;
             }
             case "show": {
                 return null;
