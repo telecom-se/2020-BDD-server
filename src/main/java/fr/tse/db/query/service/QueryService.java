@@ -266,29 +266,22 @@ public class QueryService {
                 break;
             }
             case "delete": {
-                Pattern deletePattern = Pattern.compile("^delete\\s+(.*?)\\s*from\\s*(.*?)((?:\\s*where\\s*)(.*?))?$");
+                Pattern deletePattern = Pattern.compile("^delete\\s+from\\s*(.*?)((?:\\s*where\\s*)(.*?))?$");
                 Matcher deleteMatcher = deletePattern.matcher(command);
                 if(!deleteMatcher.find()) {
                     throw new BadQueryException("Error in query");
                 };
                 if(deleteMatcher.group(1).isEmpty()) {
-                    result.put("all", false);
-                } else if(deleteMatcher.group(1).equals("all")) {
-                    result.put("all", true);
-                } else {
-                    throw new BadQueryException("Error in delete query");
-                }
-                if(deleteMatcher.group(2).isEmpty()) {
                     throw new BadQueryException("Incorrect series name provided");
                 }
-                if(deleteMatcher.group(3) != null && !deleteMatcher.group(3).isEmpty()) {
-                    String conditions = deleteMatcher.group(3);
+                if(deleteMatcher.group(2) != null && !deleteMatcher.group(2).isEmpty()) {
+                    String conditions = deleteMatcher.group(2);
                     HashMap<String, Object> whereConditions = parseConditions(conditions);
                     result.put("timestamps", whereConditions.get("timestamps"));
                     result.put("operators", whereConditions.get("operators"));
                     result.put("join", whereConditions.get("join"));
                 }
-                result.put("series", deleteMatcher.group(2));
+                result.put("series", deleteMatcher.group(1));
                 result.put("action", "delete");
                 break;
             }
@@ -339,8 +332,8 @@ public class QueryService {
             if(!m.find()) {
                 throw new BadQueryException("Error in conditions " + i);
             }
-            operators.add(m.group(2));
-            timestamps.add(Long.parseLong(m.group(3)));
+            operators.add(m.group(1));
+            timestamps.add(Long.parseLong(m.group(2)));
         }
         HashMap<String, Object> map = new HashMap<>();
         map.put("operators", operators);

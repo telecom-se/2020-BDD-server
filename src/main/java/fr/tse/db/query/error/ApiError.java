@@ -19,6 +19,7 @@ class ApiError {
     private HashMap<String, Object> error = new HashMap<>();
 
     private ApiError() {
+        super();
         timestamp = LocalDateTime.now();
     }
 
