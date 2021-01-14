@@ -1,18 +1,21 @@
 package fr.tse.db.storage.data;
 
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
-class SeriesQueueTest {
+
+public class SeriesQueueTest {
 
 	
 	@Test
-	void addValTest() {
+	public void addValTest() {
 		
 		SerieQueue<Int32> Ser = new SerieQueue<Int32>(0L);
 		
@@ -50,7 +53,7 @@ class SeriesQueueTest {
 	}
 
 	@Test
-	void getValTest() {
+	public void getValTest() {
 		
 		SerieQueue<Int32> Ser = new SerieQueue<Int32>(0L);		
 		Ser.addVal(10L, new Int32(1));
@@ -61,13 +64,13 @@ class SeriesQueueTest {
 		Int32 point3 = Ser.getVal(15L, "Int32");
 		
 		assertEquals(null,point);
-		assertEquals(1, point2.getVal());
-		assertEquals(40, point3.getVal());
+		assertEquals(new Integer(1), point2.getVal());
+		assertEquals(new Integer(40), point3.getVal());
 
 	}
 	
 	@Test
-	void removeTest() {
+	public void removeTest() {
 		
 		SerieQueue<Int32> Ser = new SerieQueue<Int32>(0L);		
 		Ser.addVal(10L, new Int32(1));
@@ -82,7 +85,7 @@ class SeriesQueueTest {
 	}
 	
 	@Test
-	void getAllPointsTest() {
+	public void getAllPointsTest() {
 
 		SerieQueue<Int32> Ser = new SerieQueue<Int32>(0L);		
 		Ser.addVal(10L, new Int32(1));
@@ -90,7 +93,7 @@ class SeriesQueueTest {
 		
 		Map<Long, Int32> map =  Ser.getAllPoints("Int32");
 		assertEquals(1, map.size());
-		assertEquals(1, map.get(10L).getVal());
+		assertEquals(new Integer(1), map.get(10L).getVal());
 		
 		
 	

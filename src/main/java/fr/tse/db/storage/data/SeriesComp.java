@@ -60,7 +60,7 @@ public class SeriesComp<ValType extends ValueType> implements Series {
 		}
 		if(this.points.get(troncTime(key)) != null) {
 			if(this.points.get(troncTime(key)).getVal(key, type.getName()) != null) {
-				throw new TimestampAlreadyExistsException(key);
+				throw new TimestampAlreadyExistsException();
 			}
 		}
 		

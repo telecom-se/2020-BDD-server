@@ -193,7 +193,7 @@ public class RequestTest {
 		Int64 nuVal = new Int64((long) 696);
 		Map<Long,Int64> m1 = new HashMap<Long, Int64>();
 		m1.put(tmp2, new Int64((long) 696));
-		Series<Int64> nuPoint = new Series<>(null,Int64.class,m1);
+		Series<Int64> nuPoint = new SeriesUnComp<>(null,Int64.class,m1);
 
 		req.insertValue("seriesTest", nuPoint);
 				
@@ -313,7 +313,7 @@ public class RequestTest {
 		Map<Long,Int64> m1 = new HashMap<Long, Int64>();
 		m1.put(tmp, val1 );
 		m1.put(tmp2, val2);
-		Series<Int64> seriesValues = new Series<>("abc",Int64.class,m1);
+		Series<Int64> seriesValues = new SeriesUnComp<>("abc",Int64.class,m1);
 		
 		Float av= req.average(seriesValues);
 		
@@ -331,7 +331,7 @@ public class RequestTest {
 		m1.put(tmp, val1 );
 		m1.put(tmp2, val2);
 		m1.put(tmp3, val3);
-		Series<Int64> seriesValues = new Series<>("abc",Int64.class,m1);
+		Series<Int64> seriesValues = new SeriesUnComp<>("abc",Int64.class,m1);
 		
 		ValueType min = req.min(seriesValues);
 		
@@ -348,7 +348,7 @@ public class RequestTest {
 		m1.put(tmp, val1 );
 		m1.put(tmp2, val2);
 		m1.put(tmp3, val3);
-		Series<Int64> seriesValues = new Series<>("abc",Int64.class,m1);
+		Series<Int64> seriesValues = new SeriesUnComp<>("abc",Int64.class,m1);
 		
 		ValueType max = req.max(seriesValues);
 		
@@ -365,7 +365,7 @@ public class RequestTest {
 		m1.put(tmp, val1 );
 		m1.put(tmp2, val2);
 		m1.put(tmp3, val3);
-		Series<Int64> seriesValues = new Series<>("abc",Int64.class,m1);
+		Series<Int64> seriesValues = new SeriesUnComp<>("abc",Int64.class,m1);
 		
 		int count = req.count(seriesValues);
 		
@@ -382,7 +382,7 @@ public class RequestTest {
 		m1.put(tmp, val1 );
 		m1.put(tmp2, val2);
 		m1.put(tmp3, val3);
-		Series<Int64> seriesValues = new Series<>("abc",Int64.class,m1);
+		Series<Int64> seriesValues = new SeriesUnComp<>("abc",Int64.class,m1);
 		
 		ValueType sum = req.sum(seriesValues);
 		

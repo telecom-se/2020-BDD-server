@@ -24,7 +24,7 @@ public class RequestsImpl implements Requests {
 		Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
 		Map<Long, ValueType> result = series.getPoints().entrySet().parallelStream().filter(map -> map.getKey().equals(timestamp))
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-		return new Series<>(null, series.getType(), result);
+		return new SeriesUnComp<>(null, series.getType(), result);
 	}
 
 	@Override
@@ -32,7 +32,7 @@ public class RequestsImpl implements Requests {
 		Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
 		Map<Long, ValueType> result = series.getPoints().entrySet().parallelStream().filter(map -> map.getKey() < timestamp)
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-		return new Series<>(null, series.getType(), result);
+		return new SeriesUnComp<>(null, series.getType(), result);
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class RequestsImpl implements Requests {
 		Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
 		Map<Long, ValueType> result = series.getPoints().entrySet().parallelStream().filter(map -> map.getKey() <= timestamp) 
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-		return new Series<>(null, series.getType(), result);
+		return new SeriesUnComp<>(null, series.getType(), result);
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class RequestsImpl implements Requests {
 		Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
 		Map<Long, ValueType> result = series.getPoints().entrySet().parallelStream().filter(map -> map.getKey() > timestamp)
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-		return new Series<>(null, series.getType(), result);
+		return new SeriesUnComp<>(null, series.getType(), result);
 	}
 
 	@Override
@@ -56,7 +56,7 @@ public class RequestsImpl implements Requests {
 		Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
 		Map<Long, ValueType> result = series.getPoints().entrySet().parallelStream().filter(map -> map.getKey() >= timestamp) 
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-		return new Series<>(null, series.getType(), result);
+		return new SeriesUnComp<>(null, series.getType(), result);
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public class RequestsImpl implements Requests {
 		Map<Long, ValueType> result = series.getPoints().entrySet().parallelStream()
 				.filter(map -> (map.getKey() >= timestamp1 && map.getKey() <= timestamp2))
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-		return new Series<>(null, series.getType(), result);
+		return new SeriesUnComp<>(null, series.getType(), result);
 	}
 
 	@Override
@@ -76,7 +76,7 @@ public class RequestsImpl implements Requests {
 		Map<Long, ValueType> result = series.getPoints().entrySet().parallelStream()
 				.filter(map -> (map.getKey() <= timestamp1 || map.getKey() >= timestamp2))
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-		return new Series<>(null, series.getType(), result);
+		return new SeriesUnComp<>(null, series.getType(), result);
 	}
 
 	@Override

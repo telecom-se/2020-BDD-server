@@ -29,8 +29,7 @@ public class DataBase {
 	
 	// constructor
 	private DataBase() {
-		this.series = new HashMap<String, Series>();
-
+		this.series = new HashMap<String, Series<ValueType>>();
 	}
 	
 	private DataBase(List<Series> series) {

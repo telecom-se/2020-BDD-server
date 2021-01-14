@@ -1,13 +1,13 @@
 package fr.tse.db.storage.data;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
-class SeriesCompTest {
+
+public class SeriesCompTest {
 
 	private SeriesComp<Int32> ser32;
 	private SeriesComp<Int64> ser64;
@@ -19,7 +19,7 @@ class SeriesCompTest {
 	
 	
 	@Test
-	void getPointsTest() {
+	public void getPointsTest() {
 		
 		ser32 = new SeriesComp<Int32>("SERIE32", Int32.class );
 		ser64 = new SeriesComp<Int64>("SERIE64", Int64.class);
@@ -41,8 +41,8 @@ class SeriesCompTest {
 		Map<Long, Int64> map64 = ser64.getPoints();
 
 		assertEquals(2, map32.size());
-		assertEquals(1, map32.get(1L).getVal());
-		assertEquals(2, map32.get(2L).getVal());
+		assertEquals(new Integer(1), map32.get(1L).getVal());
+		assertEquals(new Integer(2), map32.get(2L).getVal());
 		
 		
 		assertEquals(2, map64.size());
@@ -52,7 +52,7 @@ class SeriesCompTest {
 	}
 
 	@Test
-	void addPointTest() {
+	public void addPointTest() {
 		
 		ser32 = new SeriesComp<Int32>("SERIE32", Int32.class );
 		ser64 = new SeriesComp<Int64>("SERIE64", Int64.class);
@@ -72,15 +72,15 @@ class SeriesCompTest {
 		Map<Long,SerieQueue<Int32>> map32 = ser32.getPointsComp();
 		Map<Long,SerieQueue<Int64>> map64 = ser64.getPointsComp();
 
-		assertEquals(1,map32.get(0L).getVal(1L,"Int32").getVal());
+		assertEquals(new Integer(1),map32.get(0L).getVal(1L,"Int32").getVal());
 		assertEquals((long) 1,(long)map64.get(0L).getVal(1L,"Int64").getVal());
-		assertEquals(2,map32.get(0L).getVal(2L,"Int32").getVal());
+		assertEquals(new Integer(2),map32.get(0L).getVal(2L,"Int32").getVal());
 		assertEquals((long) 2,(long)map64.get(0L).getVal(2L,"Int64").getVal());
 
 	}
 	
 	@Test
-	void deletePointTest() {
+	public void deletePointTest() {
 		
 		ser32 = new SeriesComp<Int32>("SERIE32", Int32.class );
 		ser64 = new SeriesComp<Int64>("SERIE64", Int64.class);
@@ -115,7 +115,7 @@ class SeriesCompTest {
 	}
 	
 	@Test
-	void getByTimestampTest() {
+	public void getByTimestampTest() {
 		
 		ser32 = new SeriesComp<Int32>("SERIE32", Int32.class );
 		ser64 = new SeriesComp<Int64>("SERIE64", Int64.class);
@@ -133,7 +133,7 @@ class SeriesCompTest {
 		ser64.addPoint(2000L, p64);
 		
 		
-		assertEquals(1, ser32.getByTimestamp(1L).getVal());
+		assertEquals(new Integer(1), ser32.getByTimestamp(1L).getVal());
 		assertEquals((long)1,(long) ser64.getByTimestamp(1L).getVal());
 		assertEquals((long)2,(long) ser64.getByTimestamp(2000L).getVal());
 
@@ -141,7 +141,7 @@ class SeriesCompTest {
 	}
 	
 	@Test
-	void troncTimeTest() {
+	public void troncTimeTest() {
 		ser32 = new SeriesComp<Int32>("SERIE32", Int32.class );
 
 		assertEquals(0, ser32.troncTime(10L));

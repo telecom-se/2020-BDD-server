@@ -47,7 +47,7 @@ public class SeriesUnComp<ValType extends ValueType> implements Series {
 				throw new WrongSeriesValueTypeException(value.getClass(), this.getType());
 			}
 			if(this.points.get(key) != null) {
-				throw new TimestampAlreadyExistsException(key);
+				throw new TimestampAlreadyExistsException();
 			}
 			this.points.put(key, (ValType) value);
 		}

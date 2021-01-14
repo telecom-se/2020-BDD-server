@@ -1,15 +1,20 @@
 package fr.tse.db.storage.data;
 
-import static org.junit.jupiter.api.Assertions.*;
+
+import static fr.tse.db.storage.data.SeriesConverter.compressInt32;
+import static fr.tse.db.storage.data.SeriesConverter.unCompressInt32;
+
+import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
 
-import org.junit.jupiter.api.Test;
-import static fr.tse.db.storage.data.SeriesConverter.*
-;class SeriesConverterTest {
+import org.junit.Test;
+
+
+public class SeriesConverterTest {
 
 	@Test
-	void compressTest() {
+	public void compressTest() {
 		
 		SeriesUnComp<Int32> UnComp = new SeriesUnComp<Int32>("comp",Int32.class);
 
@@ -24,13 +29,13 @@ import static fr.tse.db.storage.data.SeriesConverter.*
 		Map<Long, Int32> points = comp.getPoints();
 		
 		assertEquals(1, points.size() );
-		assertEquals(4, points.get(5L).getVal());
+		assertEquals(new Integer(4), points.get(5L).getVal());
 		
 
 	}
 
 	@Test
-	void unCompressTest() {
+	public void unCompressTest() {
 		
 		SeriesComp<Int32> UnComp = new SeriesComp<Int32>("comp",Int32.class);
 
@@ -45,6 +50,6 @@ import static fr.tse.db.storage.data.SeriesConverter.*
 		Map<Long, Int32> points = comp.getPoints();
 		
 		assertEquals(1, points.size() );
-		assertEquals(4, points.get(5L).getVal());
+		assertEquals(new Integer(4), points.get(5L).getVal());
 	}
 }

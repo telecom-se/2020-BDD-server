@@ -20,7 +20,7 @@ public class DataBaseTest {
 	
 	@Test
 	public void addSeriesTestValid() throws SeriesAlreadyExistsException {
-		SeriesUnComp<Int64> s = new SeriesUnComp<Int64>("name", Int64.class);
+		SeriesUnComp<Int64> s = new SeriesUnComp<Int64>("name1", Int64.class);
 		int dbSize=this.database.getSeries().size();
 
 		this.database.addSeries(s);
