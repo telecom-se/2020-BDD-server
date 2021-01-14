@@ -1,8 +1,7 @@
 package fr.tse.db.query.controller;
 
-import fr.tse.db.query.domain.Series;
-import fr.tse.db.query.error.BadQueryException;
-import fr.tse.db.query.service.QueryService;
+import java.util.HashMap;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,7 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import fr.tse.db.query.service.QueryService;
 
 @RestController
 public class QueryController {
@@ -19,9 +18,14 @@ public class QueryController {
     QueryService queryService;
 
     @PostMapping(value = "/query",produces = "application/json")
-    public ResponseEntity<?> postQuery(@RequestParam("query") String query) throws BadQueryException {
+    public ResponseEntity<?> postQuery(@RequestParam("query") String query) throws Exception {
         // Get object
-        List<Series> series = this.queryService.parseQuery(query);
-        return new ResponseEntity<>(series, HttpStatus.OK);
+        HashMap<String, Object> response = this.queryService.handleQuery(query);
+        HashMap<String, Object> responseGlobal = new HashMap<>();
+        responseGlobal.put("success", true);
+        if(response != null && response.size() > 0) {
+            responseGlobal.put("data", response);
+        }
+        return new ResponseEntity<>(responseGlobal, HttpStatus.OK);
     }
 }

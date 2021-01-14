@@ -5,6 +5,7 @@ import lombok.Data;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 
 @Data
 class ApiError {
@@ -14,8 +15,11 @@ class ApiError {
     private LocalDateTime timestamp;
     private String message;
     private String code;
+    private String success = "false";
+    private HashMap<String, Object> error = new HashMap<>();
 
     private ApiError() {
+        super();
         timestamp = LocalDateTime.now();
     }
 
