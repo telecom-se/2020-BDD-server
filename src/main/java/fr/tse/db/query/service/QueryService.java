@@ -2,7 +2,7 @@ package fr.tse.db.query.service;
 
 
 import fr.tse.db.query.error.BadQueryException;
-import fr.tse.db.storage.data.ValueType;
+import fr.tse.db.storage.data.*;
 import fr.tse.db.storage.request.Requests;
 import fr.tse.db.storage.request.RequestsImpl;
 import org.springframework.stereotype.Service;
@@ -11,9 +11,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import fr.tse.db.storage.data.Float32;
-import fr.tse.db.storage.data.Int32;
-import fr.tse.db.storage.data.Int64;
 import fr.tse.db.storage.exception.SeriesAlreadyExistsException;
 
 @Service
@@ -43,9 +40,9 @@ public class QueryService {
                 List<String> operators = result.get("operators") != null ? (List<String>) result.get("operators") : null;
                 List<Long> timestamps = result.get("timestamps") != null ? (List<Long>) result.get("timestamps") : null;
                 String join = result.get("join") != null ? result.get("join").toString(): null;
-                Collection<ValueType> seriesResult = new ArrayList<>();
+                Series seriesResult = null;
                 if (operators == null || operators.isEmpty() || timestamps == null || timestamps.isEmpty()) {
-
+                    seriesResult = request.selectSeries(series);
                 } else {
                     if(join == null) {
                         seriesResult = handleOperatorsCondition("select", operators.get(0), series, timestamps.get(0));
@@ -79,16 +76,17 @@ public class QueryService {
                         Long time2 = timestamps.get(1);
                         String op1 = operators.get(0);
                         String op2 = operators.get(1);
-                        Set<ValueType> resultset = new HashSet<>();
-                        resultset.addAll(handleOperatorsCondition("select", op1, series, time1));
-                        resultset.addAll(handleOperatorsCondition("select", op2, series, time2));
-                        seriesResult = resultset;
+                        if(time1 < time2) {
+                            seriesResult = request.selectNotInBetweenTimestampBothIncluded(series, time1, time2);
+                        } else {
+                            seriesResult = request.selectNotInBetweenTimestampBothIncluded(series, time2, time1);
+                        }
                     }
                 }
                 HashMap<String, Object> resultMap = new HashMap<>();
                 // Add all the series to response
                 if(function.contains("all")) {
-                    resultMap.put("values", seriesResult.toArray());
+                    resultMap.put("values", seriesResult);
                 }
                 // Add minimum to response
                 if (function.contains("min")) {
@@ -351,13 +349,14 @@ public class QueryService {
         return map;
     }
 
-    public Collection<ValueType> handleOperatorsCondition(String action, String condition, String series, Long timestamp) {
+    public Series handleOperatorsCondition(String action, String condition, String series, Long timestamp) {
         switch(condition) {
             case "<": {
                 if(action.equals("select")) {
                     return this.request.selectLowerThanTimestamp(series, timestamp);
                 } else {
-                    // return request.deleteLowerThanTimestamp(series, timestamp);
+                    request.deleteLowerThanTimestamp(series, timestamp);
+                    return null;
                 }
             }
             case "<=": {
@@ -371,27 +370,28 @@ public class QueryService {
                 if(action.equals("select")) {
                     return request.selectHigherThanTimestamp(series, timestamp);
                 } else {
-                    // return request.deleteHigherThanTimestamp(series, timestamp);
+                    request.deleteHigherThanTimestamp(series, timestamp);
+                    return null;
                 }
             }
             case ">=": {
                 if(action.equals("select")) {
                     return request.selectHigherOrEqualThanTimestamp(series, timestamp);
                 } else {
-                    // return request.deleteHigherOrEqualThanTimestamp(series, timestamp);
+                    request.deleteHigherOrEqualThanTimestamp(series, timestamp);
+                    return null;
                 }
             }
             case "==": {
                 if(action.equals("select")) {
-                    Collection<ValueType> coll = new ArrayList<>();
-                    coll.add(request.selectByTimestamp(series, timestamp));
-                    return coll;
+                    return request.selectByTimestamp(series, timestamp);
                 } else {
-                    // return request.deleteByTimestamp(series, timestamp);
+                    request.deleteByTimestamp(series, timestamp);
+                    return null;
                 }
             }
             default: {
-                return new ArrayList<>();
+                return null;
             }
         }
     }
