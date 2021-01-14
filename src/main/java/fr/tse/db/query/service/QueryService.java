@@ -281,10 +281,8 @@ public class QueryService {
                 if(deleteMatcher.group(2).isEmpty()) {
                     throw new BadQueryException("Incorrect series name provided");
                 }
-                String conditions = deleteMatcher.group(3);
-                if(conditions.isEmpty()) {
-                    result.put("conditions", null);
-                } else {
+                if(deleteMatcher.group(3) != null && !deleteMatcher.group(3).isEmpty()) {
+                    String conditions = deleteMatcher.group(3);
                     HashMap<String, Object> whereConditions = parseConditions(conditions);
                     result.put("timestamps", whereConditions.get("timestamps"));
                     result.put("operators", whereConditions.get("operators"));
