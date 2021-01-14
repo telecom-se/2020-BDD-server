@@ -203,6 +203,7 @@ public class QueryService {
                     result.put("operators", whereConditions.get("operators"));
                     result.put("join", whereConditions.get("join"));
                 }
+                result.put("action", "select");
                 break;
             }
             case "create": {
@@ -240,7 +241,6 @@ public class QueryService {
                 result.put("action", "create");
                 result.put("name", name);
                 result.put("type", type);
-                result.put("action", "create");
                 break;
             }
             case "insert": {
