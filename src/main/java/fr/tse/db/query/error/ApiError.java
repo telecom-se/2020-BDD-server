@@ -4,37 +4,25 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 
 @Data
 class ApiError {
 
     private HttpStatus status;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
-    private LocalDateTime timestamp;
-    private String message;
-    private String code;
+    private HashMap<String, Object> error = new HashMap<>();
+    private String success = "false";
 
     private ApiError() {
-        timestamp = LocalDateTime.now();
-    }
-
-    ApiError(HttpStatus status) {
-        this();
-        this.status = status;
-        this.message = "Unexpected error";
-    }
-
-    ApiError(HttpStatus status, String message) {
-        this();
-        this.status = status;
-        this.message = message;
+        error.put("timestamp", LocalDateTime.now());
     }
 
     ApiError(HttpStatus status, String message, String code) {
         this();
-        this.status = status;
-        this.message = message;
-        this.code = code;
+        this.error.put("status", status);
+        this.error.put("message", message);
+        this.error.put("code", code);
     }
 }
