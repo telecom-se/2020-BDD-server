@@ -2,6 +2,7 @@ package fr.tse.db.storage.request;
 
 import fr.tse.db.storage.data.DataBase;
 import fr.tse.db.storage.data.Series;
+import fr.tse.db.storage.data.SeriesUnComp;
 import fr.tse.db.storage.data.ValueType;
 import fr.tse.db.storage.exception.*;
 
@@ -97,8 +98,10 @@ public class RequestsImpl implements Requests {
 	public <ValType extends ValueType> void createSeries(String seriesName, Class<ValType> type)
 			throws SeriesAlreadyExistsException {
 		DataBase dataBase = DataBase.getInstance();
-		Series<ValType> series = new Series<ValType>(seriesName, type);
-		dataBase.addSeries(series);
+
+		Series<ValType> series = new SeriesUnComp<ValType>(seriesName, type);
+		dataBase.addSeries((Series<ValueType>) series);
+
 	}
 
 	@Override
