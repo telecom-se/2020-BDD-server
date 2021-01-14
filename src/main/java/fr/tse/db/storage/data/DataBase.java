@@ -1,8 +1,10 @@
 package fr.tse.db.storage.data;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import fr.tse.db.storage.exception.SeriesAlreadyExistsException;
 import fr.tse.db.storage.exception.SeriesNotFoundException;
 
@@ -19,7 +21,7 @@ import fr.tse.db.storage.exception.SeriesNotFoundException;
 * @author  Arnaud, Valentin
 * @since   2020-11
 */
-public class DataBase {
+public class DataBase implements Serializable {
 
 	private static DataBase instance = new DataBase();
 	public static DataBase getInstance() {return instance;}
@@ -91,6 +93,8 @@ public class DataBase {
 		}
 	}
 	
-	
+	public void compressAll() {
+		
+	}
 	
 }

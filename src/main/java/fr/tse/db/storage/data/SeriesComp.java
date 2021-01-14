@@ -1,5 +1,6 @@
 package fr.tse.db.storage.data;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,7 +16,7 @@ import fr.tse.db.storage.exception.WrongSeriesValueTypeException;
  * @author  Rémi, Alexandre
  * @since   2020-11
  */
-public class SeriesComp<ValType extends ValueType> implements Series {
+public class SeriesComp<ValType extends ValueType> implements Series , Serializable {
 
 	private Class<ValType> type;
 	private String name;

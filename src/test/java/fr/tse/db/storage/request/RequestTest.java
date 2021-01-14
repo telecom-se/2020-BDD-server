@@ -383,7 +383,6 @@ public class RequestTest {
 		m1.put(tmp2, val2);
 		m1.put(tmp3, val3);
 		Series<Int64> seriesValues = new SeriesUnComp<>("abc",Int64.class,m1);
-		
 		ValueType sum = req.sum(seriesValues);
 		
 		assertEquals(60, (long)sum.getVal());
