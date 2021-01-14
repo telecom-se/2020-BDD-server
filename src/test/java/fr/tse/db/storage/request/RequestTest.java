@@ -217,7 +217,8 @@ public class RequestTest {
 	public void deleteSeriesTest() throws SeriesNotFoundException, SeriesAlreadyExistsException{
 		
 		Series<Int64> toDel = new Series<Int64>("toDel", Int64.class);
-		
+
+
 		database.addSeries(toDel);
 
 		req.deleteSeries("toDel");
@@ -287,6 +288,7 @@ public class RequestTest {
 		assertEquals(database.getByName("seriesTest").getPoints().get(tmp2 + (long)1), null);
 		
 		database.getByName("seriesTest").deletePoint(tmp2);
+
 		}
 	
 	

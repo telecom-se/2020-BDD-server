@@ -15,8 +15,6 @@ class ApiError {
     private LocalDateTime timestamp;
     private String message;
     private String code;
-    private String success = "false";
-    private HashMap<String, Object> error = new HashMap<>();
 
     private ApiError() {
         super();
