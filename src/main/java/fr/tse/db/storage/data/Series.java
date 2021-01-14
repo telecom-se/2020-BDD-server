@@ -5,6 +5,7 @@ import java.util.Map;
 
 import fr.tse.db.storage.exception.TimestampAlreadyExistsException;
 import fr.tse.db.storage.exception.WrongSeriesValueTypeException;
+import lombok.Data;
 
 /**
 * This Series class is a general container for points to store in the database
@@ -12,6 +13,8 @@ import fr.tse.db.storage.exception.WrongSeriesValueTypeException;
 * @author  Arnaud, Valentin
 * @since   2020-11
 */
+
+@Data
 public class Series<ValType extends ValueType> {
 
 	// Parameters
@@ -19,17 +22,19 @@ public class Series<ValType extends ValueType> {
 	private String name;
 	private Map<Long, ValType> points;
 	
-	// Constructor
+	// Constructors
 	public Series(String name, Class<ValType> type) {
 		this.name = name;
 		this.type = type;
 		this.points = new HashMap<Long, ValType>();
 	}
+	
+	public Series(String name, Class<ValType> type,Map<Long, ValType> points ) {
+		this.name = name;
+		this.type = type;
+		this.points = points;
+	}
 
-	public String getName() {return name;}
-	public void setName(String name) {this.name = name;}
-	public Class<ValType> getType() {return type;}
-	public Map<Long, ValType> getPoints() {return points;}
 	public void clearPoints() {this.points.clear();}
 
 	public void addPoint(Long key, ValType value) throws WrongSeriesValueTypeException, TimestampAlreadyExistsException {
@@ -37,7 +42,7 @@ public class Series<ValType extends ValueType> {
 			throw new WrongSeriesValueTypeException(value.getClass(), this.getType());
 		}
 		if(this.points.get(key) != null) {
-			throw new TimestampAlreadyExistsException(key);
+			throw new TimestampAlreadyExistsException();
 		}
 		this.points.put(key, value);
 	}
@@ -49,43 +54,7 @@ public class Series<ValType extends ValueType> {
 		}
 	}
 	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((points == null) ? 0 : points.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Series other = (Series) obj;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		if (points == null) {
-			if (other.points != null)
-				return false;
-		} else if (!points.equals(other.points))
-			return false;
-		if (type == null) {
-			if (other.type != null)
-				return false;
-		} else if (!type.equals(other.type))
-			return false;
-		return true;
-	}
-
+	
 	public ValType getByTimestamp(Long key) {
 		return this.points.get(key);
 	}

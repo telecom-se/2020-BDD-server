@@ -40,12 +40,13 @@ public class Float32 implements ValueType<Float> {
 		return "Float32[" + val + "]";
 	}
 	
-	public void sum(ValueType i) throws WrongValueTypeException{
+	public ValueType sum(ValueType i) throws WrongValueTypeException{
 		if (i instanceof Float32) {
 			this.val+= ((Float32) i).getVal();
 		} else {
 			throw new WrongValueTypeException(this.getClass(),i.getClass());
 		}
+		return new Float32(val);
 	}
 
 	public float divide(int denom) {
