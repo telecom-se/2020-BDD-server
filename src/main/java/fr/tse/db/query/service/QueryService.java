@@ -60,27 +60,22 @@ public class QueryService {
                 // Add minimum to response
                 if (function.contains("min")) {
                     resultMap.put("min", request.min(seriesResult));
-                    break;
                 }
                 // Add maximum to response
                 if (function.contains("max")) {
                     resultMap.put("max", request.max(seriesResult));
-                    break;
                 }
                 // Add average to response
                 if (function.contains("average")) {
                     resultMap.put("average", request.average(seriesResult));
-                    break;
                 }
                 // Add sum to response
                 if (function.contains("sum")) {
                     resultMap.put("sum", request.sum(seriesResult));
-                    break;
                 }
                 // Add count to response
                 if (function.contains("count")) {
                     resultMap.put("count", request.count(seriesResult));
-                    break;
                 }
                 return resultMap;
             }
