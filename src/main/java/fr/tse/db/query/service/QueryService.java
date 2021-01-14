@@ -3,6 +3,7 @@ package fr.tse.db.query.service;
 
 import fr.tse.db.query.error.BadQueryException;
 import fr.tse.db.storage.data.*;
+import fr.tse.db.storage.exception.SeriesNotFoundException;
 import fr.tse.db.storage.request.Requests;
 import fr.tse.db.storage.request.RequestsImpl;
 import org.springframework.stereotype.Service;
@@ -239,7 +240,7 @@ public class QueryService {
                 result.put("action", "create");
                 result.put("name", name);
                 result.put("type", type);
-
+                result.put("action", "create");
                 break;
             }
             case "insert": {
@@ -403,7 +404,8 @@ public class QueryService {
         }
     }
 
-    private Series handleAndCondition(String action, List<Long> timestamps, List<String> operators, String series) throws BadQueryException {
+    private Series handleAndCondition(String action, List<Long> timestamps, List<String> operators, String series)
+            throws BadQueryException, SeriesNotFoundException {
         Long time1 = timestamps.get(0);
         Long time2 = timestamps.get(1);
         String op1 = operators.get(0);
@@ -442,7 +444,7 @@ public class QueryService {
         }
     }
 
-    private Series handleOrCondition(String action, List<Long> timestamps, List<String> operators, String series) {
+    private Series handleOrCondition(String action, List<Long> timestamps, List<String> operators, String series) throws SeriesNotFoundException {
         Long time1 = timestamps.get(0);
         Long time2 = timestamps.get(1);
         String op1 = operators.get(0).substring(0,1);
