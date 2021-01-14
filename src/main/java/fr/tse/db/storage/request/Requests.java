@@ -1,6 +1,9 @@
 package fr.tse.db.storage.request;
 
 
+import java.util.Map;
+
+
 import fr.tse.db.storage.data.Series;
 import fr.tse.db.storage.data.ValueType;
 import fr.tse.db.storage.exception.EmptySeriesException;
@@ -14,7 +17,11 @@ import fr.tse.db.storage.exception.WrongSeriesValueTypeException;
  *
  */
 public interface Requests {
-	
+	/**
+	 * Shows all Series name and types in database
+	 * @return
+	 */
+	public  Map<String,Class<ValueType>> showAllSeries();
 	/**
 	 * Select all values from series
 	 * @param seriesName series name

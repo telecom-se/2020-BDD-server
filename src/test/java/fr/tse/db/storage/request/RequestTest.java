@@ -15,6 +15,7 @@ import fr.tse.db.storage.data.Int64;
 import fr.tse.db.storage.data.Series;
 import fr.tse.db.storage.data.SeriesUnComp;
 import fr.tse.db.storage.data.ValueType;
+import fr.tse.db.storage.exception.EmptySeriesException;
 import fr.tse.db.storage.exception.SeriesAlreadyExistsException;
 import fr.tse.db.storage.exception.SeriesNotFoundException;
 
@@ -57,7 +58,12 @@ public class RequestTest {
 		database.addSeries(series32);
 	}
 	
-	
+	@Test
+	public void showAllSeriesTest() {
+		Map<String, Class<ValueType>> allSeries= req.showAllSeries();
+		assertEquals(2,allSeries.size());
+		assertEquals((new Int64(0L)).getClass(), allSeries.get("seriesTest"));
+	}
 	
 	@Test
 	public void selectByTimestampTest() throws SeriesNotFoundException  {		
@@ -336,6 +342,14 @@ public class RequestTest {
 		ValueType min = req.min(seriesValues);
 		
 		assertEquals(10,(long) min.getVal());
+	}
+	
+	@Test(expected = EmptySeriesException.class)
+	public void minTest2() {
+		Map<Long,Int64> m1 = new HashMap<Long, Int64>();
+		Series<Int64> seriesValues = new SeriesUnComp<>("abc",Int64.class,m1);
+
+		ValueType min = req.min(seriesValues);
 	}
 
 	@Test

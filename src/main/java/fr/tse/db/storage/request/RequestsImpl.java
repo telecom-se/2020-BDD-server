@@ -8,11 +8,22 @@ import fr.tse.db.storage.exception.*;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class RequestsImpl implements Requests {
-
+	
+	@Override
+	public Map<String,Class<ValueType>> showAllSeries() {
+		DataBase db = DataBase.getInstance();
+		Map<String, Class<ValueType>> result = db.getSeries().entrySet().parallelStream()
+				.collect(Collectors.toMap(
+		                   entry -> entry.getKey(), 
+		                   entry -> entry.getValue().getType()));
+		return result;
+	}
+	
 	@Override
 	public Series selectSeries(String seriesName) throws SeriesNotFoundException {
 		DataBase db = DataBase.getInstance();
@@ -170,12 +181,20 @@ public class RequestsImpl implements Requests {
 
 	@Override
 	public ValueType min(Series series) throws EmptySeriesException {
-		return ((Series<ValueType>) series).getPoints().values().parallelStream().min(ValueType::compareTo).get();
+		try {
+			return ((Series<ValueType>) series).getPoints().values().parallelStream().min(ValueType::compareTo).get();
+		} catch(NoSuchElementException e) {
+			throw new EmptySeriesException();
+		}
 	}
 
 	@Override
 	public ValueType max(Series series) throws EmptySeriesException {
-		return ((Series<ValueType>) series).getPoints().values().parallelStream().max(ValueType::compareTo).get();
+		try {
+			return ((Series<ValueType>) series).getPoints().values().parallelStream().max(ValueType::compareTo).get();
+		} catch(NoSuchElementException e) {
+			throw new EmptySeriesException();
+		}
 	}
 
 	@Override

@@ -1,9 +1,6 @@
 package fr.tse.db.storage.data;
 
 
-import static fr.tse.db.storage.data.SeriesConverter.compressInt32;
-import static fr.tse.db.storage.data.SeriesConverter.unCompressInt32;
-
 import static org.junit.Assert.assertEquals;
 
 import java.util.Map;
@@ -21,7 +18,7 @@ public class SeriesConverterTest {
 		
 		UnComp.addPoint(5L, new Int32(4));
 		
-		SeriesComp<Int32> comp = compressInt32(UnComp); 
+		SeriesComp<Int32> comp = SeriesConverter.compress(UnComp); 
 		
 		assertEquals("comp", comp.getName());
 		assertEquals("Int32", comp.getType().getSimpleName());
@@ -42,7 +39,7 @@ public class SeriesConverterTest {
 		
 		UnComp.addPoint(5L, new Int32(4));
 		
-		SeriesUnComp<Int32> comp = unCompressInt32(UnComp); 
+		SeriesUnComp<Int32> comp = SeriesConverter.unCompress(UnComp); 
 		
 		assertEquals("comp", comp.getName());
 		assertEquals("Int32", comp.getType().getSimpleName());
