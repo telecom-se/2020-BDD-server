@@ -155,7 +155,6 @@ public class QueryService {
             }
             default: return null;
         }
-        return null;
     }
 
     /**
