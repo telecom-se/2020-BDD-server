@@ -1,17 +1,22 @@
-package fr.tse.db.query;
+package fr.tse.db.query.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import fr.tse.db.query.error.BadQueryException;
 import fr.tse.db.query.service.QueryService;
 
+@SpringBootTest
+@RunWith(SpringRunner.class)
 class QueryParsingDeleteTests {
 
 	@Autowired
 	private QueryService qs;
-	private final static String ACTION = "DELETE";
+	private final static String ACTION = "delete";
 	
 	// ---------------------- [DELETE ALL] [SINGLEQUERY] [BadQueryException]
 	@Test

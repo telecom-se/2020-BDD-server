@@ -1,34 +1,29 @@
-package fr.tse.db.query;
+package fr.tse.db.query.service;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import fr.tse.db.query.error.BadQueryException;
 import fr.tse.db.query.service.QueryService;
 
+@SpringBootTest
+@RunWith(SpringRunner.class)
 class QueryParsingCreateTests {
 
 	@Autowired
 	private QueryService qs;
-	private final static String ACTION = "CREATE";
+	private final static String ACTION = "create";
 	
 	// ---------------------- [CREATE] [SINGLEQUERY] [BadQueryException]
 	@Test
-	// BadQueryException : Missing ';' at the end of the query.
-	public void parseQuerySingleCreateSyntax1BadQueryExceptionTest() {
-		String query = ACTION + " MySeries int64";
-		String expectedMessage = "Error in query";
-		
-		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
-		Assertions.assertEquals(expectedMessage, e.getMessage());
-	}
-	
-	@Test
 	// BadQueryException : Missing name.
-	public void parseQuerySingleCreateSyntax2BadQueryExceptionTest() {
-		String query = ACTION + " int64;";
-		String expectedMessage = "Error in query";
+	public void parseQuerySingleCreateSyntax1BadQueryExceptionTest() {
+		String query = ACTION + " int64";
+		String expectedMessage = BadQueryException.ERROR_MESSAGE_CREATE_GENERAL;
 		
 		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
 		Assertions.assertEquals(expectedMessage, e.getMessage());
@@ -36,9 +31,9 @@ class QueryParsingCreateTests {
 	
 	@Test
 	// BadQueryException : Missing type.
-	public void parseQuerySingleCreateSyntax3BadQueryExceptionTest() {
-		String query = ACTION + " MySeries;";
-		String expectedMessage = "Error in query";
+	public void parseQuerySingleCreateSyntax2BadQueryExceptionTest() {
+		String query = ACTION + " MySeries";
+		String expectedMessage = BadQueryException.ERROR_MESSAGE_CREATE_GENERAL;
 		
 		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
 		Assertions.assertEquals(expectedMessage, e.getMessage());
@@ -46,39 +41,39 @@ class QueryParsingCreateTests {
 	
 	@Test
 	// BadQueryException : Missing name and type.
+	public void parseQuerySingleCreateSyntax3BadQueryExceptionTest() {
+		String query = ACTION;
+		String expectedMessage = BadQueryException.ERROR_MESSAGE_CREATE_GENERAL;
+		
+		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
+		Assertions.assertEquals(expectedMessage, e.getMessage());
+	}
+	
+	@Test
+	// BadQueryException : Unknown type.
 	public void parseQuerySingleCreateSyntax4BadQueryExceptionTest() {
-		String query = ACTION + ";";
-		String expectedMessage = "Error in query";
+		String query = ACTION + " MySeries uintlong42";
+		String expectedMessage = BadQueryException.ERROR_MESSAGE_CREATE_IN_TYPE;
 		
 		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
 		Assertions.assertEquals(expectedMessage, e.getMessage());
 	}
 	
 	@Test
-	// BadQueryException : Name and type inverted.
+	// BadQueryException : spaces in name.
 	public void parseQuerySingleCreateSyntax5BadQueryExceptionTest() {
-		String query = ACTION + " int64 MySeries;";
-		String expectedMessage = "Error in query";
+		String query = ACTION + " MySe ries int64";
+		String expectedMessage = BadQueryException.ERROR_MESSAGE_CREATE_IN_NAME_SPACES;
 		
 		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
 		Assertions.assertEquals(expectedMessage, e.getMessage());
 	}
 	
 	@Test
-	// BadQueryException : unknown type.
+	// BadQueryException : special characters in name.
 	public void parseQuerySingleCreateSyntax6BadQueryExceptionTest() {
-		String query = ACTION + " MySeries uintlong42;";
-		String expectedMessage = "Error in query";
-		
-		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
-		Assertions.assertEquals(expectedMessage, e.getMessage());
-	}
-	
-	@Test
-	// BadQueryException : disordered.
-	public void parseQuerySingleCreateSyntax7BadQueryExceptionTest() {
-		String query = "MySeries " + ACTION + " uintlong42;";
-		String expectedMessage = "Error in query";
+		String query = ACTION + " MaSérie int64";
+		String expectedMessage = BadQueryException.ERROR_MESSAGE_CREATE_IN_NAME_SPECIAL_CHARACTERS;
 		
 		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
 		Assertions.assertEquals(expectedMessage, e.getMessage());

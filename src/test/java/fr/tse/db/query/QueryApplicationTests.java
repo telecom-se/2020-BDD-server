@@ -25,8 +25,8 @@ class QueryApplicationTests {
 	@Test
 	// Unknown action in query
 	public void parseQueryBadQueryExceptionBadActionProvidedTest() {
-		String query = "CREATT MySeries int64;";
-		String expectedMessage = "Bad action provided";
+		String query = "CREATT MySeries int64";
+		String expectedMessage = BadQueryException.ERROR_MESSAGE_BAD_ACTION;
 		
 		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
 		Assertions.assertEquals(expectedMessage, e.getMessage());
