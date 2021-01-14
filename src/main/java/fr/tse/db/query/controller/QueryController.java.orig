@@ -23,9 +23,14 @@ public class QueryController {
         HashMap<String, Object> response = this.queryService.handleQuery(query);
         HashMap<String, Object> responseGlobal = new HashMap<>();
         responseGlobal.put("success", true);
+<<<<<<< HEAD
+        responseGlobal.put("data", response);
+        return new ResponseEntity<>(responseGlobal, HttpStatus.OK);
+=======
         if(response.size() > 0) {
             responseGlobal.put("data", response);
         }
-        return new ResponseEntity<>(responseGlobal, HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+>>>>>>> 3589fd5740dbc057302eaa0f0acf46576e06658a
     }
 }
