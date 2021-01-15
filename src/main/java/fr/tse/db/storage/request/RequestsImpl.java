@@ -15,12 +15,12 @@ import java.util.stream.Collectors;
 public class RequestsImpl implements Requests {
 	
 	@Override
-	public Map<String,Class<ValueType>> showAllSeries() {
+	public Map<String,String> showAllSeries() {
 		DataBase db = DataBase.getInstance();
-		Map<String, Class<ValueType>> result = db.getSeries().entrySet().parallelStream()
+		Map<String, String> result = db.getSeries().entrySet().parallelStream()
 				.collect(Collectors.toMap(
 		                   entry -> entry.getKey(), 
-		                   entry -> entry.getValue().getType()));
+		                   entry -> entry.getValue().getType().getSimpleName()));
 		return result;
 	}
 	

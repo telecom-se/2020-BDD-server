@@ -21,7 +21,7 @@ public interface Requests {
 	 * Shows all Series name and types in database
 	 * @return
 	 */
-	public  Map<String,Class<ValueType>> showAllSeries();
+	public  Map<String,String> showAllSeries();
 	/**
 	 * Select all values from series
 	 * @param seriesName series name
