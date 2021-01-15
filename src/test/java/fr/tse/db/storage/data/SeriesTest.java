@@ -1,11 +1,11 @@
 package fr.tse.db.storage.data;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SeriesTest {
 
@@ -13,7 +13,7 @@ public class SeriesTest {
 	private Series<Int64> series;
 	private Series<Int32> series32;
 	
-	@Before
+	@BeforeEach
 	public void initialize() {
 		this.series = new SeriesUnComp<Int64>("seriesTest", Int64.class);
 		this.series32 = new SeriesUnComp<Int32>("seriesTest32", Int32.class);

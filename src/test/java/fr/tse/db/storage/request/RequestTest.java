@@ -1,13 +1,11 @@
 package fr.tse.db.storage.request;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import fr.tse.db.storage.data.DataBase;
 import fr.tse.db.storage.data.Int32;
@@ -18,6 +16,8 @@ import fr.tse.db.storage.data.ValueType;
 import fr.tse.db.storage.exception.EmptySeriesException;
 import fr.tse.db.storage.exception.SeriesAlreadyExistsException;
 import fr.tse.db.storage.exception.SeriesNotFoundException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RequestTest {
 
@@ -31,11 +31,10 @@ public class RequestTest {
 	Int64 val = new Int64((long) 658);
 	Int32 val32 = new Int32((45));
 
-	private RequestsImpl req;
+	private RequestsImpl req = new RequestsImpl();
 
-	@Before
+	@BeforeEach
 	public void initialize() throws SeriesAlreadyExistsException {
-		req= new RequestsImpl();
 		DataBase database = DataBase.getInstance();
 		try {
 			database.deleteSeries("seriesTest");
@@ -43,14 +42,11 @@ public class RequestTest {
 		}catch(SeriesNotFoundException e) {
 			System.out.println("base not initialised");
 		}
-		
 
 		series = new SeriesUnComp<Int64>("seriesTest", Int64.class);
 		series32 = new SeriesUnComp<Int32>("seriesTest32", Int32.class);
-		
 
 		series.addPoint(tmp, val);
-		
 		
 		series32.addPoint(tmp, val32);
 		
@@ -344,12 +340,11 @@ public class RequestTest {
 		assertEquals(10,(long) min.getVal());
 	}
 	
-	@Test(expected = EmptySeriesException.class)
+	@Test
 	public void minTest2() {
 		Map<Long,Int64> m1 = new HashMap<Long, Int64>();
 		Series<Int64> seriesValues = new SeriesUnComp<>("abc",Int64.class,m1);
-
-		ValueType min = req.min(seriesValues);
+		assertThrows(EmptySeriesException.class, () -> req.min(seriesValues));
 	}
 
 	@Test

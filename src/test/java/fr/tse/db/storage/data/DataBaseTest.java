@@ -1,9 +1,8 @@
 package fr.tse.db.storage.data;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import fr.tse.db.storage.exception.SeriesAlreadyExistsException;
 import fr.tse.db.storage.exception.SeriesNotFoundException;
@@ -13,10 +12,6 @@ public class DataBaseTest {
 
 	// Series for test
 	private DataBase database=DataBase.getInstance();
-	
-	@Before
-	public void initialize() {
-	}
 	
 	@Test
 	public void addSeriesTestValid() throws SeriesAlreadyExistsException {
@@ -29,13 +24,11 @@ public class DataBaseTest {
 		assertEquals(s,this.database.getSeries().get("name1"));
 	}
 	
-	@Test(expected= SeriesAlreadyExistsException.class)
+	@Test
 	public void addSeriesTestInvalid() throws SeriesAlreadyExistsException{
 		SeriesUnComp<Int64> s = new SeriesUnComp<Int64>("name", Int64.class);
-
 		this.database.addSeries(s);
-		this.database.addSeries(s);
-	
+		assertThrows(SeriesAlreadyExistsException.class, () -> this.database.addSeries(s));
 	}
 	
 	
@@ -49,14 +42,8 @@ public class DataBaseTest {
 		
 	}
 
-	@Test(expected = SeriesNotFoundException.class)
+	@Test
 	public void getByNameTestInvalid() throws SeriesNotFoundException{
-		
-		Series<Int64> result = this.database.getByName("Wrng_name");
-
+		assertThrows(SeriesNotFoundException.class, () -> this.database.getByName("Wrong_name"));
 	}
-	
-	
-
-
 }
