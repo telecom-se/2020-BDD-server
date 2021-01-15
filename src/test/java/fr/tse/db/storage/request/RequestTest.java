@@ -1,24 +1,23 @@
 package fr.tse.db.storage.request;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import fr.tse.db.storage.data.*;
+import fr.tse.db.storage.exception.EmptySeriesException;
+import fr.tse.db.storage.exception.SeriesAlreadyExistsException;
+import fr.tse.db.storage.exception.SeriesNotFoundException;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
-import fr.tse.db.storage.data.DataBase;
-import fr.tse.db.storage.data.Int32;
-import fr.tse.db.storage.data.Int64;
-import fr.tse.db.storage.data.Series;
-import fr.tse.db.storage.data.SeriesUnComp;
-import fr.tse.db.storage.data.ValueType;
-import fr.tse.db.storage.exception.EmptySeriesException;
-import fr.tse.db.storage.exception.SeriesAlreadyExistsException;
-import fr.tse.db.storage.exception.SeriesNotFoundException;
-
+@ActiveProfiles(profiles = "test")
 public class RequestTest {
 
 	// Series for test

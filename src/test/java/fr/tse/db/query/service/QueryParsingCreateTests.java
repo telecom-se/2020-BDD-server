@@ -100,7 +100,7 @@ class QueryParsingCreateTests {
 	// BadQueryException : spaces in name.
 	public void parseQuerySingleCreateSyntax5BadQueryExceptionTest() {
 		String query = ACTION + " MySe ries int64";
-		String expectedMessage = BadQueryException.ERROR_MESSAGE_CREATE_IN_NAME_SPACES;
+		String expectedMessage = BadQueryException.ERROR_MESSAGE_CREATE_IN_TYPE;
 		
 		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
 		Assertions.assertEquals(expectedMessage, e.getMessage());

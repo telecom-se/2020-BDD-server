@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -20,6 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
+@ActiveProfiles(profiles = "test_query_contoller")
 public class QueryControllerCreateTests {
 
     @Autowired
@@ -38,14 +40,7 @@ public class QueryControllerCreateTests {
     @Test
     public void testCreateControllerSeriesAlreadyExistsExceptionTest() throws Exception {
 
-        // TODO : il faut utiliser le LoadDatabaseRunner
-        mvc.perform(post("/query?query=CREATE MySeries1 int32"))
-                .andExpect(status().is(200))
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("success", is(true)))
-        ;
-
-        mvc.perform(post("/query?query=CREATE MySeries1 int32"))
+        mvc.perform(post("/query?query=CREATE seriesint32 int32"))
                 .andExpect(status().is(409))
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("success", is(false)))
