@@ -1,9 +1,13 @@
 package fr.tse.db.storage.data;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Map;
 
@@ -11,9 +15,10 @@ import org.junit.Test;
 
 public class ReadWriteOnFileTest {
 	@Test
-	public void writeDBTest() throws FileNotFoundException, IOException {
-		File fichier =  new File("./tests/db.db") ;
-		ObjectOutputStream oos =  new ObjectOutputStream(new FileOutputStream(fichier)) ;
+	public void writeDBTest() throws FileNotFoundException, IOException, ClassNotFoundException {
+		File fichier =  new File("db.db") ;
+		
+		ObjectOutputStream oos =  new ObjectOutputStream(new FileOutputStream(fichier,false)) ;
 		
 		DataBase db = DataBase.getInstance();
 		
@@ -27,6 +32,16 @@ public class ReadWriteOnFileTest {
 		db.addSeries(s);
 		
 		oos.writeObject(db) ;
+		
+		ObjectInputStream ois =  new ObjectInputStream(new FileInputStream(fichier)) ;
+
+		DataBase db2=(DataBase) ois.readObject();
+		
+		assertEquals(db.getSeries().get("seriesTest").getName() , db2.getSeries().get("seriesTest").getName());
 
 	}
+
+	
+	
+	
 }
