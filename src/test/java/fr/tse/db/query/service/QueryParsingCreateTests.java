@@ -1,6 +1,5 @@
 package fr.tse.db.query.service;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -97,24 +96,40 @@ class QueryParsingCreateTests {
 	}
 	
 	@Test
-	// BadQueryException : spaces in name.
-	public void parseQuerySingleCreateSyntax5BadQueryExceptionTest() {
-		String query = ACTION + " MySe ries int64";
-		String expectedMessage = BadQueryException.ERROR_MESSAGE_CREATE_IN_TYPE;
-		
-		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
-		Assertions.assertEquals(expectedMessage, e.getMessage());
-	}
-	
-	@Test
 	// BadQueryException : special characters in name.
-	public void parseQuerySingleCreateSyntax6BadQueryExceptionTest() {
+	public void parseQuerySingleCreateSyntax5BadQueryExceptionTest() {
 		String query = ACTION + " MaSérie int64";
 		String expectedMessage = BadQueryException.ERROR_MESSAGE_CREATE_IN_NAME_SPECIAL_CHARACTERS;
 		
 		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
 		Assertions.assertEquals(expectedMessage, e.getMessage());
 	}
+	
 	// ---------------------- [CREATE] [SINGLEQUERY] [OK]
-	// TODO
+	@Test
+	// BadQueryException : Regular creation.
+	public void parseQuerySingleCreateExample1Test() throws BadQueryException {
+		String query = ACTION + " MySeries int64";
+		HashMap<String, Object> expectedHashMap = new HashMap();
+		expectedHashMap.put("action", "create");
+		expectedHashMap.put("name", "MySeries");
+		expectedHashMap.put("type", "int64");
+		
+		HashMap<String, Object> returnedHashMap = qs.parseQuery(query);
+		assertEquals(expectedHashMap, returnedHashMap);
+	}
+	
+	@Test
+	// BadQueryException : Regular creation with spaces.
+	public void parseQuerySingleCreateExample2Test() throws BadQueryException {
+		String query = ACTION + "    MySeries     int64";
+		HashMap<String, Object> expectedHashMap = new HashMap();
+		expectedHashMap.put("action", "create");
+		expectedHashMap.put("name", "MySeries");
+		expectedHashMap.put("type", "int64");
+		
+		HashMap<String, Object> returnedHashMap = qs.parseQuery(query);
+		assertEquals(expectedHashMap, returnedHashMap);
+	}
+	
 }

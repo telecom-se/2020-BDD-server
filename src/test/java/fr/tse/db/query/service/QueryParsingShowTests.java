@@ -23,15 +23,14 @@ public class QueryParsingShowTests {
 	public void parseQuerySelectSyntaxQueryExceptionTest() throws BadQueryException {
 	    String queryTest = "show";
 	    HashMap<String, Object> expectedSeries = new HashMap<String, Object>();
-        HashMap<String, Object> test = queryService.parseQuery(queryTest);
-        System.out.println(test+"test");
-	    Assertions.assertEquals(expectedSeries,test);
+	    expectedSeries.put("action", "show");
+	    Assertions.assertEquals(expectedSeries,queryService.parseQuery(queryTest));
 	}
 	
 	@Test
 	// BadQueryException : Test when the Show Query is not specified
 	public void parseQuerySelectUnspecifiedBadQueryExceptionTest() {
-	    String queryTest = "mySeries;";
+	    String queryTest = "myseries;";
 	    String expectedMessage = "Error in SHOW query";
 	    Exception e = Assertions.assertThrows(BadQueryException.class, () -> queryService.parseQuery(queryTest));
 	    Assertions.assertEquals(expectedMessage, e.getMessage());
