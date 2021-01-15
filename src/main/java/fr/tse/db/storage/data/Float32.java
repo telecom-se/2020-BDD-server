@@ -7,7 +7,7 @@ import fr.tse.db.storage.exception.WrongValueTypeException;
 * @author  Valentin, Alexandre, Youssef
 * @since   2020-11
 */
-public class Float32 implements ValueType<Float> {
+public class Float32 implements ValueType<Float>{
 
 	private Float val;
 
@@ -41,12 +41,13 @@ public class Float32 implements ValueType<Float> {
 	}
 	
 	public ValueType sum(ValueType i) throws WrongValueTypeException{
+		Float32 res=new Float32(0F);
 		if (i instanceof Float32) {
-			this.val+= ((Float32) i).getVal();
+			res.setVal(this.getVal()+((Float32) i).getVal());
 		} else {
 			throw new WrongValueTypeException(this.getClass(),i.getClass());
 		}
-		return new Float32(val);
+		return res;
 	}
 
 	public float divide(int denom) {
