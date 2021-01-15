@@ -121,23 +121,28 @@ public class QueryService {
             	
             	Series seriesTemp = new Series(serieName, series.getType());
 
-            	// For each pair in pairs list
-            	for(String[] pair : pairs) {
-            		// Get pair timestamp
-            		Long timestamp = Long.parseLong(pair[0]);
-            		
-                	// According to the value type
-                	if(series.getType() == Int32.class) {
-                		Int32 value = new Int32(Integer.parseInt(pair[1]));
-                    	seriesTemp.addPoint(timestamp, value);
-                	}else if(series.getType() == Int64.class) {
-                		Int64 value = new Int64(Long.parseLong(pair[1]));
-                    	seriesTemp.addPoint(timestamp, value);
-                	}else if(series.getType() == Float32.class) {
-                		Float32 value = new Float32(Float.parseFloat(pair[1]));
-                    	seriesTemp.addPoint(timestamp, value);
-                	}
-            	}
+            	try{
+                    // For each pair in pairs list
+                    for(String[] pair : pairs) {
+                        // Get pair timestamp
+                        Long timestamp = Long.parseLong(pair[0]);
+
+                        // According to the value type
+                        if(series.getType() == Int32.class) {
+                            Int32 value = new Int32(Integer.parseInt(pair[1]));
+                            seriesTemp.addPoint(timestamp, value);
+                        }else if(series.getType() == Int64.class) {
+                            Int64 value = new Int64(Long.parseLong(pair[1]));
+                            seriesTemp.addPoint(timestamp, value);
+                        }else if(series.getType() == Float32.class) {
+                            Float32 value = new Float32(Float.parseFloat(pair[1]));
+                            seriesTemp.addPoint(timestamp, value);
+                        }
+                    }
+                }catch (NumberFormatException exc){
+            	    throw new WrongSeriesValueTypeException(seriesTemp.getType(),seriesTemp.getType());
+                }
+
             	
             	// Insert serie in serie
             	request.insertValue(serieName, seriesTemp);
