@@ -8,6 +8,7 @@ import fr.tse.db.storage.request.Requests;
 import fr.tse.db.storage.request.RequestsImpl;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,7 +35,6 @@ public class QueryService {
      */
     public HashMap<String, Object> handleQuery(String query) throws Exception {
         String[] commands = query.toLowerCase().split("\\s*;\\s*");
-        System.out.println(commands.length + " command(s) found");
         HashMap<String, Object> result = this.parseQuery(commands[0]);
         HashMap<String, Object> resultMap = new HashMap<>();
         switch(result.get("action").toString()) {
@@ -153,13 +153,23 @@ public class QueryService {
             case "show": {
                 String series = result.get("series").toString();
                 if(series.equals("all")) {
-                    resultMap.put("info", request.showAllSeries());
+                    Map<String, String> data = request.showAllSeries();
+                    ArrayList<HashMap<String, String>> returnedArray = new ArrayList<>();
+                    for (Map.Entry<String, String> entry : data.entrySet()) {
+                        String name = entry.getKey();
+                        String value = entry.getValue();
+                        HashMap<String, String> current = new HashMap<>();
+                        current.put("name", name);
+                        current.put("type", value);
+                        returnedArray.add(current);
+                    }
+                    resultMap.put("info", returnedArray);
                 } else {
                     // TODO call storage method
                     //resultMap.put("info", request.showSeries(series));
                 }
 
-                return null;
+                return resultMap;
             }
             case "drop": {
                 String series = result.get("series").toString();
