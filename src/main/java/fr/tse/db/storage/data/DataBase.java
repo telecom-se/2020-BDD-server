@@ -1,9 +1,13 @@
 package fr.tse.db.storage.data;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import fr.tse.db.storage.exception.SeriesAlreadyExistsException;
 import fr.tse.db.storage.exception.SeriesNotFoundException;
@@ -93,6 +97,23 @@ public class DataBase implements Serializable {
 		}
 	}
 	
+	
+	private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+		Map<String,SeriesComp> map=this.series.entrySet().parallelStream()
+			.collect(Collectors.toMap(
+					entry->entry.getKey(),
+					entry -> SeriesConverter.compress((SeriesUnComp) entry.getValue())
+					));
+		out.writeObject(map);
+	}
+	
+	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+		Map<String,SeriesComp> map= (Map<String, SeriesComp>) in.readObject();
+		this.series= map.entrySet().parallelStream().collect(Collectors.toMap(
+				entry->entry.getKey(),
+				entry -> SeriesConverter.unCompress(entry.getValue())
+				));
+	}
 	
 	
 }
