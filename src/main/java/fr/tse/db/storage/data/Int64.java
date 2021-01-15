@@ -25,13 +25,7 @@ public class Int64 implements ValueType<Long> {
 
     public int compareTo(ValueType o) {
         if (o instanceof Int64) {
-            if (this.val == ((Int64) o).val) {
-                return 0;
-            } else if (this.val < ((Int64) o).val) {
-                return -1;
-            } else {
-                return 1;
-            }
+            return this.val.compareTo(((Int64) o).val);
         } else {
             throw new WrongValueTypeException(this.getClass(), o.getClass());
         }
@@ -50,9 +44,5 @@ public class Int64 implements ValueType<Long> {
             throw new WrongValueTypeException(this.getClass(), i.getClass());
         }
         return res;
-    }
-
-    public float divide(int denom) {
-        return (float) this.val / denom;
     }
 }

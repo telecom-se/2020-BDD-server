@@ -17,9 +17,9 @@ public class SeriesQueueTest {
     @Test
     public void addValTest() {
 
-        SerieQueue<Int32> Ser = new SerieQueue<Int32>(0L);
+        SeriesQueue<Int32> Ser = new SeriesQueue<Int32>(0L);
 
-        LinkedList<DataPointComp> list = Ser.getSerie();
+        LinkedList<DataPointComp> list = Ser.getSeries();
 
 
         assertEquals(0, list.size());
@@ -27,7 +27,7 @@ public class SeriesQueueTest {
 
         Ser.addVal(10L, new Int32(1));
 
-        list = Ser.getSerie();
+        list = Ser.getSeries();
         BitSet one = new BitSet();
         BitSet ten = new BitSet();
 
@@ -40,7 +40,7 @@ public class SeriesQueueTest {
 
 
         Ser.addVal(11L, new Int32(1));
-        list = Ser.getSerie();
+        list = Ser.getSeries();
 
         BitSet zero = new BitSet();
         zero.set(0, false);
@@ -54,7 +54,7 @@ public class SeriesQueueTest {
     @Test
     public void getValTest() {
 
-        SerieQueue<Int32> Ser = new SerieQueue<Int32>(0L);
+        SeriesQueue<Int32> Ser = new SeriesQueue<Int32>(0L);
         Ser.addVal(10L, new Int32(1));
         Ser.addVal(15L, new Int32(40));
 
@@ -71,22 +71,22 @@ public class SeriesQueueTest {
     @Test
     public void removeTest() {
 
-        SerieQueue<Int32> Ser = new SerieQueue<Int32>(0L);
+        SeriesQueue<Int32> Ser = new SeriesQueue<Int32>(0L);
         Ser.addVal(10L, new Int32(1));
 
 
         Ser.remove(56L);
-        assertEquals(1, Ser.getSerie().size());
+        assertEquals(1, Ser.getSeries().size());
         Ser.remove(10L);
 
-        assertEquals(0, Ser.getSerie().size());
+        assertEquals(0, Ser.getSeries().size());
 
     }
 
     @Test
     public void getAllPointsTest() {
 
-        SerieQueue<Int32> Ser = new SerieQueue<Int32>(0L);
+        SeriesQueue<Int32> Ser = new SeriesQueue<Int32>(0L);
         Ser.addVal(10L, new Int32(1));
 
 

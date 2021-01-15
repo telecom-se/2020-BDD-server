@@ -14,9 +14,9 @@ import java.io.Serializable;
 
 public interface ValueType<T> extends Comparable<ValueType>, Serializable {
 
-    public T getVal();
+    T getVal();
 
-    public void setVal(T val);
+    void setVal(T val);
 
     /**
      * Sum this object with another ValueType
@@ -25,14 +25,5 @@ public interface ValueType<T> extends Comparable<ValueType>, Serializable {
      *
      * @throws WrongValueTypeException if types do not match
      */
-    public ValueType sum(ValueType i) throws WrongValueTypeException;
-
-    /**
-     * Divide this object by an int
-     *
-     * @param denom the int to divide with
-     *
-     * @return divided value
-     */
-    public float divide(int denom);
+    ValueType sum(ValueType i) throws WrongValueTypeException;
 }

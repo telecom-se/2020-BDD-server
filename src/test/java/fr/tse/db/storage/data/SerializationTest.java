@@ -15,7 +15,7 @@ public class SerializationTest {
 
         DataBase db = DataBase.getInstance();
 
-        Series s = new SeriesUnComp<Int64>("seriesTest", Int64.class);
+        Series s = new SeriesUncompressed<>("seriesTest", Int64.class);
         Long tmp = (long) 1000000;
         Int64 val = new Int64((long) 658);
         s.addPoint(tmp, val);

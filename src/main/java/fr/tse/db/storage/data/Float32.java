@@ -26,13 +26,7 @@ public class Float32 implements ValueType<Float> {
 
     public int compareTo(ValueType o) {
         if (o instanceof Float32) {
-            if (this.val == ((Float32) o).val) {
-                return 0;
-            } else if (this.val < ((Float32) o).val) {
-                return -1;
-            } else {
-                return 1;
-            }
+            return this.val.compareTo(((Float32) o).val);
         } else {
             throw new WrongValueTypeException(this.getClass(), o.getClass());
         }
@@ -51,9 +45,5 @@ public class Float32 implements ValueType<Float> {
             throw new WrongValueTypeException(this.getClass(), i.getClass());
         }
         return res;
-    }
-
-    public float divide(int denom) {
-        return (float) this.val / denom;
     }
 }

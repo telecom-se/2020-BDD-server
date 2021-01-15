@@ -3,7 +3,7 @@ package fr.tse.db.storage.data;
 import java.util.BitSet;
 
 /**
- * Utilitary class to make conversions between bitsets and the differents valuetypes.
+ * Utility class to make conversions between bitsets and the different value types.
  * Mainly used by the SeriesQueue class.
  *
  * @author remi huguenot
@@ -31,9 +31,10 @@ public class BitsConverter {
     }
 
     public static BitSet ValTypeToBitSet(ValueType value) {
+        // hack
         String cl = value.getVal().getClass().getSimpleName();
         BitSet bits = new BitSet();
-        int index;
+        int index = 0;
 
         switch (cl) {
             // Case Float32
@@ -41,10 +42,9 @@ public class BitsConverter {
                 byte floatBits = ((Number) value.getVal()).byteValue();
                 bits = BitSet.valueOf(new byte[]{floatBits});
                 break;
-            //Case Int32
+            // Case Int32
             case "Integer":
                 int valInt = ((Int32) value).getVal();
-                index = 0;
                 while (valInt != 0) {
                     if (valInt % 2 != 0) {
                         bits.set(index);
@@ -53,10 +53,9 @@ public class BitsConverter {
                     valInt = valInt >>> 1;
                 }
                 break;
-            //Case Int64
+            // Case Int64
             case "Long":
                 long valLong = ((Int64) value).getVal();
-                index = 0;
                 while (valLong != 0L) {
                     if (valLong % 2L != 0) {
                         bits.set(index);
@@ -66,8 +65,7 @@ public class BitsConverter {
                 }
                 break;
             default:
-                System.out.println("default");
-                break;
+                throw new IllegalArgumentException("Type not supported");
         }
         return bits;
     }
@@ -90,7 +88,6 @@ public class BitsConverter {
 
     public static Float32 BitSetToFloat32(BitSet bits) {
         byte[] byteArr = bits.toByteArray();
-
         return new Float32(((Byte) byteArr[0]).floatValue());
     }
 
@@ -98,7 +95,6 @@ public class BitsConverter {
         switch (className) {
             case "Int64":
                 return BitSetToInt64(val);
-
             case "Int32":
                 return BitSetToInt32(val);
             case "Float32":

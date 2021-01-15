@@ -11,11 +11,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class DataBaseTest {
 
     // Series for test
-    private DataBase database = DataBase.getInstance();
+    private final DataBase database = DataBase.getInstance();
 
     @Test
     public void addSeriesTestValid() throws SeriesAlreadyExistsException {
-        SeriesUnComp<Int64> s = new SeriesUnComp<Int64>("name1", Int64.class);
+        SeriesUncompressed<Int64> s = new SeriesUncompressed<>("name1", Int64.class);
         int dbSize = this.database.getSeries().size();
 
         this.database.addSeries(s);
@@ -26,7 +26,7 @@ public class DataBaseTest {
 
     @Test
     public void addSeriesTestInvalid() throws SeriesAlreadyExistsException {
-        SeriesUnComp<Int64> s = new SeriesUnComp<Int64>("name", Int64.class);
+        SeriesUncompressed<Int64> s = new SeriesUncompressed<>("name", Int64.class);
         this.database.addSeries(s);
         assertThrows(SeriesAlreadyExistsException.class, () -> this.database.addSeries(s));
     }
@@ -34,13 +34,10 @@ public class DataBaseTest {
 
     @Test
     public void getByNameTestValid() throws SeriesNotFoundException {
-        SeriesUnComp<Int64> s = new SeriesUnComp<Int64>("name_test", Int64.class);
+        SeriesUncompressed<Int64> s = new SeriesUncompressed<>("name_test", Int64.class);
         this.database.getSeries().put("name_test", s);
         Series<Int64> result = this.database.getByName("name_test");
-        ;
-
         assertEquals(result, s);
-
     }
 
     @Test

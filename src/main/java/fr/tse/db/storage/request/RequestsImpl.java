@@ -2,32 +2,28 @@ package fr.tse.db.storage.request;
 
 import fr.tse.db.storage.data.DataBase;
 import fr.tse.db.storage.data.Series;
-import fr.tse.db.storage.data.SeriesUnComp;
+import fr.tse.db.storage.data.SeriesUncompressed;
 import fr.tse.db.storage.data.ValueType;
 import fr.tse.db.storage.exception.*;
 
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class RequestsImpl implements Requests {
-
     @Override
     public Map<String, String> showAllSeries() {
         DataBase db = DataBase.getInstance();
-        Map<String, String> result = db.getSeries().entrySet().parallelStream()
+        return db.getSeries().entrySet().parallelStream()
                 .collect(Collectors.toMap(
-                        entry -> entry.getKey(),
+                        Entry::getKey,
                         entry -> entry.getValue().getType().getSimpleName()));
-        return result;
     }
 
     @Override
     public Series selectSeries(String seriesName) throws SeriesNotFoundException {
-        DataBase db = DataBase.getInstance();
-        return db.getByName(seriesName);
+        return DataBase.getInstance().getByName(seriesName);
     }
 
     @Override
@@ -35,7 +31,7 @@ public class RequestsImpl implements Requests {
         Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
         Map<Long, ValueType> result = series.getPoints().entrySet().parallelStream().filter(map -> map.getKey().equals(timestamp))
                 .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-        return new SeriesUnComp<>(null, series.getType(), result);
+        return new SeriesUncompressed<>(null, series.getType(), result);
     }
 
     @Override
@@ -43,7 +39,7 @@ public class RequestsImpl implements Requests {
         Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
         Map<Long, ValueType> result = series.getPoints().entrySet().parallelStream().filter(map -> map.getKey() < timestamp)
                 .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-        return new SeriesUnComp<>(null, series.getType(), result);
+        return new SeriesUncompressed<>(null, series.getType(), result);
     }
 
     @Override
@@ -51,7 +47,7 @@ public class RequestsImpl implements Requests {
         Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
         Map<Long, ValueType> result = series.getPoints().entrySet().parallelStream().filter(map -> map.getKey() <= timestamp)
                 .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-        return new SeriesUnComp<>(null, series.getType(), result);
+        return new SeriesUncompressed<>(null, series.getType(), result);
     }
 
     @Override
@@ -59,7 +55,7 @@ public class RequestsImpl implements Requests {
         Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
         Map<Long, ValueType> result = series.getPoints().entrySet().parallelStream().filter(map -> map.getKey() > timestamp)
                 .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-        return new SeriesUnComp<>(null, series.getType(), result);
+        return new SeriesUncompressed<>(null, series.getType(), result);
     }
 
     @Override
@@ -67,7 +63,7 @@ public class RequestsImpl implements Requests {
         Series<ValueType> series = DataBase.getInstance().getByName(seriesName);
         Map<Long, ValueType> result = series.getPoints().entrySet().parallelStream().filter(map -> map.getKey() >= timestamp)
                 .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-        return new SeriesUnComp<>(null, series.getType(), result);
+        return new SeriesUncompressed<>(null, series.getType(), result);
     }
 
     @Override
@@ -77,7 +73,7 @@ public class RequestsImpl implements Requests {
         Map<Long, ValueType> result = series.getPoints().entrySet().parallelStream()
                 .filter(map -> (map.getKey() >= timestamp1 && map.getKey() <= timestamp2))
                 .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-        return new SeriesUnComp<>(null, series.getType(), result);
+        return new SeriesUncompressed<>(null, series.getType(), result);
     }
 
     @Override
@@ -87,7 +83,7 @@ public class RequestsImpl implements Requests {
         Map<Long, ValueType> result = series.getPoints().entrySet().parallelStream()
                 .filter(map -> (map.getKey() <= timestamp1 || map.getKey() >= timestamp2))
                 .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-        return new SeriesUnComp<>(null, series.getType(), result);
+        return new SeriesUncompressed<>(null, series.getType(), result);
     }
 
     @Override
@@ -98,7 +94,7 @@ public class RequestsImpl implements Requests {
             throw new WrongSeriesValueTypeException(series.getType(), insertedPoints.getType());
         }
         if (((Series<ValueType>) insertedPoints).getPoints().entrySet().parallelStream()
-                .allMatch(map -> !series.getPoints().containsKey(map.getKey()))) {
+                .noneMatch(map -> series.getPoints().containsKey(map.getKey()))) {
             series.getPoints().putAll(insertedPoints.getPoints());
         } else {
             throw new TimestampAlreadyExistsException();
@@ -110,9 +106,8 @@ public class RequestsImpl implements Requests {
             throws SeriesAlreadyExistsException {
         DataBase dataBase = DataBase.getInstance();
 
-        Series<ValType> series = new SeriesUnComp<ValType>(seriesName, type);
+        Series<ValType> series = new SeriesUncompressed<ValType>(seriesName, type);
         dataBase.addSeries((Series<ValueType>) series);
-
     }
 
     @Override
@@ -183,20 +178,12 @@ public class RequestsImpl implements Requests {
 
     @Override
     public ValueType min(Series series) throws EmptySeriesException {
-        try {
-            return ((Series<ValueType>) series).getPoints().values().parallelStream().min(ValueType::compareTo).get();
-        } catch (NoSuchElementException e) {
-            throw new EmptySeriesException();
-        }
+        return ((Series<ValueType>) series).getPoints().values().parallelStream().min(ValueType::compareTo).orElseThrow(EmptySeriesException::new);
     }
 
     @Override
     public ValueType max(Series series) throws EmptySeriesException {
-        try {
-            return ((Series<ValueType>) series).getPoints().values().parallelStream().max(ValueType::compareTo).get();
-        } catch (NoSuchElementException e) {
-            throw new EmptySeriesException();
-        }
+        return ((Series<ValueType>) series).getPoints().values().parallelStream().max(ValueType::compareTo).orElseThrow(EmptySeriesException::new);
     }
 
     @Override

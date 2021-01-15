@@ -15,8 +15,8 @@ public class SeriesTest {
 
     @BeforeEach
     public void initialize() {
-        this.series = new SeriesUnComp<Int64>("seriesTest", Int64.class);
-        this.series32 = new SeriesUnComp<Int32>("seriesTest32", Int32.class);
+        this.series = new SeriesUncompressed<Int64>("seriesTest", Int64.class);
+        this.series32 = new SeriesUncompressed<Int32>("seriesTest32", Int32.class);
     }
 
     @Test

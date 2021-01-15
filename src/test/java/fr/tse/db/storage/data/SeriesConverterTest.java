@@ -13,12 +13,12 @@ public class SeriesConverterTest {
     @Test
     public void compressTest() {
 
-        SeriesUnComp<Int32> UnComp = new SeriesUnComp<Int32>("comp", Int32.class);
+        SeriesUncompressed<Int32> UnComp = new SeriesUncompressed<>("comp", Int32.class);
 
 
         UnComp.addPoint(5L, new Int32(4));
 
-        SeriesComp<Int32> comp = SeriesConverter.compress(UnComp);
+        SeriesCompressed<Int32> comp = SeriesConverter.compress(UnComp);
 
         assertEquals("comp", comp.getName());
         assertEquals("Int32", comp.getType().getSimpleName());
@@ -26,7 +26,7 @@ public class SeriesConverterTest {
         Map<Long, Int32> points = comp.getPoints();
 
         assertEquals(1, points.size());
-        assertEquals(new Integer(4), points.get(5L).getVal());
+        assertEquals(Integer.valueOf(4), points.get(5L).getVal());
 
 
     }
@@ -34,12 +34,12 @@ public class SeriesConverterTest {
     @Test
     public void unCompressTest() {
 
-        SeriesComp<Int32> UnComp = new SeriesComp<Int32>("comp", Int32.class);
+        SeriesCompressed<Int32> UnComp = new SeriesCompressed<>("comp", Int32.class);
 
 
         UnComp.addPoint(5L, new Int32(4));
 
-        SeriesUnComp<Int32> comp = SeriesConverter.uncompress(UnComp);
+        SeriesUncompressed<Int32> comp = SeriesConverter.uncompress(UnComp);
 
         assertEquals("comp", comp.getName());
         assertEquals("Int32", comp.getType().getSimpleName());
@@ -47,6 +47,6 @@ public class SeriesConverterTest {
         Map<Long, Int32> points = comp.getPoints();
 
         assertEquals(1, points.size());
-        assertEquals(new Integer(4), points.get(5L).getVal());
+        assertEquals(Integer.valueOf(4), points.get(5L).getVal());
     }
 }

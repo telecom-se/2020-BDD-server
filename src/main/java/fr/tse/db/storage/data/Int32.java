@@ -25,13 +25,7 @@ public class Int32 implements ValueType<Integer> {
 
     public int compareTo(ValueType o) {
         if (o instanceof Int32) {
-            if (this.val == ((Int32) o).val) {
-                return 0;
-            } else if (this.val < ((Int32) o).val) {
-                return -1;
-            } else {
-                return 1;
-            }
+            return this.val.compareTo(((Int32) o).val);
         } else {
             throw new WrongValueTypeException(this.getClass(), o.getClass());
         }
@@ -50,9 +44,5 @@ public class Int32 implements ValueType<Integer> {
             throw new WrongValueTypeException(this.getClass(), i.getClass());
         }
         return res;
-    }
-
-    public float divide(int denom) {
-        return (float) this.val / denom;
     }
 }

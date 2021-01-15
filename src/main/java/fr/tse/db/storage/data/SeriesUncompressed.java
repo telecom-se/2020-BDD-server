@@ -15,20 +15,20 @@ import java.util.Map;
  * @since 2020-11
  */
 @Data
-public class SeriesUnComp<ValType extends ValueType> implements Series {
+public class SeriesUncompressed<ValType extends ValueType> implements Series {
     // Parameters
     private Class<ValType> type;
     private String name;
     private Map<Long, ValType> points;
 
     // Constructors
-    public SeriesUnComp(String name, Class<ValType> type) {
+    public SeriesUncompressed(String name, Class<ValType> type) {
         this.name = name;
         this.type = type;
-        this.points = new HashMap<Long, ValType>();
+        this.points = new HashMap<>();
     }
 
-    public SeriesUnComp(String name, Class<ValType> type, Map<Long, ValType> points) {
+    public SeriesUncompressed(String name, Class<ValType> type, Map<Long, ValType> points) {
         this.name = name;
         this.type = type;
         this.points = points;
@@ -53,18 +53,10 @@ public class SeriesUnComp<ValType extends ValueType> implements Series {
     @Override
     public void deletePoint(Long key) {
         ValType value = this.points.remove(key);
-        if (value == null) {
-            // TODO Not implemented Yet
-        }
     }
 
     @Override
     public ValType getByTimestamp(Long key) {
         return this.points.get(key);
-    }
-
-    @Override
-    public String toString() {
-        return "Series [type=" + type.getSimpleName() + ", name=" + name + ", points=" + points + "]";
     }
 }

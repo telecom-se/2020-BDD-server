@@ -12,18 +12,18 @@ import static fr.tse.db.storage.data.BitsConverter.*;
  *
  * @author remi huguenot
  */
-public class SerieQueue<ValType extends ValueType> implements Serializable {
-    private LinkedList<DataPointComp> serie;
-    private long top;
+public class SeriesQueue<ValType extends ValueType> implements Serializable {
+    private final LinkedList<DataPointComp> series;
+    private final long top;
 
-    public SerieQueue(long top) {
+    public SeriesQueue(long top) {
         super();
         this.top = top;
-        serie = new LinkedList<DataPointComp>();
+        series = new LinkedList<>();
     }
 
-    public LinkedList<DataPointComp> getSerie() {
-        return serie;
+    public LinkedList<DataPointComp> getSeries() {
+        return series;
     }
 
     /**
@@ -33,24 +33,20 @@ public class SerieQueue<ValType extends ValueType> implements Serializable {
      * @param value
      */
     public void addVal(Long key, ValType value) {
-        //last element of comparison
-        DataPointComp last;
-        try {
-            last = serie.getLast();
-        } catch (NoSuchElementException e) {
-            // if the list is empty
-            last = new DataPointComp(top);
-        }
+        // last element of comparison
+        DataPointComp last = series.isEmpty() ?
+                new DataPointComp(top)
+                : series.getLast();
 
         //change data into bitsets
-        BitSet NuTime = LongToBitSet(key);
-        BitSet NuVal = ValTypeToBitSet(value);
+        BitSet newTime = LongToBitSet(key);
+        BitSet newVal = ValTypeToBitSet(value);
 
         //compare the values
-        NuTime.xor(last.getTimestamp());
-        NuVal.xor(last.getValue());
+        newTime.xor(last.getTimestamp());
+        newVal.xor(last.getValue());
 
-        serie.add(new DataPointComp(NuTime, NuVal));
+        series.add(new DataPointComp(newTime, newVal));
     }
 
     /**
@@ -63,20 +59,19 @@ public class SerieQueue<ValType extends ValueType> implements Serializable {
      * @return
      */
     public ValType getVal(long timestamp, String valtype) {
-
         BitSet timestampBit = LongToBitSet(timestamp);
 
         BitSet timeItBit = LongToBitSet(top);
         BitSet valItBit = LongToBitSet(0L);
 
-        Iterator<DataPointComp> I = serie.iterator();
+        Iterator<DataPointComp> I = series.iterator();
 
-        DataPointComp last = (DataPointComp) I.next();
+        DataPointComp last = I.next();
         timeItBit.xor(last.getTimestamp());
         valItBit.xor(last.getValue());
 
         while (I.hasNext() && !timeItBit.equals(timestampBit)) {
-            last = (DataPointComp) I.next();
+            last = I.next();
             timeItBit.xor(last.getTimestamp());
             valItBit.xor(last.getValue());
         }
@@ -101,10 +96,10 @@ public class SerieQueue<ValType extends ValueType> implements Serializable {
         BitSet timeItBit = LongToBitSet(top);
         BitSet valItBit = LongToBitSet(0L);
 
-        Iterator<DataPointComp> I = serie.iterator();
+        Iterator<DataPointComp> I = series.iterator();
 
         while (I.hasNext() && !timeItBit.equals(timestampBit)) {
-            DataPointComp last = (DataPointComp) I.next();
+            DataPointComp last = I.next();
             timeItBit.xor(last.getTimestamp());
             valItBit.xor(last.getValue());
         }
@@ -124,21 +119,15 @@ public class SerieQueue<ValType extends ValueType> implements Serializable {
      * @return
      */
     public Map<Long, ValType> getAllPoints(String valtype) {
-
-        Map<Long, ValType> AllPoints = new HashMap<Long, ValType>();
+        Map<Long, ValType> AllPoints = new HashMap<>();
 
         BitSet timeItBit = LongToBitSet(top);
         BitSet valItBit = LongToBitSet(0L);
 
-        Iterator<DataPointComp> I = serie.iterator();
-
-        while (I.hasNext()) {
-            DataPointComp last = (DataPointComp) I.next();
+        for (DataPointComp last : series) {
             timeItBit.xor(last.getTimestamp());
             valItBit.xor(last.getValue());
-
             AllPoints.put(BitSetToLong(timeItBit), (ValType) BitSetToValType(valItBit, valtype));
-
         }
         return AllPoints;
     }

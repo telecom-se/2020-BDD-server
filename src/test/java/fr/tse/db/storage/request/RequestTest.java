@@ -19,18 +19,17 @@ public class RequestTest {
     Long tmp3 = (long) 999999;
     Int64 val = new Int64((long) 658);
     Int32 val32 = new Int32((45));
+    private final DataBase database = DataBase.getInstance();
+    private final RequestsImpl req = new RequestsImpl();
     // Series for test
-    private SeriesUnComp<Int64> series = new SeriesUnComp<Int64>("seriesTest", Int64.class);
-    private SeriesUnComp<Int32> series32 = new SeriesUnComp<Int32>("seriesTest32", Int32.class);
-    private DataBase database = DataBase.getInstance();
-    private RequestsImpl req = new RequestsImpl();
+    private SeriesUncompressed<Int64> series = new SeriesUncompressed<Int64>("seriesTest", Int64.class);
 
     @BeforeEach
     public void initialize() throws SeriesAlreadyExistsException {
         database.setSeries(new HashMap<>());
 
-        series = new SeriesUnComp<Int64>("seriesTest", Int64.class);
-        series32 = new SeriesUnComp<Int32>("seriesTest32", Int32.class);
+        series = new SeriesUncompressed<>("seriesTest", Int64.class);
+        SeriesUncompressed<Int32> series32 = new SeriesUncompressed<>("seriesTest32", Int32.class);
 
         series.addPoint(tmp, val);
         series32.addPoint(tmp, val32);
@@ -43,7 +42,7 @@ public class RequestTest {
     public void showAllSeriesTest() {
         Map<String, String> allSeries = req.showAllSeries();
         assertEquals(2, allSeries.size());
-        assertEquals((new Int64(0L)).getClass().getSimpleName(), allSeries.get("seriesTest"));
+        assertEquals(Int64.class.getSimpleName(), allSeries.get("seriesTest"));
     }
 
     @Test
@@ -178,9 +177,9 @@ public class RequestTest {
     @Test
     public void insertValueTest() throws SeriesNotFoundException {
         Int64 nuVal = new Int64((long) 696);
-        Map<Long, Int64> m1 = new HashMap<Long, Int64>();
+        Map<Long, Int64> m1 = new HashMap<>();
         m1.put(tmp2, new Int64((long) 696));
-        Series<Int64> nuPoint = new SeriesUnComp<>(null, Int64.class, m1);
+        Series<Int64> nuPoint = new SeriesUncompressed<>(null, Int64.class, m1);
 
         req.insertValue("seriesTest", nuPoint);
 
@@ -204,7 +203,7 @@ public class RequestTest {
     @Test()
     public void deleteSeriesTest() throws SeriesNotFoundException, SeriesAlreadyExistsException {
 
-        SeriesUnComp<Int64> toDel = new SeriesUnComp<Int64>("toDel", Int64.class);
+        SeriesUncompressed<Int64> toDel = new SeriesUncompressed<>("toDel", Int64.class);
 
         database.addSeries(toDel);
 
@@ -227,7 +226,7 @@ public class RequestTest {
 
         req.deleteByTimestamp("seriesTest", tmp3);
 
-        assertEquals(database.getByName("seriesTest").getPoints().get(tmp3), null);
+        assertNull(database.getByName("seriesTest").getPoints().get(tmp3));
     }
 
     @Test
@@ -240,8 +239,8 @@ public class RequestTest {
 
         req.deleteLowerThanTimestamp("seriesTest", tmp);
 
-        assertEquals(database.getByName("seriesTest").getPoints().get(tmp3), null);
-        assertEquals(database.getByName("seriesTest").getPoints().get(tmp3 - (long) 1), null);
+        assertNull(database.getByName("seriesTest").getPoints().get(tmp3));
+        assertNull(database.getByName("seriesTest").getPoints().get(tmp3 - (long) 1));
 
     }
 
@@ -256,8 +255,8 @@ public class RequestTest {
         req.deleteLowerOrEqualThanTimestamp("seriesTest", tmp3);
 
         assertEquals(((Int64) database.getByName("seriesTest").getPoints().get(tmp)).getVal(), val.getVal());
-        assertEquals(database.getByName("seriesTest").getPoints().get(tmp3), null);
-        assertEquals(database.getByName("seriesTest").getPoints().get(tmp3 - (long) 1), null);
+        assertNull(database.getByName("seriesTest").getPoints().get(tmp3));
+        assertNull(database.getByName("seriesTest").getPoints().get(tmp3 - (long) 1));
 
     }
 
@@ -272,7 +271,7 @@ public class RequestTest {
         req.deleteHigherThanTimestamp("seriesTest", tmp2);
 
         assertEquals(database.getByName("seriesTest").getPoints().get(tmp2), nuVal);
-        assertEquals(database.getByName("seriesTest").getPoints().get(tmp2 + (long) 1), null);
+        assertNull(database.getByName("seriesTest").getPoints().get(tmp2 + (long) 1));
 
         database.getByName("seriesTest").deletePoint(tmp2);
     }
@@ -287,8 +286,8 @@ public class RequestTest {
 
         req.deleteHigherOrEqualThanTimestamp("seriesTest", tmp2);
 
-        assertEquals(database.getByName("seriesTest").getPoints().get(tmp2), null);
-        assertEquals(database.getByName("seriesTest").getPoints().get(tmp2 + (long) 1), null);
+        assertNull(database.getByName("seriesTest").getPoints().get(tmp2));
+        assertNull(database.getByName("seriesTest").getPoints().get(tmp2 + (long) 1));
     }
 
     @Test
@@ -297,10 +296,10 @@ public class RequestTest {
         Int64 val1 = new Int64((long) 20);
         Int64 val2 = new Int64((long) 30);
 
-        Map<Long, Int64> m1 = new HashMap<Long, Int64>();
+        Map<Long, Int64> m1 = new HashMap<>();
         m1.put(tmp, val1);
         m1.put(tmp2, val2);
-        Series<Int64> seriesValues = new SeriesUnComp<>("abc", Int64.class, m1);
+        Series<Int64> seriesValues = new SeriesUncompressed<>("abc", Int64.class, m1);
 
         Float av = req.average(seriesValues);
 
@@ -314,11 +313,11 @@ public class RequestTest {
         Int64 val2 = new Int64((long) 30);
         Int64 val3 = new Int64((long) 10);
 
-        Map<Long, Int64> m1 = new HashMap<Long, Int64>();
+        Map<Long, Int64> m1 = new HashMap<>();
         m1.put(tmp, val1);
         m1.put(tmp2, val2);
         m1.put(tmp3, val3);
-        Series<Int64> seriesValues = new SeriesUnComp<>("abc", Int64.class, m1);
+        Series<Int64> seriesValues = new SeriesUncompressed<>("abc", Int64.class, m1);
 
         ValueType min = req.min(seriesValues);
 
@@ -327,8 +326,8 @@ public class RequestTest {
 
     @Test
     public void minTest2() {
-        Map<Long, Int64> m1 = new HashMap<Long, Int64>();
-        Series<Int64> seriesValues = new SeriesUnComp<>("abc", Int64.class, m1);
+        Map<Long, Int64> m1 = new HashMap<>();
+        Series<Int64> seriesValues = new SeriesUncompressed<>("abc", Int64.class, m1);
         assertThrows(EmptySeriesException.class, () -> req.min(seriesValues));
     }
 
@@ -338,11 +337,11 @@ public class RequestTest {
         Int64 val2 = new Int64((long) 30);
         Int64 val3 = new Int64((long) 10);
 
-        Map<Long, Int64> m1 = new HashMap<Long, Int64>();
+        Map<Long, Int64> m1 = new HashMap<>();
         m1.put(tmp, val1);
         m1.put(tmp2, val2);
         m1.put(tmp3, val3);
-        Series<Int64> seriesValues = new SeriesUnComp<>("abc", Int64.class, m1);
+        Series<Int64> seriesValues = new SeriesUncompressed<>("abc", Int64.class, m1);
 
         ValueType max = req.max(seriesValues);
 
@@ -355,11 +354,11 @@ public class RequestTest {
         Int64 val2 = new Int64((long) 30);
         Int64 val3 = new Int64((long) 10);
 
-        Map<Long, Int64> m1 = new HashMap<Long, Int64>();
+        Map<Long, Int64> m1 = new HashMap<>();
         m1.put(tmp, val1);
         m1.put(tmp2, val2);
         m1.put(tmp3, val3);
-        Series<Int64> seriesValues = new SeriesUnComp<>("abc", Int64.class, m1);
+        Series<Int64> seriesValues = new SeriesUncompressed<>("abc", Int64.class, m1);
 
         int count = req.count(seriesValues);
 
@@ -372,11 +371,11 @@ public class RequestTest {
         Int64 val2 = new Int64((long) 30);
         Int64 val3 = new Int64((long) 10);
 
-        Map<Long, Int64> m1 = new HashMap<Long, Int64>();
+        Map<Long, Int64> m1 = new HashMap<>();
         m1.put(tmp, val1);
         m1.put(tmp2, val2);
         m1.put(tmp3, val3);
-        Series<Int64> seriesValues = new SeriesUnComp<>("abc", Int64.class, m1);
+        Series<Int64> seriesValues = new SeriesUncompressed<>("abc", Int64.class, m1);
         ValueType sum = req.sum(seriesValues);
 
         assertEquals(60, (long) sum.getVal());

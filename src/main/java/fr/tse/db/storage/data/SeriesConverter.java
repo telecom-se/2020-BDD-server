@@ -9,27 +9,23 @@ import java.util.Map;
  * @author remi huguenot
  */
 public class SeriesConverter {
-    public static <ValType extends ValueType> SeriesComp<ValType> compress(SeriesUnComp<ValType> seriesUnComp) {
-        SeriesComp<ValType> nuSerr = new SeriesComp<ValType>(seriesUnComp.getName(), seriesUnComp.getType());
-
-        Map<Long, ValType> points = seriesUnComp.getPoints();
+    public static <ValType extends ValueType> SeriesCompressed<ValType> compress(SeriesUncompressed<ValType> seriesUncompressed) {
+        SeriesCompressed<ValType> newSeries = new SeriesCompressed<>(seriesUncompressed.getName(), seriesUncompressed.getType());
+        Map<Long, ValType> points = seriesUncompressed.getPoints();
 
         for (Long key : points.keySet()) {
-
-            nuSerr.addPoint(key, points.get(key));
+            newSeries.addPoint(key, points.get(key));
         }
-        return nuSerr;
+        return newSeries;
     }
 
-    public static <ValType extends ValueType> SeriesUnComp<ValType> uncompress(SeriesComp<ValType> seriesComp) {
-        SeriesUnComp<ValType> nuSerr = new SeriesUnComp<ValType>(seriesComp.getName(), seriesComp.getType());
-        Map<Long, ValType> points = seriesComp.getPoints();
+    public static <ValType extends ValueType> SeriesUncompressed<ValType> uncompress(SeriesCompressed<ValType> seriesCompressed) {
+        SeriesUncompressed<ValType> newSeries = new SeriesUncompressed<>(seriesCompressed.getName(), seriesCompressed.getType());
+        Map<Long, ValType> points = seriesCompressed.getPoints();
 
         for (Long key : points.keySet()) {
-
-            nuSerr.addPoint(key, points.get(key));
+            newSeries.addPoint(key, points.get(key));
         }
-
-        return nuSerr;
+        return newSeries;
     }
 }
