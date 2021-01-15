@@ -10,6 +10,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import fr.tse.db.query.error.BadQueryException;
 import fr.tse.db.query.service.QueryService;
+import fr.tse.db.storage.data.DataBase;
+import fr.tse.db.storage.data.Int32;
+import fr.tse.db.storage.data.Series;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -112,4 +115,7 @@ public class QueryParsingSelectTests {
 	    Exception e = Assertions.assertThrows(BadQueryException.class, () -> queryService.parseQuery(query));
 	    Assertions.assertEquals(expectedMessage, e.getMessage());
 	}
+	
+	// ---------------------- [SELECT] [SINGLEQUERY] [OK]
+	
 }
