@@ -37,7 +37,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(apiError);
     }
     
-    @ExceptionHandler(SeriesNotFoundException.class)
+   @ExceptionHandler(SeriesNotFoundException.class)
     protected ResponseEntity<Object> handleSeriesNotFoundExceptionQuery() {
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, "Series doesn't exist", "S_NOT_FOUND");
         return buildResponseEntity(apiError);
@@ -57,6 +57,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(NoSuchElementException.class)
     protected  ResponseEntity<Object> handleEmptySeriesExceptionQuery(){
         ApiError apiError = new ApiError(HttpStatus.CONFLICT,"The series is empty.", "S_EMPTY");
+        return buildResponseEntity(apiError);
+    }
+
+    @ExceptionHandler(Exception.class)
+    protected ResponseEntity<Object> handleOthersException(){
+        ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST,"Error not handle.", "S_OTHERS");
         return buildResponseEntity(apiError);
     }
 
