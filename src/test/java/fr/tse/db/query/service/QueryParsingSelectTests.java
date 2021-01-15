@@ -14,6 +14,7 @@ import fr.tse.db.storage.data.DataBase;
 import fr.tse.db.storage.data.Int32;
 import fr.tse.db.storage.data.Series;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 @SpringBootTest
@@ -30,6 +31,10 @@ public class QueryParsingSelectTests {
 	    HashMap<String, Object> expectedSeries = new HashMap<String, Object>();
 	    expectedSeries.put("action", "select");
 	    expectedSeries.put("function", "all");
+	    expectedSeries.put("series","myseries");
+		expectedSeries.put("operators",Arrays.asList("=="));
+		expectedSeries.put("timestamps",Arrays.asList(15L));
+		expectedSeries.put("join",null);
 	    Assertions.assertEquals(expectedSeries,queryService.parseQuery(queryTest));
 	}
 	
@@ -100,12 +105,15 @@ public class QueryParsingSelectTests {
 	// BadQueryException : Test when the Query is correct
 	public void parseQuerySelectTest() throws BadQueryException {
 	    String queryTest = "select all from myseries where timestamp == 15;";
-	    @SuppressWarnings("unused")
-		  HashMap<String, Object> expectedMap = new HashMap<String, Object>();
-		  expectedMap.put("action", "select");
-		  expectedMap.put("series", "myseries where;");
-		  expectedMap.put("function","all");
-	    Assertions.assertEquals(expectedMap,  queryService.parseQuery(queryTest));
+	    HashMap<String, Object> expectedMap = new HashMap();
+		expectedMap.put("action", "select");
+		expectedMap.put("series", "myseries");
+		expectedMap.put("timestamps", Arrays.asList((15L)));
+		expectedMap.put("operators", Arrays.asList("=="));
+		expectedMap.put("join", null);
+		expectedMap.put("function","all");
+		HashMap<String,Object> actualMap = queryService.parseQuery(queryTest);
+	    Assertions.assertEquals(expectedMap, actualMap);
 	}
 	
 	@Test

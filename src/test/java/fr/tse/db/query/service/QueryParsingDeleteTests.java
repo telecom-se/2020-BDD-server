@@ -8,11 +8,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import fr.tse.db.query.error.BadQueryException;
-import fr.tse.db.query.service.QueryService;
-import fr.tse.db.storage.data.Int32;
-import fr.tse.db.storage.data.Series;
-import fr.tse.db.storage.request.Requests;
-import fr.tse.db.storage.request.RequestsImpl;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -39,13 +39,8 @@ class QueryParsingDeleteTests {
 	public void parseQuerySingleDeleteSyntax2BadQueryExceptionTest() {
 		String query = ACTION + " from MySeries where";
 		String expectedMessage = BadQueryException.ERROR_MESSAGE_CONDITIONS_GENERAL;
-		
 		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
-		if(e.getMessage().contains(expectedMessage)) {
-			assertTrue(true);
-		} else {
-			assertTrue(false);
-		}
+		Assertions.assertTrue(e.getMessage().contains(expectedMessage));
 	}
 	
 	@Test
@@ -55,11 +50,7 @@ class QueryParsingDeleteTests {
 		String expectedMessage = BadQueryException.ERROR_MESSAGE_CONDITIONS_GENERAL;
 		
 		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
-		if(e.getMessage().contains(expectedMessage)) {
-			assertTrue(true);
-		} else {
-			assertTrue(false);
-		}
+		Assertions.assertTrue(e.getMessage().contains(expectedMessage));
 	}
 	
 	@Test
@@ -69,11 +60,7 @@ class QueryParsingDeleteTests {
 		String expectedMessage = BadQueryException.ERROR_MESSAGE_CONDITIONS_GENERAL;
 		
 		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
-		if(e.getMessage().contains(expectedMessage)) {
-			assertTrue(true);
-		} else {
-			assertTrue(false);
-		}
+		Assertions.assertTrue(e.getMessage().contains(expectedMessage));
 	}
 	
 	@Test
@@ -83,11 +70,7 @@ class QueryParsingDeleteTests {
 		String expectedMessage = BadQueryException.ERROR_MESSAGE_CONDITIONS_GENERAL;
 		
 		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
-		if(e.getMessage().contains(expectedMessage)) {
-			assertTrue(true);
-		} else {
-			assertTrue(false);
-		}
+		Assertions.assertTrue(e.getMessage().contains(expectedMessage));
 	}
 	
 	@Test
@@ -97,11 +80,7 @@ class QueryParsingDeleteTests {
 		String expectedMessage = BadQueryException.ERROR_MESSAGE_CONDITIONS_GENERAL;
 		
 		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
-		if(e.getMessage().contains(expectedMessage)) {
-			assertTrue(true);
-		} else {
-			assertTrue(false);
-		}
+		Assertions.assertTrue(e.getMessage().contains(expectedMessage));
 	}
 	
 	@Test
@@ -111,11 +90,7 @@ class QueryParsingDeleteTests {
 		String expectedMessage = BadQueryException.ERROR_MESSAGE_CONDITIONS_GENERAL;
 		
 		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
-		if(e.getMessage().contains(expectedMessage)) {
-			assertTrue(true);
-		} else {
-			assertTrue(false);
-		}
+		Assertions.assertTrue(e.getMessage().contains(expectedMessage));
 	}
 	
 	@Test
@@ -145,11 +120,7 @@ class QueryParsingDeleteTests {
 		String expectedMessage = BadQueryException.ERROR_MESSAGE_CONDITIONS_GENERAL;
 		
 		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
-		if(e.getMessage().contains(expectedMessage)) {
-			assertTrue(true);
-		} else {
-			assertTrue(false);
-		}
+		Assertions.assertTrue(e.getMessage().contains(expectedMessage));
 	}
 	
 	@Test
@@ -159,11 +130,7 @@ class QueryParsingDeleteTests {
 		String expectedMessage = BadQueryException.ERROR_MESSAGE_CONDITIONS_GENERAL;
 		
 		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
-		if(e.getMessage().contains(expectedMessage)) {
-			assertTrue(true);
-		} else {
-			assertTrue(false);
-		}
+		Assertions.assertTrue(e.getMessage().contains(expectedMessage));
 	}
 	
 	@Test
@@ -173,11 +140,7 @@ class QueryParsingDeleteTests {
 		String expectedMessage = BadQueryException.ERROR_MESSAGE_CONDITIONS_GENERAL;
 		
 		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
-		if(e.getMessage().contains(expectedMessage)) {
-			assertTrue(true);
-		} else {
-			assertTrue(false);
-		}
+		Assertions.assertTrue(e.getMessage().contains(expectedMessage));
 	}
 	
 	@Test
@@ -187,11 +150,7 @@ class QueryParsingDeleteTests {
 		String expectedMessage = BadQueryException.ERROR_MESSAGE_CONDITIONS_GENERAL;
 		
 		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
-		if(e.getMessage().contains(expectedMessage)) {
-			assertTrue(true);
-		} else {
-			assertTrue(false);
-		}
+		Assertions.assertTrue(e.getMessage().contains(expectedMessage));
 	}
 	
 	@Test
@@ -201,11 +160,7 @@ class QueryParsingDeleteTests {
 		String expectedMessage = BadQueryException.ERROR_MESSAGE_CONDITIONS_GENERAL;
 		
 		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
-		if(e.getMessage().contains(expectedMessage)) {
-			assertTrue(true);
-		} else {
-			assertTrue(false);
-		}
+		Assertions.assertTrue(e.getMessage().contains(expectedMessage));
 	}
 	
 	@Test
@@ -234,12 +189,11 @@ class QueryParsingDeleteTests {
 	public void parseQueryDeleteExample1Test() throws BadQueryException {
 		String query = ACTION + " from MySeries";
 		HashMap<String, Object> expectedHashMap = new HashMap();
-		expectedHashMap.put("conditions", null);
 		expectedHashMap.put("series", "MySeries");
 		expectedHashMap.put("action", "delete");
 		
 		HashMap<String, Object> returnedHashMap = qs.parseQuery(query);
-		assertEquals(expectedHashMap, returnedHashMap);
+		Assertions.assertEquals(expectedHashMap, returnedHashMap);
 	}
 	
 	@Test
@@ -247,18 +201,14 @@ class QueryParsingDeleteTests {
 	public void parseQueryDeleteExample2Test() throws BadQueryException {
 		String query = ACTION + " from MySeries where timestamp == 12525";
 		HashMap<String, Object> expectedHashMap = new HashMap();
-	    HashMap<String, Object> whereConditions = new HashMap<>();
-	    whereConditions.put("operators", "==");
-	    whereConditions.put("timestamps",(long) 12525);
-	    whereConditions.put("join", null);
-	    expectedHashMap.put("timestamps", whereConditions.get("timestamps"));
-	    expectedHashMap.put("operators", whereConditions.get("operators"));
-	    expectedHashMap.put("join", whereConditions.get("join"));
+	    expectedHashMap.put("timestamps", Arrays.asList((long) 12525));
+	    expectedHashMap.put("operators", Arrays.asList("=="));
+	    expectedHashMap.put("join", null);
 		expectedHashMap.put("series", "MySeries");
 		expectedHashMap.put("action", "delete");
 		
 		HashMap<String, Object> returnedHashMap = qs.parseQuery(query);
-		assertEquals(expectedHashMap, returnedHashMap);
+		Assertions.assertEquals(expectedHashMap, returnedHashMap);
 	}
 	
 	@Test
@@ -267,7 +217,7 @@ class QueryParsingDeleteTests {
 		String query = ACTION + " from MySeries where timestamp > 5 and timestamp < 15";
 		HashMap<String, Object> expectedHashMap = new HashMap();
 	    HashMap<String, Object> whereConditions = new HashMap<>();
-	    List<String> operators = new ArrayList<String>();
+	    List<String> operators = new ArrayList<>();
 	    operators.add(">");
 	    operators.add("<");
 	    List<Long> timestamps = new ArrayList<Long>();
@@ -283,7 +233,7 @@ class QueryParsingDeleteTests {
 		expectedHashMap.put("action", "delete");
 		
 		HashMap<String, Object> returnedHashMap = qs.parseQuery(query);
-		assertEquals(expectedHashMap, returnedHashMap);
+		Assertions.assertEquals(expectedHashMap, returnedHashMap);
 	}
 
 	// ---------------------- [DELETE] [SINGLEQUERY] [OK]

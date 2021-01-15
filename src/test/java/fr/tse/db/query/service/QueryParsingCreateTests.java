@@ -1,5 +1,6 @@
 package fr.tse.db.query.service;
 
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +32,7 @@ class QueryParsingCreateTests {
 		hashMapExpected.put("action", "create");
 		hashMapExpected.put("type", "int32");
 
-		Assert.assertEquals(hashMapExpected, qs.parseQuery(queryInt32));
+		Assertions.assertEquals(hashMapExpected, qs.parseQuery(queryInt32));
 
 		// Testing the creation of a series with int64 type
 		String queryInt64 = "create MySeries int64";
@@ -116,7 +117,7 @@ class QueryParsingCreateTests {
 		expectedHashMap.put("type", "int64");
 		
 		HashMap<String, Object> returnedHashMap = qs.parseQuery(query);
-		assertEquals(expectedHashMap, returnedHashMap);
+		Assertions.assertEquals(expectedHashMap, returnedHashMap);
 	}
 	
 	@Test
@@ -129,7 +130,7 @@ class QueryParsingCreateTests {
 		expectedHashMap.put("type", "int64");
 		
 		HashMap<String, Object> returnedHashMap = qs.parseQuery(query);
-		assertEquals(expectedHashMap, returnedHashMap);
+		Assertions.assertEquals(expectedHashMap, returnedHashMap);
 	}
 	
 }

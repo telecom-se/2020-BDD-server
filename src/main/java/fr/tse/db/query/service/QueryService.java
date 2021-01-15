@@ -294,10 +294,10 @@ public class QueryService {
                 Pattern deletePattern = Pattern.compile("^delete\\s+from\\s*(.*?)((?:\\s*where\\s*)(.*?))?$");
                 Matcher deleteMatcher = deletePattern.matcher(command);
                 if(!deleteMatcher.find()) {
-                    throw new BadQueryException("Error in query");
+                    throw new BadQueryException(BadQueryException.ERROR_MESSAGE_DELETE_GENERAL_1);
                 };
                 if(deleteMatcher.group(1).isEmpty()) {
-                    throw new BadQueryException("Incorrect series name provided");
+                    throw new BadQueryException(BadQueryException.ERROR_MESSAGE_DELETE_IN_NAME);
                 }
                 if(deleteMatcher.group(2) != null && !deleteMatcher.group(2).isEmpty()) {
                     String conditions = deleteMatcher.group(2);
@@ -314,7 +314,7 @@ public class QueryService {
                 Pattern selectPattern = Pattern.compile("^drop\\s+(.*?)\\s*$");
                 Matcher selectMatcher = selectPattern.matcher(command);
                 if(!selectMatcher.find() || selectMatcher.group(1).isEmpty()) {
-                    throw new BadQueryException("Error in query");
+                    throw new BadQueryException(BadQueryException.ERROR_MESSAGE_DELETE_GENERAL_1);
                 };
                 result.put("action", "drop");
                 result.put("series", selectMatcher.group(1));
@@ -331,7 +331,7 @@ public class QueryService {
                 break;
             }
             default: {
-                throw new BadQueryException("Error in query action");
+                throw new BadQueryException(BadQueryException.ERROR_MESSAGE_BAD_ACTION);
             }
         }
         return result;
@@ -340,7 +340,7 @@ public class QueryService {
     public HashMap<String, Object> parseConditions(String conditions) throws BadQueryException {
         String[] splitConditions = conditions.split("(and|or)");
         if(splitConditions.length > 2) {
-            throw new BadQueryException("Too many conditions");
+            throw new BadQueryException(BadQueryException.ERROR_MESSAGE_CONDITIONS_TOO_MANY);
         }
         List<Long> timestamps = new ArrayList<>();
         List<String> operators = new ArrayList<>();
@@ -355,7 +355,7 @@ public class QueryService {
             Pattern p = Pattern.compile("timestamp\\s+(<|>|==|<=|>=)\\s+([0-9]+)\\s*");
             Matcher m = p.matcher(conditions);
             if(!m.find()) {
-                throw new BadQueryException("Error in conditions " + i);
+                throw new BadQueryException(BadQueryException.ERROR_MESSAGE_CONDITIONS_GENERAL + i);
             }
             operators.add(m.group(1));
             timestamps.add(Long.parseLong(m.group(2)));
