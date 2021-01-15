@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -30,6 +31,7 @@ public class LoadDatabase {
 
 
     private void initSeries() {
+        this.clearSeries();
         /*
         create 3 series :
         _"seriesint32" type Int32
@@ -64,6 +66,14 @@ public class LoadDatabase {
         db.addSeries(seriesInt64);
         db.addSeries(seriesFloat32);
         log.info("Series populated");
+    }
+
+    private void clearSeries(){
+        DataBase database = DataBase.getInstance();
+        ArrayList<String> seriesNameList = new ArrayList<>(database.getSeries().keySet());
+        for(String name : seriesNameList){
+            database.deleteSeries(name);
+        }
     }
 
 }

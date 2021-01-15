@@ -22,7 +22,7 @@ import fr.tse.db.storage.request.RequestsImpl;
 //@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@ActiveProfiles(profiles = "test")
+@ActiveProfiles(profiles = "test_query_controller")
 class QueryControllerDeleteTests {
 	
 	@Autowired
