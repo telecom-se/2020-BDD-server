@@ -1,5 +1,8 @@
 package fr.tse.db.query.service;
 
+import java.util.Arrays;
+import java.util.HashMap;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -9,6 +12,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import fr.tse.db.query.error.BadQueryException;
 import fr.tse.db.query.service.QueryService;
+import fr.tse.db.storage.data.Int32;
+import fr.tse.db.storage.data.Series;
+import fr.tse.db.storage.request.Requests;
+import fr.tse.db.storage.request.RequestsImpl;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -223,5 +230,54 @@ class QueryParsingDeleteTests {
 		Assertions.assertEquals(expectedMessage, e.getMessage());
 	}
 	// ---------------------- [DELETE] [SINGLEQUERY] [OK]
-	// TODO
+	
+	
+	
+	// ---------------------- [DELETE] [SINGLEQUERY] 
+	
+	@Test
+	public void parseQuerySingleDeleteSyntax1NoExceptionTest() throws BadQueryException {
+		String seriesName = "TestSerieInt32";
+		String query = ACTION + " from " + seriesName;
+
+		HashMap<String, Object> hashMap = qs.parseQuery(query);
+		
+		// Check valid hashmap
+		Assertions.assertEquals(hashMap.get("action"), "delete");
+		Assertions.assertEquals(hashMap.get("series"), seriesName);
+	}
+	
+	
+	@Test
+	public void parseQuerySingleDeleteSyntax2NoExceptionTest() throws BadQueryException {
+		String seriesName = "TestSerieInt32";
+		String query = ACTION + " from " + seriesName + " where timestamp == 3000";
+		
+		HashMap<String, Object> hashMap = qs.parseQuery(query);
+		
+		// Check valid hashmap
+		Assertions.assertEquals(hashMap.get("action"), "delete");
+		Assertions.assertEquals(hashMap.get("series"), seriesName);
+		Assertions.assertEquals(hashMap.get("operators"), Arrays.asList(new String[]{"=="}));
+		Assertions.assertEquals(hashMap.get("timestamps"), Arrays.asList(new Long[]{3000L}));
+	}
+	
+	@Test
+	public void parseQuerySingleDeleteSyntax3NoExceptionTest() throws BadQueryException {
+		String seriesName = "TestSerieInt32";
+		String query = ACTION + " from " + seriesName + " where timestamp == 3000";
+		
+		HashMap<String, Object> hashMap = qs.parseQuery(query);
+		
+		System.out.println(hashMap);
+		
+		// Check valid hashmap
+		Assertions.assertEquals(hashMap.get("action"), "delete");
+		Assertions.assertEquals(hashMap.get("series"), seriesName);
+		Assertions.assertEquals(hashMap.get("operators"), Arrays.asList(new String[]{"=="}));
+		Assertions.assertEquals(hashMap.get("timestamps"), Arrays.asList(new Long[]{3000L}));
+	}
+
+	// ---------------------- [DELETE] [SINGLEQUERY] 
+	
 }
