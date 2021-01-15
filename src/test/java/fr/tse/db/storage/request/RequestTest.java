@@ -35,19 +35,12 @@ public class RequestTest {
 
 	@BeforeEach
 	public void initialize() throws SeriesAlreadyExistsException {
-		DataBase database = DataBase.getInstance();
-		try {
-			database.deleteSeries("seriesTest");
-			database.deleteSeries("seriesTest32");
-		}catch(SeriesNotFoundException e) {
-			System.out.println("base not initialised");
-		}
+		database.setSeries(new HashMap<>());
 
 		series = new SeriesUnComp<Int64>("seriesTest", Int64.class);
 		series32 = new SeriesUnComp<Int32>("seriesTest32", Int32.class);
 
 		series.addPoint(tmp, val);
-		
 		series32.addPoint(tmp, val32);
 		
 		database.addSeries(series);
