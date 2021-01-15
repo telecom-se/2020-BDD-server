@@ -11,7 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 
-@ActiveProfiles(profiles = "test")
+
 public class SeriesCompTest {
 
 	private SeriesComp<Int32> ser32;

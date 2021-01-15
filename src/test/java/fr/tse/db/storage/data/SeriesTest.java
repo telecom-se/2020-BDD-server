@@ -11,7 +11,7 @@ import java.util.Map;
 
 import static org.junit.Assert.*;
 
-@ActiveProfiles(profiles = "test")
+
 public class SeriesTest {
 
 	// Series for test

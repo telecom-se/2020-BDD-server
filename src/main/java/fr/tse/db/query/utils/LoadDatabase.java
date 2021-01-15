@@ -21,20 +21,13 @@ import java.util.Set;
 public class LoadDatabase {
 
     @Bean
-    @Profile("test_query_contoller")
+    @Profile("test_query_controller")
     CommandLineRunner initTestDatabase(){
         return args -> {
             initSeries();
         };
     }
 
-    @Bean
-    @Profile("test")
-    CommandLineRunner clearDatabase(){
-        return args -> {
-            clearSeries();
-        };
-    }
 
     private void initSeries() {
         /*
@@ -73,14 +66,5 @@ public class LoadDatabase {
         log.info("Series populated");
     }
 
-    private void clearSeries(){
-        DataBase db = DataBase.getInstance();
-        Set<String> seriesNameList = db.getSeries().keySet();
-        if(seriesNameList != null){
-            for(String name : seriesNameList){
-                db.deleteSeries(name);
-            }
-        }
-    }
 }
 

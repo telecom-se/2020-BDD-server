@@ -21,7 +21,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
-@ActiveProfiles(profiles = "test_query_contoller")
+@ActiveProfiles(profiles = "test_query_controller")
 public class QueryControllerCreateTests {
 
     @Autowired

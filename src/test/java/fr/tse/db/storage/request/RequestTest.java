@@ -11,13 +11,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-@ActiveProfiles(profiles = "test")
+@ActiveProfiles("test")
 public class RequestTest {
 
 	// Series for test
@@ -36,11 +38,9 @@ public class RequestTest {
 	public void initialize() throws SeriesAlreadyExistsException {
 		req= new RequestsImpl();
 		DataBase database = DataBase.getInstance();
-		try {
-			database.deleteSeries("seriesTest");
-			database.deleteSeries("seriesTest32");
-		}catch(SeriesNotFoundException e) {
-			System.out.println("base not initialised");
+		ArrayList<String> seriesNameList = new ArrayList<>(database.getSeries().keySet());
+		for(String name : seriesNameList){
+			database.deleteSeries(name);
 		}
 		
 
