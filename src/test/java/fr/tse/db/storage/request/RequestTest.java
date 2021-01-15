@@ -60,9 +60,9 @@ public class RequestTest {
 	
 	@Test
 	public void showAllSeriesTest() {
-		Map<String, Class<ValueType>> allSeries= req.showAllSeries();
+		Map<String, String> allSeries= req.showAllSeries();
 		assertEquals(2,allSeries.size());
-		assertEquals((new Int64(0L)).getClass(), allSeries.get("seriesTest"));
+		assertEquals((new Int64(0L)).getClass().getSimpleName(), allSeries.get("seriesTest"));
 	}
 	
 	@Test
