@@ -173,7 +173,7 @@ public class QueryService {
         Pattern p = Pattern.compile("^(create|update|insert|select|delete|drop|show)");
         Matcher m = p.matcher(command);
         if(!m.find()) {
-            throw new BadQueryException("Bad action provided");
+            throw new BadQueryException(BadQueryException.ERROR_MESSAGE_BAD_ACTION);
         }
         switch (m.group(1)) {
             case "select": {
@@ -211,7 +211,7 @@ public class QueryService {
 
                 // Check if regex matchs the command and respect two entities
                 if(!selectMatcher.find() || selectMatcher.groupCount() < 2) {
-                    throw new BadQueryException("Error in CREATE query");
+                    throw new BadQueryException(BadQueryException.ERROR_MESSAGE_CREATE_GENERAL);
                 }
 
                 // Get the name and the type given in the command
@@ -220,12 +220,12 @@ public class QueryService {
 
                 // Check name or type contains one or more spaces
                 if(name.contains(" ")) {
-                    throw new BadQueryException("Error in CREATE query (space in name)");
+                    throw new BadQueryException(BadQueryException.ERROR_MESSAGE_CREATE_IN_NAME_SPACES);
                 }
                 
                 // Check if type exist
                 if (!typeList.contains(type)) {
-                    throw new BadQueryException("Error in CREATE query (type not exist)");
+                    throw new BadQueryException(BadQueryException.ERROR_MESSAGE_CREATE_IN_TYPE);
                 }
 
                 // Check the name and type synthax
@@ -233,7 +233,7 @@ public class QueryService {
                 Matcher selectMatcherSynthaxName = selectPatternSynthax.matcher(name);
 
                 if (!selectMatcherSynthaxName.matches()) {
-                    throw new BadQueryException("Error in CREATE query (special characters not allowed in name)");
+                    throw new BadQueryException(BadQueryException.ERROR_MESSAGE_CREATE_IN_NAME_SPECIAL_CHARACTERS);
                 }
                 
                 // Insert in hashmap the action, the serie name and the type
@@ -246,7 +246,7 @@ public class QueryService {
                 Pattern selectPattern = Pattern.compile("^insert\\s+into\\s+(.*?)\\s+values\\s+\\(\\((.*?)\\)\\)\\s*$");
                 Matcher selectMatcher = selectPattern.matcher(command);
                 if(!selectMatcher.find() || selectMatcher.group(1).isEmpty() || selectMatcher.group(2).isEmpty()) {
-                    throw new BadQueryException("Error in INSERT query");
+                    throw new BadQueryException(BadQueryException.ERROR_MESSAGE_INSERT_GENERAL);
                 };
                 result.put("action", "insert");
                 String series = selectMatcher.group(1);
@@ -257,13 +257,13 @@ public class QueryService {
                 for (String splitedValue : splitedValues) {
                     String[] pair = splitedValue.split(",\\s*");
                     if (pair.length != 2) {
-                        throw new BadQueryException("Error in inserted values");
+                        throw new BadQueryException(BadQueryException.ERROR_MESSAGE_INSERT_IN_VALUES);
                     }
                     try {
                         Integer.parseInt(pair[0]);
                         Float.parseFloat(pair[1]);
                     } catch (NumberFormatException nfe) {
-                        throw new BadQueryException("Wrong type provided for insert");
+                        throw new BadQueryException(BadQueryException.ERROR_MESSAGE_INSERT_IN_TYPE);
                     }
                     pairs.add(pair);
                 }
