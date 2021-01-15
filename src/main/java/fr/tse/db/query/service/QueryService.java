@@ -24,11 +24,14 @@ public class QueryService {
     
     // TODO A mettre dans un fichier constante
     public List<String> typeList = Arrays.asList(new String[]{"int32", "int64", "float32"});
-    
-    
-    QueryService() {
-    }
 
+    /**
+     * This function is first called by the controller and delegates the parsing and then handle the result by calling
+     * the storage functions depending on the conditions provided
+     * @param query the query to parse and proceed
+     * @return The hashMap with all the information
+     * @throws Exception
+     */
     public HashMap<String, Object> handleQuery(String query) throws Exception {
         String[] commands = query.toLowerCase().split("\\s*;\\s*");
         System.out.println(commands.length + " command(s) found");
@@ -97,9 +100,12 @@ public class QueryService {
                 List<String> operators = result.get("operators") != null ? (List<String>) result.get("operators") : null;
                 List<Long> timestamps = result.get("timestamps") != null ? (List<Long>) result.get("timestamps") : null;
                 String join = result.get("join") != null ? result.get("join").toString(): null;
+                // Check if conditions were provided
                 if (operators == null || operators.isEmpty() || timestamps == null || timestamps.isEmpty()) {
                     request.deleteAllPoints(series);
                 } else
+
+                // Check conditions the same way as the SELECT method
                 if(join == null) {
                     handleOperatorsCondition("delete", operators.get(0), series, timestamps.get(0));
                 } else if(join.equals("and")) {
@@ -119,7 +125,7 @@ public class QueryService {
             	// Get the list of pairs <Timestamp, Value>
             	ArrayList<String[]> pairs = (ArrayList<String[]>) result.get("pairs");
             	
-            	Series seriesTemp = new Series(serieName, series.getType());
+            	Series seriesTemp = new SeriesComp(serieName, series.getType());
 
             	// For each pair in pairs list
             	for(String[] pair : pairs) {
@@ -145,6 +151,14 @@ public class QueryService {
             	return null;
             }
             case "show": {
+                String series = result.get("series").toString();
+                if(series.equals("all")) {
+                    resultMap.put("info", request.showAllSeries());
+                } else {
+                    // TODO call storage method
+                    //resultMap.put("info", request.showSeries(series));
+                }
+
                 return null;
             }
             case "drop": {
@@ -212,11 +226,6 @@ public class QueryService {
                 // Get the name and the type given in the command
                 String name = selectMatcher.group(1);
                 String type = selectMatcher.group(2);
-
-                // Check name or type contains one or more spaces
-                if(name.contains(" ")) {
-                    throw new BadQueryException("Error in CREATE query (space in name)");
-                }
                 
                 // Check if type exist
                 if (!typeList.contains(type)) {
