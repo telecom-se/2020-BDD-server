@@ -1,11 +1,11 @@
 package fr.tse.db.query.service;
 
-import java.util.HashMap;
+import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import fr.tse.db.query.error.BadQueryException;
@@ -13,6 +13,8 @@ import fr.tse.db.query.service.QueryService;
 import fr.tse.db.storage.data.DataBase;
 import fr.tse.db.storage.data.Int32;
 import fr.tse.db.storage.data.Series;
+
+import java.util.HashMap;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -98,10 +100,11 @@ public class QueryParsingSelectTests {
 	// BadQueryException : Test when the Query is correct
 	public void parseQuerySelectTest() throws BadQueryException {
 	    String queryTest = "select all from myseries where timestamp == 15;";
-		HashMap<String, Object> expectedMap = new HashMap<String, Object>();
-		expectedMap.put("action", "select");
-		expectedMap.put("series", "myseries where;");
-		expectedMap.put("function","all");
+	    @SuppressWarnings("unused")
+		  HashMap<String, Object> expectedMap = new HashMap<String, Object>();
+		  expectedMap.put("action", "select");
+		  expectedMap.put("series", "myseries where;");
+		  expectedMap.put("function","all");
 	    Assertions.assertEquals(expectedMap,  queryService.parseQuery(queryTest));
 	}
 	

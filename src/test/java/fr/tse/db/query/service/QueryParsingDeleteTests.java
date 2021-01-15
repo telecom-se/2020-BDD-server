@@ -1,13 +1,5 @@
 package fr.tse.db.query.service;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +9,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import fr.tse.db.query.error.BadQueryException;
 import fr.tse.db.query.service.QueryService;
+import fr.tse.db.storage.data.Int32;
+import fr.tse.db.storage.data.Series;
+import fr.tse.db.storage.request.Requests;
+import fr.tse.db.storage.request.RequestsImpl;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -231,6 +227,7 @@ class QueryParsingDeleteTests {
 		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
 		Assertions.assertEquals(expectedMessage, e.getMessage());
 	}
+
 	// ---------------------- [DELETE] [OK]
 	@Test
 	// Delete a Series
@@ -288,5 +285,56 @@ class QueryParsingDeleteTests {
 		HashMap<String, Object> returnedHashMap = qs.parseQuery(query);
 		assertEquals(expectedHashMap, returnedHashMap);
 	}
+
+	// ---------------------- [DELETE] [SINGLEQUERY] [OK]
+	
+	
+	
+	// ---------------------- [DELETE] [SINGLEQUERY] 
+	
+	@Test
+	public void parseQuerySingleDeleteSyntax1NoExceptionTest() throws BadQueryException {
+		String seriesName = "TestSerieInt32";
+		String query = ACTION + " from " + seriesName;
+
+		HashMap<String, Object> hashMap = qs.parseQuery(query);
+		
+		// Check valid hashmap
+		Assertions.assertEquals(hashMap.get("action"), "delete");
+		Assertions.assertEquals(hashMap.get("series"), seriesName);
+	}
+	
+	
+	@Test
+	public void parseQuerySingleDeleteSyntax2NoExceptionTest() throws BadQueryException {
+		String seriesName = "TestSerieInt32";
+		String query = ACTION + " from " + seriesName + " where timestamp == 3000";
+		
+		HashMap<String, Object> hashMap = qs.parseQuery(query);
+		
+		// Check valid hashmap
+		Assertions.assertEquals(hashMap.get("action"), "delete");
+		Assertions.assertEquals(hashMap.get("series"), seriesName);
+		Assertions.assertEquals(hashMap.get("operators"), Arrays.asList(new String[]{"=="}));
+		Assertions.assertEquals(hashMap.get("timestamps"), Arrays.asList(new Long[]{3000L}));
+	}
+	
+	@Test
+	public void parseQuerySingleDeleteSyntax3NoExceptionTest() throws BadQueryException {
+		String seriesName = "TestSerieInt32";
+		String query = ACTION + " from " + seriesName + " where timestamp == 3000";
+		
+		HashMap<String, Object> hashMap = qs.parseQuery(query);
+		
+		System.out.println(hashMap);
+		
+		// Check valid hashmap
+		Assertions.assertEquals(hashMap.get("action"), "delete");
+		Assertions.assertEquals(hashMap.get("series"), seriesName);
+		Assertions.assertEquals(hashMap.get("operators"), Arrays.asList(new String[]{"=="}));
+		Assertions.assertEquals(hashMap.get("timestamps"), Arrays.asList(new Long[]{3000L}));
+	}
+
+	// ---------------------- [DELETE] [SINGLEQUERY] 
 	
 }

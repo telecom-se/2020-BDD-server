@@ -1,8 +1,10 @@
 package fr.tse.db.storage.data;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import fr.tse.db.storage.exception.SeriesAlreadyExistsException;
 import fr.tse.db.storage.exception.SeriesNotFoundException;
 
@@ -19,33 +21,33 @@ import fr.tse.db.storage.exception.SeriesNotFoundException;
 * @author  Arnaud, Valentin
 * @since   2020-11
 */
-public class DataBase {
+public class DataBase implements Serializable {
 
 	private static DataBase instance = new DataBase();
 	public static DataBase getInstance() {return instance;}
 	
 	// parameters
-	private Map<String, Series> series;
+	private Map<String, Series<ValueType>> series;
 	
 	// constructor
 	private DataBase() {
-		this.series = new HashMap<String, Series>();
+		this.series = new HashMap<String, Series<ValueType>>();
 	}
 	
 	private DataBase(List<Series> series) {
 		
-		this.series = new HashMap<String, Series>();
+		this.series = new HashMap<String, Series<ValueType>>();
 		for (int i=0 ; i<series.size() ; i++) {
 			this.series.put(series.get(i).getName(), series.get(i));
 		}
 	}
 	
 	// getters and setters
-	public Map<String, Series> getSeries() {
+	public Map<String, Series<ValueType>> getSeries() {
 		return series;
 	}
 
-	public void setSeries(Map<String, Series> series) {
+	public void setSeries(Map<String, Series<ValueType>> series) {
 		this.series = series;
 	}
 	
@@ -57,7 +59,7 @@ public class DataBase {
 	*/
 
 	// methods
-	public void addSeries(Series series) throws SeriesAlreadyExistsException {
+	public void addSeries(Series<ValueType> series) throws SeriesAlreadyExistsException {
 		
 		if (this.series.get(series.getName())!= null) {
 			throw new SeriesAlreadyExistsException(series.getName());

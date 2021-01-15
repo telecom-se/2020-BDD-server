@@ -1,4 +1,6 @@
 package fr.tse.db.storage.data;
+import java.io.Serializable;
+
 import fr.tse.db.storage.exception.WrongValueTypeException;
 
 /**
@@ -9,7 +11,7 @@ import fr.tse.db.storage.exception.WrongValueTypeException;
 * @since   2020-11
 */
 
-public interface ValueType<T> extends Comparable<ValueType>{
+public interface ValueType<T> extends Comparable<ValueType>, Serializable{
 	
 	public T getVal();
 	public void setVal(T val);

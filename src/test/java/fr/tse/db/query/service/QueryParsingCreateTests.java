@@ -1,10 +1,5 @@
 package fr.tse.db.query.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +10,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import fr.tse.db.query.error.BadQueryException;
 import fr.tse.db.query.service.QueryService;
 
+import java.util.HashMap;
+
 @SpringBootTest
 @RunWith(SpringRunner.class)
 class QueryParsingCreateTests {
@@ -22,7 +19,41 @@ class QueryParsingCreateTests {
 	@Autowired
 	private QueryService qs;
 	private final static String ACTION = "create";
-	
+
+	// ---------------------- [CREATE] [SINGLEQUERY]
+	@Test
+	public void parseQuerySingleCreate() throws BadQueryException {
+		// Testing the creation of a series with int32 type
+		String queryInt32 = "create MySeries int32";
+
+		HashMap<String, Object> hashMapExpected = new HashMap<>();
+		hashMapExpected.put("name", "MySeries");
+		hashMapExpected.put("action", "create");
+		hashMapExpected.put("type", "int32");
+
+		Assert.assertEquals(hashMapExpected, qs.parseQuery(queryInt32));
+
+		// Testing the creation of a series with int64 type
+		String queryInt64 = "create MySeries int64";
+
+		hashMapExpected.clear();
+		hashMapExpected.put("name", "MySeries");
+		hashMapExpected.put("action", "create");
+		hashMapExpected.put("type", "int64");
+
+		Assert.assertEquals(hashMapExpected, qs.parseQuery(queryInt64));
+
+		// Testing the creation of a series with float32 type
+		String queryFloat32 = "create MySeries float32";
+
+		hashMapExpected.clear();
+		hashMapExpected.put("name", "MySeries");
+		hashMapExpected.put("action", "create");
+		hashMapExpected.put("type", "float32");
+
+		Assert.assertEquals(hashMapExpected, qs.parseQuery(queryFloat32));
+	}
+
 	// ---------------------- [CREATE] [SINGLEQUERY] [BadQueryException]
 	@Test
 	// BadQueryException : Missing name.
@@ -63,7 +94,6 @@ class QueryParsingCreateTests {
 		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
 		Assertions.assertEquals(expectedMessage, e.getMessage());
 	}
-	
 	
 	@Test
 	// BadQueryException : special characters in name.
