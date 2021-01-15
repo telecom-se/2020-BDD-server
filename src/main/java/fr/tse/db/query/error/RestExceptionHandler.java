@@ -1,5 +1,6 @@
 package fr.tse.db.query.error;
 
+import fr.tse.db.storage.exception.*;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -8,12 +9,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import fr.tse.db.storage.exception.SeriesAlreadyExistsException;
-import fr.tse.db.storage.exception.SeriesNotFoundException;
-import fr.tse.db.storage.exception.TimestampAlreadyExistsException;
-import fr.tse.db.storage.exception.WrongSeriesValueTypeException;
-
 import java.util.HashMap;
+import java.util.NoSuchElementException;
 
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
@@ -57,4 +54,10 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         ApiError apiError = new ApiError(HttpStatus.CONFLICT,"Timestamp Already Exists", "S_TIMESTAMP_EXISTS");
         return buildResponseEntity(apiError);
     }
+    @ExceptionHandler(NoSuchElementException.class)
+    protected  ResponseEntity<Object> handleEmptySeriesExceptionQuery(){
+        ApiError apiError = new ApiError(HttpStatus.CONFLICT,"The series is empty.", "S_EMPTY");
+        return buildResponseEntity(apiError);
+    }
+
 }
