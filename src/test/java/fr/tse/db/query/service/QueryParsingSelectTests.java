@@ -100,7 +100,7 @@ public class QueryParsingSelectTests {
 	@Test
 	// BadQueryException : Test when the Query is correct
 	public void parseQuerySelectTest() throws BadQueryException {
-	    String queryTest = "SELECT ALL FROM MySeries WHERE TIMESTAMP == 15;";
+	    String queryTest = "select all from myseries where timestamp == 15;";
 	    @SuppressWarnings("unused")
 		HashMap<String, Object> expectedMap = new HashMap<String, Object>();
 	    expectedMap = queryService.parseQuery(queryTest);
