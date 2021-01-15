@@ -1,12 +1,17 @@
 package fr.tse.db.storage.data;
 
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import static fr.tse.db.storage.data.BitsConverter.*;
+import static fr.tse.db.storage.data.BitsConverter.BitSetToLong;
+import static fr.tse.db.storage.data.BitsConverter.BitSetToValType;
+import static fr.tse.db.storage.data.BitsConverter.LongToBitSet;
+import static fr.tse.db.storage.data.BitsConverter.ValTypeToBitSet;
+
+import java.io.Serializable;
 import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 /**
  * Intermediary container for SeriesComp that keeps a series of datapoints with dleta delat compression. 
@@ -14,7 +19,7 @@ import java.util.Iterator;
  *
  * @param <ValType>
  */
-public class SerieQueue<ValType extends ValueType> {
+public class SerieQueue<ValType extends ValueType> implements Serializable {
 
 	private LinkedList<DataPointComp> serie;
 	private long top;

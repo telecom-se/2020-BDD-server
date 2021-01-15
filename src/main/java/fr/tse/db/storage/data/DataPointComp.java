@@ -1,9 +1,10 @@
 package fr.tse.db.storage.data;
 
+import java.io.Serializable;
 import java.util.BitSet;
 import static fr.tse.db.storage.data.BitsConverter.*;
 
-public class DataPointComp {
+public class DataPointComp implements Serializable {
 	//serie de bits
 	private BitSet timestamp;
 	//serie de bits

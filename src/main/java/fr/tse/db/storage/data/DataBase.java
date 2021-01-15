@@ -1,9 +1,17 @@
 package fr.tse.db.storage.data;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import fr.tse.db.storage.exception.SeriesAlreadyExistsException;
 import fr.tse.db.storage.exception.SeriesNotFoundException;
@@ -93,6 +101,58 @@ public class DataBase implements Serializable {
 		}
 	}
 	
+	/**
+	 * Writes the object into an outputStream
+	 * @param out
+	 * @throws IOException
+	 */
+	private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+		Map<String,SeriesComp> map=this.series.entrySet().parallelStream()
+			.collect(Collectors.toMap(
+					entry->entry.getKey(),
+					entry -> SeriesConverter.compress((SeriesUnComp) entry.getValue())
+					));
+		out.writeObject(map);
+	}
+	
+	/**
+	 * Reads a database from inputStream
+	 * @param in
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
+	private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+		Map<String,SeriesComp> map= (Map<String, SeriesComp>) in.readObject();
+		this.series= map.entrySet().parallelStream().collect(Collectors.toMap(
+				entry->entry.getKey(),
+				entry -> SeriesConverter.unCompress(entry.getValue())
+				));
+	}
+	
+	/**
+	 * Static export of database into file
+	 * @param db
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	public static void dumpDatabase(DataBase db) throws FileNotFoundException, IOException {
+		File fichier =  new File("db.db") ;
+		ObjectOutputStream oos =  new ObjectOutputStream(new FileOutputStream(fichier,false)) ;
+		oos.writeObject(db);
+	}
+	
+	/**
+	 * Static import of database from file
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 */
+	public static DataBase loadDatabase() throws FileNotFoundException, IOException, ClassNotFoundException {
+		File fichier =  new File("db.db") ;
+		ObjectInputStream ois =  new ObjectInputStream(new FileInputStream(fichier)) ;
+		return (DataBase) ois.readObject();
+	}
 	
 	
 }
