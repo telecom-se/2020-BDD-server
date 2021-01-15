@@ -198,8 +198,6 @@ public class QueryService {
                     result.put("join", whereConditions.get("join"));
                 }
                 result.put("action", "select");
-                System.out.println("******************");
-                System.out.println(result);
                 break;
             }
             case "create": {
