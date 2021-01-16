@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 @SpringBootTest
@@ -23,12 +23,12 @@ public class QueryParsingSelectTests {
 	// BadQueryException : Test when the Select Query is correct
 	public void parseQuerySelectSyntaxQueryExceptionTest() throws BadQueryException {
 		String queryTest = "select all from myseries where timestamp == 15;";
-		HashMap<String, Object> expectedSeries = new HashMap<String, Object>();
+		HashMap<String, Object> expectedSeries = new HashMap<>();
 		expectedSeries.put("action", "select");
 		expectedSeries.put("function", "all");
 		expectedSeries.put("series", "myseries");
-		expectedSeries.put("operators", Arrays.asList("=="));
-		expectedSeries.put("timestamps", Arrays.asList(15L));
+		expectedSeries.put("operators", Collections.singletonList("=="));
+		expectedSeries.put("timestamps", Collections.singletonList(15L));
 		expectedSeries.put("join", null);
 		Assertions.assertEquals(expectedSeries, queryService.parseQuery(queryTest));
 	}
@@ -103,8 +103,8 @@ public class QueryParsingSelectTests {
 		HashMap<String, Object> expectedMap = new HashMap();
 		expectedMap.put("action", "select");
 		expectedMap.put("series", "myseries");
-		expectedMap.put("timestamps", Arrays.asList((15L)));
-		expectedMap.put("operators", Arrays.asList("=="));
+		expectedMap.put("timestamps", Collections.singletonList((15L)));
+		expectedMap.put("operators", Collections.singletonList("=="));
 		expectedMap.put("join", null);
 		expectedMap.put("function", "all");
 		HashMap<String, Object> actualMap = queryService.parseQuery(queryTest);

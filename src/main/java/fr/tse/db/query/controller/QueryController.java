@@ -15,7 +15,6 @@ import java.util.HashMap;
 @Slf4j
 @RestController
 public class QueryController {
-
     @Autowired
     QueryService queryService;
 

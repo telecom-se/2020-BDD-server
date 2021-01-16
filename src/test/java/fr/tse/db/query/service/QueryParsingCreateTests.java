@@ -73,10 +73,9 @@ class QueryParsingCreateTests {
 	@Test
 	// BadQueryException : Missing name and type.
 	public void parseQuerySingleCreateSyntax3BadQueryExceptionTest() {
-		String query = ACTION;
 		String expectedMessage = BadQueryException.ERROR_MESSAGE_CREATE_GENERAL;
 
-		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
+		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(ACTION));
 		Assertions.assertEquals(expectedMessage, e.getMessage());
 	}
 

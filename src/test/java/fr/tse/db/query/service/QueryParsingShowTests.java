@@ -16,7 +16,7 @@ public class QueryParsingShowTests {
     @Test
     public void showAllTest() throws BadQueryException {
         String queryTest = "show all";
-        HashMap<String, Object> expectedSeries = new HashMap<String, Object>();
+        HashMap<String, Object> expectedSeries = new HashMap<>();
         expectedSeries.put("action", "show");
         expectedSeries.put("series", "all");
         Assertions.assertEquals(expectedSeries, queryService.parseQuery(queryTest));
@@ -24,11 +24,9 @@ public class QueryParsingShowTests {
 
     @Test
     // BadQueryException : Test when the Show Query is correct
-    public void parseQueryShowSyntaxQueryExceptionTest() throws BadQueryException {
+    public void parseQueryShowSyntaxQueryExceptionTest() {
         String queryTest = "show";
         String expectedMessage = "Error in SHOW query";
-        HashMap<String, Object> expectedSeries = new HashMap<String, Object>();
-        expectedSeries.put("action", "show");
         Exception e = Assertions.assertThrows(BadQueryException.class, () -> queryService.parseQuery(queryTest));
         Assertions.assertEquals(expectedMessage, e.getMessage());
     }

@@ -26,7 +26,6 @@ public class QueryService {
      * @param query the query to parse and proceed
      *
      * @return The hashMap with all the information
-     * @throws Exception
      */
     public HashMap<String, Object> handleQuery(String query) throws Exception {
         String[] commands = query.toLowerCase().split("\\s*;\\s*");
@@ -99,7 +98,6 @@ public class QueryService {
                 if (operators == null || operators.isEmpty() || timestamps == null || timestamps.isEmpty()) {
                     request.deleteAllPoints(series);
                 } else
-
                     // Check conditions the same way as the SELECT method
                     if (join == null) {
                         handleOperatorsCondition("delete", operators.get(0), series, timestamps.get(0));
@@ -111,16 +109,16 @@ public class QueryService {
                 return null;
             }
             case "insert": {
-                // Get serie name
-                String serieName = (String) result.get("series");
+                // Get series name
+                String seriesName = (String) result.get("series");
 
-                // Get serie from name
-                Series series = request.selectSeries(serieName);
+                // Get series from name
+                Series series = request.selectSeries(seriesName);
 
                 // Get the list of pairs <Timestamp, Value>
                 ArrayList<String[]> pairs = (ArrayList<String[]>) result.get("pairs");
 
-                Series seriesTemp = new SeriesUnComp(serieName, series.getType());
+                Series seriesTemp = new SeriesUnComp(seriesName, series.getType());
 
                 try {
                     // For each pair in pairs list
@@ -144,9 +142,8 @@ public class QueryService {
                     throw new WrongSeriesValueTypeException(seriesTemp.getType(), seriesTemp.getType());
                 }
 
-
-                // Insert serie in serie
-                request.insertValue(serieName, seriesTemp);
+                // Insert series in serie
+                request.insertValue(seriesName, seriesTemp);
 
                 return null;
             }
@@ -183,12 +180,12 @@ public class QueryService {
     }
 
     /**
-     * Parse the query given in parameter, and returns an hash map with all the important information
+     * Parse the query given in parameter
      *
-     * @param command The query to parse
+     * @param command The query to parse     *
      *
-     * @return
-     * @throws BadQueryException
+     * @return a hash map with all the important information
+     * @throws BadQueryException if the query string is ill-formed
      */
     public HashMap<String, Object> parseQuery(String command) throws BadQueryException {
         HashMap<String, Object> result = new HashMap<>();
@@ -234,7 +231,7 @@ public class QueryService {
                 Pattern selectPattern = Pattern.compile("^\\s*create\\s+(.+?)\\s+(.+?)\\s*$");
                 Matcher selectMatcher = selectPattern.matcher(command);
 
-                // Check if regex matchs the command and respect two entities
+                // Check if regex matches the command and respect two entities
                 if (!selectMatcher.find() || selectMatcher.groupCount() < 2) {
                     throw new BadQueryException(BadQueryException.ERROR_MESSAGE_CREATE_GENERAL);
                 }
@@ -248,15 +245,15 @@ public class QueryService {
                     throw new BadQueryException(BadQueryException.ERROR_MESSAGE_CREATE_IN_TYPE);
                 }
 
-                // Check the name and type synthax
-                Pattern selectPatternSynthax = Pattern.compile("[a-zA-Z0-9_-]+");
-                Matcher selectMatcherSynthaxName = selectPatternSynthax.matcher(name);
+                // Check the name and type syntax
+                Pattern selectPatternSyntax = Pattern.compile("[a-zA-Z0-9_-]+");
+                Matcher selectMatcherSyntaxName = selectPatternSyntax.matcher(name);
 
-                if (!selectMatcherSynthaxName.matches()) {
+                if (!selectMatcherSyntaxName.matches()) {
                     throw new BadQueryException(BadQueryException.ERROR_MESSAGE_CREATE_IN_NAME_SPECIAL_CHARACTERS);
                 }
 
-                // Insert in hashmap the action, the serie name and the type
+                // Insert in hashmap the action, the series name and the type
                 result.put("action", "create");
                 result.put("name", name);
                 result.put("type", type);
@@ -272,10 +269,10 @@ public class QueryService {
                 String series = selectMatcher.group(1);
                 result.put("series", series);
                 String values = selectMatcher.group(2);
-                String[] splitedValues = values.split("\\)\\,\\s+\\(");
+                String[] splittedValues = values.split("\\),\\s+\\(");
                 ArrayList<String[]> pairs = new ArrayList<>();
-                for (String splitedValue : splitedValues) {
-                    String[] pair = splitedValue.split(",\\s*");
+                for (String splittedValue : splittedValues) {
+                    String[] pair = splittedValue.split(",\\s*");
                     if (pair.length != 2) {
                         throw new BadQueryException(BadQueryException.ERROR_MESSAGE_INSERT_IN_VALUES);
                     }
@@ -354,9 +351,9 @@ public class QueryService {
         if (conditions.contains("or")) {
             joinCondition = "or";
         }
-        for (int i = 0; i < splitConditions.length; i++) {
+        for (String splitCondition : splitConditions) {
             Pattern p = Pattern.compile("timestamp\\s+(<|>|==|<=|>=)\\s+([0-9]+)\\s*");
-            Matcher m = p.matcher(splitConditions[i]);
+            Matcher m = p.matcher(splitCondition);
             if (!m.find()) {
                 throw new BadQueryException(BadQueryException.ERROR_MESSAGE_CONDITIONS_GENERAL);
             }
