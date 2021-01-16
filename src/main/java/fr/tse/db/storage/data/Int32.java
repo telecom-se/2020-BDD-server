@@ -1,7 +1,5 @@
 package fr.tse.db.storage.data;
 
-import java.io.Serializable;
-
 import fr.tse.db.storage.exception.WrongValueTypeException;
 
 /**
@@ -11,51 +9,40 @@ import fr.tse.db.storage.exception.WrongValueTypeException;
  * @since 2020-11
  */
 public class Int32 implements ValueType<Integer> {
+    private Integer val;
 
-	private Integer val;
+    public Int32(Integer val) {
+        this.val = val;
+    }
 
-	public Int32(Integer val) {
-		this.val = val;
-	}
+    public Integer getVal() {
+        return val;
+    }
 
-	public Integer getVal() {
-		return val;
-	}
+    public void setVal(Integer val) {
+        this.val = val;
+    }
 
-	public void setVal(Integer val) {
-		this.val = val;
-	}
+    public int compareTo(ValueType o) {
+        if (o instanceof Int32) {
+            return this.val.compareTo(((Int32) o).val);
+        } else {
+            throw new WrongValueTypeException(this.getClass(), o.getClass());
+        }
+    }
 
-	public int compareTo(ValueType o) {
-		if (o instanceof Int32) {
-			if (this.val == ((Int32) o).val) {
-				return 0;
-			} else if (this.val < ((Int32) o).val) {
-				return -1;
-			} else {
-				return 1;
-			}
-		} else {
-			throw new WrongValueTypeException(this.getClass(), o.getClass());
-		}
-	}
+    @Override
+    public String toString() {
+        return "Int32[" + val + "]";
+    }
 
-	@Override
-	public String toString() {
-		return "Int32[" + val + "]";
-	}
-
-	public ValueType sum(ValueType i) throws WrongValueTypeException {
-		Int32 res = new Int32(0);
-		if (i instanceof Int32) {
-			res.setVal(this.getVal() + ((Int32) i).getVal());
-		} else {
-			throw new WrongValueTypeException(this.getClass(), i.getClass());
-		}
-		return res;
-	}
-
-	public float divide(int denom) {
-		return (float) this.val / denom;
-	}
+    public ValueType sum(ValueType i) throws WrongValueTypeException {
+        Int32 res = new Int32(0);
+        if (i instanceof Int32) {
+            res.setVal(this.getVal() + ((Int32) i).getVal());
+        } else {
+            throw new WrongValueTypeException(this.getClass(), i.getClass());
+        }
+        return res;
+    }
 }
