@@ -80,7 +80,7 @@ public class QueryParsingSelectTests {
 	// BadQueryException : Test when the Conditions in Query are not specified
 	public void parseQuerySelectConditionsUnspecifiedBadQueryExceptionTest() {
 	    String queryTest = "select all from myseries where;";
-	    String expectedMessage = "Bad action provided";
+	    String expectedMessage = "Error in SELECT query";
 	    Exception e = Assertions.assertThrows(BadQueryException.class, () -> queryService.parseQuery(queryTest));
 	    Assertions.assertEquals(expectedMessage, e.getMessage());
 	}
@@ -89,7 +89,7 @@ public class QueryParsingSelectTests {
 	// BadQueryException : Test when the Conditions Syntax are incorrect
 	public void parseQuerySelectConditionsSyntaxBadQueryExceptionTest() {
 	    String queryTest = "select all from myseries were timestamp == 15;";
-	    String expectedMessage = "Bad action provided";
+	    String expectedMessage = "Error in SELECT query";
 	    Exception e = Assertions.assertThrows(BadQueryException.class, () -> queryService.parseQuery(queryTest));
 	    Assertions.assertEquals(expectedMessage, e.getMessage());
 	}
@@ -98,7 +98,7 @@ public class QueryParsingSelectTests {
 	// BadQueryException : Test when the Conditions Syntax are incorrect
 	public void parseQuerySelectConditionsSyntaxBracketBadQueryExceptionTest() {
 	    String queryTest = "select all from myseries where timestamp == (15);";
-	    String expectedMessage = "Error in conditions 0";
+	    String expectedMessage = BadQueryException.ERROR_MESSAGE_CONDITIONS_GENERAL;
 	    Exception e = Assertions.assertThrows(BadQueryException.class, () -> queryService.parseQuery(queryTest));
 	    Assertions.assertEquals(expectedMessage, e.getMessage());
 	}

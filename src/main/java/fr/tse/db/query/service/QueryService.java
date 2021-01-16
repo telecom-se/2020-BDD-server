@@ -203,20 +203,23 @@ public class QueryService {
         switch (m.group(1)) {
             case "select": {
                 // Check if the select query is correct
-                Pattern selectPattern = Pattern.compile("^\\s*select\\s+(.*?)\\s+from\\s+(.*?)(?:(?:\\s+where\\s+)(.*?))?$");
+                Pattern selectPattern = Pattern.compile("^\\s*select\\s+(.*?)\\s+from\\s+(.*?)(?:\\s+(?:where)\\s+(.*?))?$");
                 Matcher selectMatcher = selectPattern.matcher(command);
                 if(!selectMatcher.find()) {
-                    throw new BadQueryException("Error in SELECT query");
+                    throw new BadQueryException(BadQueryException.ERROR_MESSAGE_SELECT_GENERAL);
                 };
                 // If no series is provided
                 if(selectMatcher.group(1).isEmpty()) {
-                    throw new BadQueryException("Error in SELECT query: No timestamp provided");
+                    throw new BadQueryException(BadQueryException.ERROR_MESSAGE_SELECT_NO_AGGREGATION);
                 }
                 result.put("function", selectMatcher.group(1));
                 for(int i = 0; i <= selectMatcher.groupCount(); i++) {
                     System.out.println(i + " " + selectMatcher.group(i));
                 }
                 String series = selectMatcher.group(2);
+                if(series.isEmpty() || series.contains(" ")) {
+                    throw new BadQueryException(BadQueryException.ERROR_MESSAGE_SELECT_GENERAL);
+                }
                 result.put("series", series);
                 System.out.println("Series " + series);
                 // Check if conditions were provided
@@ -323,8 +326,8 @@ public class QueryService {
             case "show": {
                 Pattern selectPattern = Pattern.compile("^show\\s+(.*?)\\s*$");
                 Matcher selectMatcher = selectPattern.matcher(command);
-                if(!selectMatcher.find() || selectMatcher.group(1).isEmpty()) {
-                    throw new BadQueryException("Error in SHOW query");
+                if(!selectMatcher.find() || !selectMatcher.group(1).equals("all")) {
+                    throw new BadQueryException(BadQueryException.ERROR_MESSAGE_SHOW_GENERAL);
                 };
                 result.put("action", "show");
                 result.put("series", selectMatcher.group(1));
@@ -342,6 +345,9 @@ public class QueryService {
         if(splitConditions.length > 2) {
             throw new BadQueryException(BadQueryException.ERROR_MESSAGE_CONDITIONS_TOO_MANY);
         }
+        if(splitConditions.length < 1) {
+            throw new BadQueryException(BadQueryException.ERROR_MESSAGE_CONDITIONS_GENERAL);
+        }
         List<Long> timestamps = new ArrayList<>();
         List<String> operators = new ArrayList<>();
         String joinCondition = null;
@@ -353,9 +359,9 @@ public class QueryService {
         }
         for(int i = 0; i < splitConditions.length; i++) {
             Pattern p = Pattern.compile("timestamp\\s+(<|>|==|<=|>=)\\s+([0-9]+)\\s*");
-            Matcher m = p.matcher(conditions);
+            Matcher m = p.matcher(splitConditions[i]);
             if(!m.find()) {
-                throw new BadQueryException(BadQueryException.ERROR_MESSAGE_CONDITIONS_GENERAL + i);
+                throw new BadQueryException(BadQueryException.ERROR_MESSAGE_CONDITIONS_GENERAL);
             }
             operators.add(m.group(1));
             timestamps.add(Long.parseLong(m.group(2)));
