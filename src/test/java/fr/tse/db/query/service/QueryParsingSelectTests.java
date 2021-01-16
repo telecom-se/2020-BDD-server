@@ -148,7 +148,7 @@ public class QueryParsingSelectTests {
 		db.deleteSeries("myseries1");
 		}catch(Exception e) {
 			db.deleteSeries("myseries1");
-			Assert.fail(e.getMessage());
+			Assertions.fail(e.getMessage());
 		}	
 	}
 
@@ -173,7 +173,7 @@ public class QueryParsingSelectTests {
 
 		} catch(Exception e) {
 			db.deleteSeries("myseries1");
-			Assert.fail(e.getMessage());
+			Assertions.fail(e.getMessage());
 		}
 		
 
@@ -207,7 +207,7 @@ public class QueryParsingSelectTests {
 		}
 		catch(Exception e){
 			db.deleteSeries("myseries1");
-			Assert.fail(e.getMessage());
+			Assertions.fail(e.getMessage());
 		}
 
 	}
@@ -233,7 +233,7 @@ public class QueryParsingSelectTests {
 		}
 		catch(Exception e){
 			db.deleteSeries("myseries1");
-			Assert.fail(e.getMessage());
+			Assertions.fail(e.getMessage());
 		}
 		
 	}

@@ -42,7 +42,7 @@ class QueryParsingCreateTests {
 		hashMapExpected.put("action", "create");
 		hashMapExpected.put("type", "int64");
 
-		Assert.assertEquals(hashMapExpected, qs.parseQuery(queryInt64));
+		Assertions.assertEquals(hashMapExpected, qs.parseQuery(queryInt64));
 
 		// Testing the creation of a series with float32 type
 		String queryFloat32 = "create MySeries float32";
@@ -52,7 +52,7 @@ class QueryParsingCreateTests {
 		hashMapExpected.put("action", "create");
 		hashMapExpected.put("type", "float32");
 
-		Assert.assertEquals(hashMapExpected, qs.parseQuery(queryFloat32));
+		Assertions.assertEquals(hashMapExpected, qs.parseQuery(queryFloat32));
 	}
 
 	// ---------------------- [CREATE] [SINGLEQUERY] [BadQueryException]
