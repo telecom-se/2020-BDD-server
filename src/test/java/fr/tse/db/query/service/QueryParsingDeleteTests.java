@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -161,10 +161,9 @@ class QueryParsingDeleteTests {
     @Test
     // BadQueryException : Missing ALL or FROM.
     public void parseQuerySingleDeleteSyntax15BadQueryExceptionTest() {
-        String query = ACTION;
         String expectedMessage = BadQueryException.ERROR_MESSAGE_DELETE_GENERAL_1;
 
-        Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
+        Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(ACTION));
         Assertions.assertEquals(expectedMessage, e.getMessage());
     }
 
@@ -196,8 +195,8 @@ class QueryParsingDeleteTests {
     public void parseQueryDeleteExample2Test() throws BadQueryException {
         String query = ACTION + " from MySeries where timestamp == 12525";
         HashMap<String, Object> expectedHashMap = new HashMap();
-        expectedHashMap.put("timestamps", Arrays.asList((long) 12525));
-        expectedHashMap.put("operators", Arrays.asList("=="));
+        expectedHashMap.put("timestamps", Collections.singletonList((long) 12525));
+        expectedHashMap.put("operators", Collections.singletonList("=="));
         expectedHashMap.put("join", null);
         expectedHashMap.put("series", "MySeries");
         expectedHashMap.put("action", "delete");
@@ -215,7 +214,7 @@ class QueryParsingDeleteTests {
         List<String> operators = new ArrayList<>();
         operators.add(">");
         operators.add("<");
-        List<Long> timestamps = new ArrayList<Long>();
+        List<Long> timestamps = new ArrayList<>();
         timestamps.add((long) 5);
         timestamps.add((long) 15);
         expectedHashMap.put("timestamps", timestamps);
@@ -250,8 +249,8 @@ class QueryParsingDeleteTests {
         // Check valid hashmap
         Assertions.assertEquals(hashMap.get("action"), "delete");
         Assertions.assertEquals(hashMap.get("series"), seriesName);
-        Assertions.assertEquals(hashMap.get("operators"), Arrays.asList("=="));
-        Assertions.assertEquals(hashMap.get("timestamps"), Arrays.asList(3000L));
+        Assertions.assertEquals(hashMap.get("operators"), Collections.singletonList("=="));
+        Assertions.assertEquals(hashMap.get("timestamps"), Collections.singletonList(3000L));
     }
 
     @Test
@@ -266,8 +265,8 @@ class QueryParsingDeleteTests {
         // Check valid hashmap
         Assertions.assertEquals(hashMap.get("action"), "delete");
         Assertions.assertEquals(hashMap.get("series"), seriesName);
-        Assertions.assertEquals(hashMap.get("operators"), Arrays.asList("=="));
-        Assertions.assertEquals(hashMap.get("timestamps"), Arrays.asList(3000L));
+        Assertions.assertEquals(hashMap.get("operators"), Collections.singletonList("=="));
+        Assertions.assertEquals(hashMap.get("timestamps"), Collections.singletonList(3000L));
     }
 
     // ---------------------- [DELETE] [SINGLEQUERY]

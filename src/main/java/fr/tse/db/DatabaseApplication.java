@@ -1,11 +1,11 @@
-package fr.tse.db.query;
+package fr.tse.db;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class QueryApplication {
+public class DatabaseApplication {
     public static void main(String[] args) {
-        SpringApplication.run(QueryApplication.class, args);
+        SpringApplication.run(DatabaseApplication.class, args);
     }
 }

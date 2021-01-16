@@ -9,15 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class QueryApplicationTests {
+class DatabaseApplicationTests {
 
     @Autowired
     private QueryService qs;
-
-    @Test
-    void contextLoads() {
-    }
-
 
     @Test
     // Unknown action in query
@@ -28,5 +23,4 @@ class QueryApplicationTests {
         Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
         Assertions.assertEquals(expectedMessage, e.getMessage());
     }
-
 }
