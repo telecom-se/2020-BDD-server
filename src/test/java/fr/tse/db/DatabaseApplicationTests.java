@@ -1,4 +1,4 @@
-package fr.tse.db.query;
+package fr.tse.db;
 
 
 import fr.tse.db.query.error.BadQueryException;

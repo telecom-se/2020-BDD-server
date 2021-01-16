@@ -260,8 +260,6 @@ class QueryParsingDeleteTests {
 
         HashMap<String, Object> hashMap = qs.parseQuery(query);
 
-        System.out.println(hashMap);
-
         // Check valid hashmap
         Assertions.assertEquals(hashMap.get("action"), "delete");
         Assertions.assertEquals(hashMap.get("series"), seriesName);

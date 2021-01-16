@@ -7,12 +7,14 @@ import fr.tse.db.storage.exception.SeriesNotFoundException;
 import fr.tse.db.storage.exception.WrongSeriesValueTypeException;
 import fr.tse.db.storage.request.Requests;
 import fr.tse.db.storage.request.RequestsImpl;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 @Service
 public class QueryService {
 
@@ -208,14 +210,14 @@ public class QueryService {
                 }
                 result.put("function", selectMatcher.group(1));
                 for (int i = 0; i <= selectMatcher.groupCount(); i++) {
-                    System.out.println(i + " " + selectMatcher.group(i));
+                    log.debug(i + " " + selectMatcher.group(i));
                 }
                 String series = selectMatcher.group(2);
                 if (series.isEmpty() || series.contains(" ")) {
                     throw new BadQueryException(BadQueryException.ERROR_MESSAGE_SELECT_GENERAL);
                 }
                 result.put("series", series);
-                System.out.println("Series " + series);
+                log.debug("Series " + series);
                 // Check if conditions were provided
                 if (selectMatcher.group(3) != null && !selectMatcher.group(3).isEmpty()) {
                     String conditions = selectMatcher.group(3);
