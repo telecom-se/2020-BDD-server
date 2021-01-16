@@ -123,7 +123,7 @@ public class QueryParsingSelectTests {
 	
 	
 	@Test
-	public void parseQuerySelectOkAll() {
+	public void handleQuerySelectOkAll() {
 	    
 		DataBase db = DataBase.getInstance();		
 		db.addSeries(new Series("myseries1", Int32.class));
@@ -140,15 +140,12 @@ public class QueryParsingSelectTests {
 		}catch(Exception e) {
 			db.deleteSeries("myseries1");
 			Assert.fail(e.getMessage());
-		}
-		
-
-		
+		}	
 	}
 	
 	// NOT WORKING : THE SERIES (myseries1, myseries2) is seeked instead of the series myseries1 and myseries2
 	@Test
-	public void parseQuerySelectOkAllMultiple()  {
+	public void handleQuerySelectOkAllMultiple()  {
 	    
 		DataBase db = DataBase.getInstance();
 		
@@ -172,14 +169,11 @@ public class QueryParsingSelectTests {
 			db.deleteSeries("myseries2");
 			Assert.fail(e.getMessage());
 		}
-		
-		
-
 	}
 	
 	
 	@Test 
-	public void parseQuerySelectSimpleWhere() {
+	public void handleQuerySelectSimpleWhere() {
 		
 		DataBase db = DataBase.getInstance();		
 		Series addedSerie = new Series("myseries1", Int32.class);
@@ -206,7 +200,7 @@ public class QueryParsingSelectTests {
 	}
 	
 	@Test
-	public void parseQuerySelectMinFromRange()  {
+	public void handleQuerySelectMinWithCondition()  {
 		
 		DataBase db = DataBase.getInstance();		
 		Series addedSerie = new Series("myseries1", Int32.class);
@@ -227,6 +221,35 @@ public class QueryParsingSelectTests {
 	    Assertions.assertNotNull(response2.get("min"));
 		Assertions.assertEquals(1, ((Int32)response2.get("min")).getVal());
 		
+		db.deleteSeries("myseries1");
+
+		
+		}
+		catch(Exception e){
+			db.deleteSeries("myseries1");
+			Assert.fail(e.getMessage());
+		}
+		
+		
+		
+		
+		
+		
+	}
+	
+	// NOT WORKING ONLY THE FIRST CONDITION IS TAKEN INTO ACCOUNT
+	@Test
+	public void handleQuerySelectMinWithMultipleCondition()  {
+		
+		DataBase db = DataBase.getInstance();		
+		Series addedSerie = new Series("myseries1", Int32.class);
+		addedSerie.addPoint(16L, new Int32(3));
+		addedSerie.addPoint(12L,new Int32(1));
+		addedSerie.addPoint(21L,new Int32(2));
+		addedSerie.addPoint(18L,new Int32(4));
+		db.addSeries(addedSerie);
+
+		try {
 		
 		String queryTest3 = "SELECT MIN FROM MySeries1 WHERE TIMESTAMP > 15 AND TIMESTAMP < 20";
 	    HashMap<String, Object> response3 = queryService.handleQuery(queryTest3);    
@@ -239,11 +262,6 @@ public class QueryParsingSelectTests {
 			db.deleteSeries("myseries1");
 			Assert.fail(e.getMessage());
 		}
-		
-		
-		
-		
-		
 		
 	}
 	
