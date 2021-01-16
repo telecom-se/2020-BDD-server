@@ -1,4 +1,4 @@
 package fr.tse.db.storage.exception;
 
-public class EmptySeriesException  extends RuntimeException{
+public class EmptySeriesException extends RuntimeException {
 }

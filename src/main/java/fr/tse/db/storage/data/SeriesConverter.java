@@ -5,37 +5,27 @@ import java.util.Map;
 /**
  * Class with static methods to switch between compressed and uncompressed
  * series.
- * 
- * @author remi huguenot
  *
+ * @author remi huguenot
  */
 public class SeriesConverter {
+    public static <ValType extends ValueType> SeriesCompressed<ValType> compress(SeriesUncompressed<ValType> seriesUncompressed) {
+        SeriesCompressed<ValType> newSeries = new SeriesCompressed<>(seriesUncompressed.getName(), seriesUncompressed.getType());
+        Map<Long, ValType> points = seriesUncompressed.getPoints();
 
-	public static <ValType extends ValueType> SeriesComp<ValType> compress(SeriesUnComp<ValType> Serr) {
+        for (Long key : points.keySet()) {
+            newSeries.addPoint(key, points.get(key));
+        }
+        return newSeries;
+    }
 
-		SeriesComp<ValType> nuSerr = new SeriesComp<ValType>(Serr.getName(), Serr.getType());
+    public static <ValType extends ValueType> SeriesUncompressed<ValType> uncompress(SeriesCompressed<ValType> seriesCompressed) {
+        SeriesUncompressed<ValType> newSeries = new SeriesUncompressed<>(seriesCompressed.getName(), seriesCompressed.getType());
+        Map<Long, ValType> points = seriesCompressed.getPoints();
 
-		Map<Long, ValType> points = Serr.getPoints();
-
-		for (Long key : points.keySet()) {
-
-			nuSerr.addPoint(key, points.get(key));
-		}
-		return nuSerr;
-
-	}
-
-	public static <ValType extends ValueType> SeriesUnComp<ValType> unCompress(SeriesComp<ValType> Serr) {
-
-		SeriesUnComp<ValType> nuSerr = new SeriesUnComp<ValType>(Serr.getName(), Serr.getType());
-		Map<Long, ValType> points = Serr.getPoints();
-
-		for (Long key : points.keySet()) {
-
-			nuSerr.addPoint(key, points.get(key));
-		}
-
-		return nuSerr;
-	}
-
+        for (Long key : points.keySet()) {
+            newSeries.addPoint(key, points.get(key));
+        }
+        return newSeries;
+    }
 }
