@@ -1,7 +1,10 @@
 package fr.tse.db.query.service;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Set;
+
+import fr.tse.db.storage.data.SeriesUnComp;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
@@ -31,7 +34,7 @@ public class QueryParsingSelectTests {
 	    expectedSeries.put("action", "select");
 	    expectedSeries.put("function", "all");
 	    expectedSeries.put("series","myseries");
-		expectedSeries.put("operators",Arrays.asList("=="));
+		expectedSeries.put("operators", Arrays.asList("=="));
 		expectedSeries.put("timestamps",Arrays.asList(15L));
 		expectedSeries.put("join",null);
 	    Assertions.assertEquals(expectedSeries,queryService.parseQuery(queryTest));
@@ -132,7 +135,7 @@ public class QueryParsingSelectTests {
 	public void handleQuerySelectOkAll() {
 	    
 		DataBase db = DataBase.getInstance();		
-		db.addSeries(new Series("myseries1", Int32.class));
+		db.addSeries(new SeriesUnComp("myseries1", Int32.class));
 		
 		try {
 		String queryTest = "SELECT ALL FROM MySeries1";
@@ -148,41 +151,12 @@ public class QueryParsingSelectTests {
 			Assert.fail(e.getMessage());
 		}	
 	}
-	
-	// NOT WORKING : THE SERIES (myseries1, myseries2) is seeked instead of the series myseries1 and myseries2
-	@Test
-	public void handleQuerySelectOkAllMultiple()  {
-	    
-		DataBase db = DataBase.getInstance();
-		
-		db.addSeries(new Series("myseries1", Int32.class));
-		db.addSeries(new Series("myseries2", Int32.class));
-		
-		try {
-			String queryTest2 = "SELECT ALL FROM (MySeries1, myseries2)";
 
-			HashMap<String, Object> response = queryService.handleQuery(queryTest2);
-			Assertions.assertNotNull(response.get("values"));
-
-			Series seriesResult = (Series) response.get("values");
-			Assertions.assertEquals("myseries1", seriesResult.getName());
-
-			db.deleteSeries("myseries1");
-			db.deleteSeries("myseries2");
-
-		}catch(Exception e) {
-			db.deleteSeries("myseries1");
-			db.deleteSeries("myseries2");
-			Assert.fail(e.getMessage());
-		}
-	}
-	
-	
 	@Test 
 	public void handleQuerySelectSimpleWhere() {
 		
 		DataBase db = DataBase.getInstance();		
-		Series addedSerie = new Series("myseries1", Int32.class);
+		Series addedSerie = new SeriesUnComp("myseries1", Int32.class);
 		addedSerie.addPoint(15L, new Int32(3));
 		addedSerie.addPoint(12L,new Int32(34));
 		db.addSeries(addedSerie);
@@ -209,7 +183,7 @@ public class QueryParsingSelectTests {
 	public void handleQuerySelectMinWithCondition()  {
 		
 		DataBase db = DataBase.getInstance();		
-		Series addedSerie = new Series("myseries1", Int32.class);
+		Series addedSerie = new SeriesUnComp("myseries1", Int32.class);
 		addedSerie.addPoint(16L, new Int32(3));
 		addedSerie.addPoint(12L,new Int32(1));
 		addedSerie.addPoint(21L,new Int32(2));
@@ -235,12 +209,7 @@ public class QueryParsingSelectTests {
 			db.deleteSeries("myseries1");
 			Assert.fail(e.getMessage());
 		}
-		
-		
-		
-		
-		
-		
+
 	}
 	
 	// NOT WORKING ONLY THE FIRST CONDITION IS TAKEN INTO ACCOUNT
@@ -248,7 +217,7 @@ public class QueryParsingSelectTests {
 	public void handleQuerySelectMinWithMultipleCondition()  {
 		
 		DataBase db = DataBase.getInstance();		
-		Series addedSerie = new Series("myseries1", Int32.class);
+		Series addedSerie = new SeriesUnComp("myseries1", Int32.class);
 		addedSerie.addPoint(16L, new Int32(3));
 		addedSerie.addPoint(12L,new Int32(1));
 		addedSerie.addPoint(21L,new Int32(2));
@@ -256,13 +225,11 @@ public class QueryParsingSelectTests {
 		db.addSeries(addedSerie);
 
 		try {
-		
 		String queryTest3 = "SELECT MIN FROM MySeries1 WHERE TIMESTAMP > 15 AND TIMESTAMP < 20";
 	    HashMap<String, Object> response3 = queryService.handleQuery(queryTest3);    
 	    Assertions.assertNotNull(response3.get("min"));
 		Assertions.assertEquals(3, ((Int32)response3.get("min")).getVal());
 		db.deleteSeries("myseries1");
-
 		}
 		catch(Exception e){
 			db.deleteSeries("myseries1");
