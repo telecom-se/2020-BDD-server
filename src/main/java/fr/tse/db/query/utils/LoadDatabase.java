@@ -31,9 +31,9 @@ public class LoadDatabase {
         _"seriesInt64" type Int64
         _"seriesFloat32" type Float32
          */
-        Series seriesInt32 = new SeriesUnComp("seriesint32", Int32.class);
-        Series seriesInt64 = new SeriesUnComp("seriesint64", Int64.class);
-        Series seriesFloat32 = new SeriesUnComp("seriesfloat32", Float32.class);
+        Series seriesInt32 = new SeriesUncompressed("seriesint32", Int32.class);
+        Series seriesInt64 = new SeriesUncompressed("seriesint64", Int64.class);
+        Series seriesFloat32 = new SeriesUncompressed("seriesfloat32", Float32.class);
         // Populate those series with 5 data points :
         seriesInt32.addPoint(1L, new Int32(2));
         seriesInt32.addPoint(2L, new Int32(4));

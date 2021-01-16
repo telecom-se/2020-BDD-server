@@ -4,7 +4,7 @@ import fr.tse.db.query.error.BadQueryException;
 import fr.tse.db.storage.data.DataBase;
 import fr.tse.db.storage.data.Int32;
 import fr.tse.db.storage.data.Series;
-import fr.tse.db.storage.data.SeriesUnComp;
+import fr.tse.db.storage.data.SeriesUncompressed;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,7 +128,7 @@ public class QueryParsingSelectTests {
     public void handleQuerySelectOkAll() {
 
         DataBase db = DataBase.getInstance();
-        db.addSeries(new SeriesUnComp("myseries1", Int32.class));
+        db.addSeries(new SeriesUncompressed("myseries1", Int32.class));
 
         try {
             String queryTest = "SELECT ALL FROM MySeries1";
@@ -149,7 +149,7 @@ public class QueryParsingSelectTests {
     public void handleQuerySelectSimpleWhere() {
 
         DataBase db = DataBase.getInstance();
-        Series addedSerie = new SeriesUnComp("myseries1", Int32.class);
+        Series addedSerie = new SeriesUncompressed("myseries1", Int32.class);
         addedSerie.addPoint(15L, new Int32(3));
         addedSerie.addPoint(12L, new Int32(34));
         db.addSeries(addedSerie);
@@ -176,7 +176,7 @@ public class QueryParsingSelectTests {
     public void handleQuerySelectMinWithCondition() {
 
         DataBase db = DataBase.getInstance();
-        Series addedSerie = new SeriesUnComp("myseries1", Int32.class);
+        Series addedSerie = new SeriesUncompressed("myseries1", Int32.class);
         addedSerie.addPoint(16L, new Int32(3));
         addedSerie.addPoint(12L, new Int32(1));
         addedSerie.addPoint(21L, new Int32(2));
@@ -209,7 +209,7 @@ public class QueryParsingSelectTests {
     public void handleQuerySelectMinWithMultipleCondition() {
 
         DataBase db = DataBase.getInstance();
-        Series addedSeries = new SeriesUnComp("myseries1", Int32.class);
+        Series addedSeries = new SeriesUncompressed("myseries1", Int32.class);
         addedSeries.addPoint(16L, new Int32(3));
         addedSeries.addPoint(12L, new Int32(1));
         addedSeries.addPoint(21L, new Int32(2));
