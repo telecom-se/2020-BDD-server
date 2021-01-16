@@ -7,17 +7,13 @@ import fr.tse.db.storage.data.Series;
 import fr.tse.db.storage.data.SeriesUncompressed;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Collections;
 import java.util.HashMap;
 
-@SpringBootTest
 public class QueryParsingSelectTests {
 
-    @Autowired
-    private QueryService queryService;
+        private final QueryService queryService = new QueryService();
 
     @Test
     // BadQueryException : Test when the Select Query is correct
@@ -128,7 +124,7 @@ public class QueryParsingSelectTests {
     public void handleQuerySelectOkAll() {
 
         DataBase db = DataBase.getInstance();
-        db.addSeries(new SeriesUncompressed("myseries1", Int32.class));
+        db.addSeries(new SeriesUncompressed("MySeries1", Int32.class));
 
         try {
             String queryTest = "SELECT ALL FROM MySeries1";
@@ -136,11 +132,11 @@ public class QueryParsingSelectTests {
 
             Assertions.assertNotNull(response.get("values"));
             Series seriesResult = (Series) response.get("values");
-            Assertions.assertEquals("myseries1", seriesResult.getName());
+            Assertions.assertEquals("MySeries1", seriesResult.getName());
 
-            db.deleteSeries("myseries1");
+            db.deleteSeries("MySeries1");
         } catch (Exception e) {
-            db.deleteSeries("myseries1");
+            db.deleteSeries("MySeries1");
             Assertions.fail(e.getMessage());
         }
     }
@@ -149,7 +145,7 @@ public class QueryParsingSelectTests {
     public void handleQuerySelectSimpleWhere() {
 
         DataBase db = DataBase.getInstance();
-        Series addedSerie = new SeriesUncompressed("myseries1", Int32.class);
+        Series addedSerie = new SeriesUncompressed("MySeries1", Int32.class);
         addedSerie.addPoint(15L, new Int32(3));
         addedSerie.addPoint(12L, new Int32(34));
         db.addSeries(addedSerie);
@@ -162,10 +158,10 @@ public class QueryParsingSelectTests {
 
             Assertions.assertEquals(1, points.size());
             Assertions.assertNotNull(points.get(15L));
-            db.deleteSeries("myseries1");
+            db.deleteSeries("MySeries1");
 
         } catch (Exception e) {
-            db.deleteSeries("myseries1");
+            db.deleteSeries("MySeries1");
             Assertions.fail(e.getMessage());
         }
 
@@ -176,7 +172,7 @@ public class QueryParsingSelectTests {
     public void handleQuerySelectMinWithCondition() {
 
         DataBase db = DataBase.getInstance();
-        Series addedSerie = new SeriesUncompressed("myseries1", Int32.class);
+        Series addedSerie = new SeriesUncompressed("MySeries1", Int32.class);
         addedSerie.addPoint(16L, new Int32(3));
         addedSerie.addPoint(12L, new Int32(1));
         addedSerie.addPoint(21L, new Int32(2));
@@ -187,18 +183,18 @@ public class QueryParsingSelectTests {
             String queryTest1 = "SELECT MIN FROM MySeries1 WHERE TIMESTAMP > 15";
             HashMap<String, Object> response1 = queryService.handleQuery(queryTest1);
             Assertions.assertNotNull(response1.get("min"));
-            Assertions.assertEquals(2, ((Int32) response1.get("min")).getVal());
+            Assertions.assertEquals(2, response1.get("min"));
 
             String queryTest2 = "SELECT MIN FROM MySeries1 WHERE TIMESTAMP < 17";
             HashMap<String, Object> response2 = queryService.handleQuery(queryTest2);
             Assertions.assertNotNull(response2.get("min"));
-            Assertions.assertEquals(1, ((Int32) response2.get("min")).getVal());
+            Assertions.assertEquals(1, response2.get("min"));
 
-            db.deleteSeries("myseries1");
+            db.deleteSeries("MySeries1");
 
 
         } catch (Exception e) {
-            db.deleteSeries("myseries1");
+            db.deleteSeries("MySeries1");
             Assertions.fail(e.getMessage());
         }
 
@@ -209,21 +205,21 @@ public class QueryParsingSelectTests {
     public void handleQuerySelectMinWithMultipleCondition() {
 
         DataBase db = DataBase.getInstance();
-        Series addedSeries = new SeriesUncompressed("myseries1", Int32.class);
-        addedSeries.addPoint(16L, new Int32(3));
+        Series addedSeries = new SeriesUncompressed("MySeries1", Int32.class);
         addedSeries.addPoint(12L, new Int32(1));
-        addedSeries.addPoint(21L, new Int32(2));
+        addedSeries.addPoint(16L, new Int32(3));
         addedSeries.addPoint(18L, new Int32(4));
+        addedSeries.addPoint(21L, new Int32(2));
         db.addSeries(addedSeries);
 
         try {
             String queryTest3 = "SELECT MIN FROM MySeries1 WHERE TIMESTAMP > 15 AND TIMESTAMP < 20";
             HashMap<String, Object> response3 = queryService.handleQuery(queryTest3);
             Assertions.assertNotNull(response3.get("min"));
-            Assertions.assertEquals(3, ((Int32) response3.get("min")).getVal());
-            db.deleteSeries("myseries1");
+            Assertions.assertEquals(3, response3.get("min"));
+            db.deleteSeries("MySeries1");
         } catch (Exception e) {
-            db.deleteSeries("myseries1");
+            db.deleteSeries("MySeries1");
             Assertions.fail(e.getMessage());
         }
 

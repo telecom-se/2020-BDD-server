@@ -58,7 +58,7 @@ public class LoadDatabase {
         db.addSeries(seriesInt32);
         db.addSeries(seriesInt64);
         db.addSeries(seriesFloat32);
-        log.info("Database populated");
+        log.info("Database populated with mockup data");
     }
 
     private void clearSeries() {

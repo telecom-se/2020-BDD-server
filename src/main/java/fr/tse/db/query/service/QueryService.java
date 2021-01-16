@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -30,15 +31,20 @@ public class QueryService {
      * @return The hashMap with all the information
      */
     public HashMap<String, Object> handleQuery(String query) throws Exception {
-        String[] commands = query.toLowerCase().split("\\s*;\\s*");
+        String[] commands = query.split("\\s*;\\s*");
         HashMap<String, Object> result = this.parseQuery(commands[0]);
         HashMap<String, Object> resultMap = new HashMap<>();
         switch (result.get("action").toString()) {
             case "select": {
                 String series = result.get("series").toString();
-                String function = result.get("function").toString();
-                List<String> operators = result.get("operators") != null ? (List<String>) result.get("operators") : null;
-                List<Long> timestamps = result.get("timestamps") != null ? (List<Long>) result.get("timestamps") : null;
+                String function = result.get("function").toString().toLowerCase();
+
+                Object operatorsObject = result.get("operators");
+                List<String> operators = operatorsObject == null ? null :
+                        ((List<String>) operatorsObject).stream().map(String::toLowerCase).collect(Collectors.toList());
+                Object timestampsObject = result.get("timestamps");
+                List<Long> timestamps = operatorsObject == null ? null : ((List<Long>) timestampsObject);
+
                 String join = result.get("join") != null ? result.get("join").toString() : null;
                 Series seriesResult;
                 if (operators == null || operators.isEmpty() || timestamps == null || timestamps.isEmpty()) {
@@ -58,19 +64,19 @@ public class QueryService {
                 }
                 // Add minimum to response
                 if (function.contains("min")) {
-                    resultMap.put("min", request.min(seriesResult));
+                    resultMap.put("min", request.min(seriesResult).getVal());
                 }
                 // Add maximum to response
                 if (function.contains("max")) {
-                    resultMap.put("max", request.max(seriesResult));
+                    resultMap.put("max", request.max(seriesResult).getVal());
                 }
                 // Add average to response
-                if (function.contains("average")) {
+                if (function.contains("average") || function.contains("avg")) {
                     resultMap.put("average", request.average(seriesResult));
                 }
                 // Add sum to response
                 if (function.contains("sum")) {
-                    resultMap.put("sum", request.sum(seriesResult));
+                    resultMap.put("sum", request.sum(seriesResult).getVal());
                 }
                 // Add count to response
                 if (function.contains("count")) {
@@ -191,15 +197,15 @@ public class QueryService {
      */
     public HashMap<String, Object> parseQuery(String command) throws BadQueryException {
         HashMap<String, Object> result = new HashMap<>();
-        Pattern p = Pattern.compile("^(create|update|insert|select|delete|drop|show)");
+        Pattern p = Pattern.compile("^(create|update|insert|select|delete|drop|show)", Pattern.CASE_INSENSITIVE);
         Matcher m = p.matcher(command);
         if (!m.find()) {
             throw new BadQueryException(BadQueryException.ERROR_MESSAGE_BAD_ACTION);
         }
-        switch (m.group(1)) {
+        switch (m.group(1).toLowerCase()) {
             case "select": {
                 // Check if the select query is correct
-                Pattern selectPattern = Pattern.compile("^\\s*select\\s+(.*?)\\s+from\\s+(.*?)(?:\\s+(?:where)\\s+(.*?))?$");
+                Pattern selectPattern = Pattern.compile("^\\s*select\\s+(.*?)\\s+from\\s+(.*?)(?:\\s+(?:where)\\s+(.*?))?$", Pattern.CASE_INSENSITIVE);
                 Matcher selectMatcher = selectPattern.matcher(command);
                 if (!selectMatcher.find()) {
                     throw new BadQueryException(BadQueryException.ERROR_MESSAGE_SELECT_GENERAL);
@@ -230,7 +236,7 @@ public class QueryService {
                 break;
             }
             case "create": {
-                Pattern selectPattern = Pattern.compile("^\\s*create\\s+(.+?)\\s+(.+?)\\s*$");
+                Pattern selectPattern = Pattern.compile("^\\s*create\\s+(.+?)\\s+(.+?)\\s*$", Pattern.CASE_INSENSITIVE);
                 Matcher selectMatcher = selectPattern.matcher(command);
 
                 // Check if regex matches the command and respect two entities
@@ -248,7 +254,7 @@ public class QueryService {
                 }
 
                 // Check the name and type syntax
-                Pattern selectPatternSyntax = Pattern.compile("[a-zA-Z0-9_-]+");
+                Pattern selectPatternSyntax = Pattern.compile("[a-zA-Z0-9_-]+", Pattern.CASE_INSENSITIVE);
                 Matcher selectMatcherSyntaxName = selectPatternSyntax.matcher(name);
 
                 if (!selectMatcherSyntaxName.matches()) {
@@ -262,7 +268,7 @@ public class QueryService {
                 break;
             }
             case "insert": {
-                Pattern selectPattern = Pattern.compile("^insert\\s+into\\s+(.*?)\\s+values\\s+\\(\\((.*?)\\)\\)\\s*$");
+                Pattern selectPattern = Pattern.compile("^insert\\s+into\\s+(.*?)\\s+values\\s+\\(\\((.*?)\\)\\)\\s*$", Pattern.CASE_INSENSITIVE);
                 Matcher selectMatcher = selectPattern.matcher(command);
                 if (!selectMatcher.find() || selectMatcher.group(1).isEmpty() || selectMatcher.group(2).isEmpty()) {
                     throw new BadQueryException(BadQueryException.ERROR_MESSAGE_INSERT_GENERAL);
@@ -290,7 +296,7 @@ public class QueryService {
                 break;
             }
             case "delete": {
-                Pattern deletePattern = Pattern.compile("^delete\\s+from\\s*(.*?)((?:\\s*where\\s*)(.*?))?$");
+                Pattern deletePattern = Pattern.compile("^delete\\s+from\\s*(.*?)((?:\\s*where\\s*)(.*?))?$", Pattern.CASE_INSENSITIVE);
                 Matcher deleteMatcher = deletePattern.matcher(command);
                 if (!deleteMatcher.find()) {
                     throw new BadQueryException(BadQueryException.ERROR_MESSAGE_DELETE_GENERAL_1);
@@ -310,7 +316,7 @@ public class QueryService {
                 break;
             }
             case "drop": {
-                Pattern selectPattern = Pattern.compile("^drop\\s+(.*?)\\s*$");
+                Pattern selectPattern = Pattern.compile("^drop\\s+(.*?)\\s*$", Pattern.CASE_INSENSITIVE);
                 Matcher selectMatcher = selectPattern.matcher(command);
                 if (!selectMatcher.find() || selectMatcher.group(1).isEmpty()) {
                     throw new BadQueryException(BadQueryException.ERROR_MESSAGE_DELETE_GENERAL_1);
@@ -320,7 +326,7 @@ public class QueryService {
                 break;
             }
             case "show": {
-                Pattern selectPattern = Pattern.compile("^show\\s+(.*?)\\s*$");
+                Pattern selectPattern = Pattern.compile("^show\\s+(.*?)\\s*$", Pattern.CASE_INSENSITIVE);
                 Matcher selectMatcher = selectPattern.matcher(command);
                 if (!selectMatcher.find() || !selectMatcher.group(1).equals("all")) {
                     throw new BadQueryException(BadQueryException.ERROR_MESSAGE_SHOW_GENERAL);
@@ -337,7 +343,7 @@ public class QueryService {
     }
 
     public HashMap<String, Object> parseConditions(String conditions) throws BadQueryException {
-        String[] splitConditions = conditions.split("(and|or)");
+        String[] splitConditions = conditions.toLowerCase().split("(and|or)");
         if (splitConditions.length > 2) {
             throw new BadQueryException(BadQueryException.ERROR_MESSAGE_CONDITIONS_TOO_MANY);
         }
@@ -347,14 +353,14 @@ public class QueryService {
         List<Long> timestamps = new ArrayList<>();
         List<String> operators = new ArrayList<>();
         String joinCondition = null;
-        if (conditions.contains("and")) {
+        if (Pattern.compile("and", Pattern.CASE_INSENSITIVE).matcher(conditions).find()) {
             joinCondition = "and";
         }
-        if (conditions.contains("or")) {
+        if (Pattern.compile("or", Pattern.CASE_INSENSITIVE).matcher(conditions).find()) {
             joinCondition = "or";
         }
         for (String splitCondition : splitConditions) {
-            Pattern p = Pattern.compile("timestamp\\s+(<|>|==|<=|>=)\\s+([0-9]+)\\s*");
+            Pattern p = Pattern.compile("timestamp\\s+(<|>|==|<=|>=)\\s+([0-9]+)\\s*", Pattern.CASE_INSENSITIVE);
             Matcher m = p.matcher(splitCondition);
             if (!m.find()) {
                 throw new BadQueryException(BadQueryException.ERROR_MESSAGE_CONDITIONS_GENERAL);

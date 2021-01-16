@@ -34,7 +34,7 @@ public class QueryControllerCreateTests {
     @Test
     public void testCreateControllerSeriesAlreadyExistsExceptionTest() throws Exception {
 
-        mvc.perform(post("/query?query=CREATE seriesint32 int32"))
+        mvc.perform(post("/query?query=CREATE seriesInt32 int32"))
                 .andExpect(status().is(409))
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("success", is(false)))

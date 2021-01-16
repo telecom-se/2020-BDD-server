@@ -39,7 +39,7 @@ class QueryControllerDeleteTests {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success", is(true)));
-        Assertions.assertFalse(db.getByName(seriesInt32.toLowerCase()).getPoints().containsKey(1L));
+        Assertions.assertFalse(db.getByName(seriesInt32).getPoints().containsKey(1L));
 
 
         // Exception not implemented in the current version of the software
@@ -64,7 +64,7 @@ class QueryControllerDeleteTests {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success", is(true)));
 
-        Assertions.assertTrue(db.getByName(seriesInt32.toLowerCase()).getPoints().isEmpty());
+        Assertions.assertTrue(db.getByName(seriesInt32).getPoints().isEmpty());
 
         // Exception not implemented in the current version of the software
 		/*this.mvc.perform(
