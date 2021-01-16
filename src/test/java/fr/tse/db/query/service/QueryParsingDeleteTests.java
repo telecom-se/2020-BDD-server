@@ -223,12 +223,9 @@ class QueryParsingDeleteTests {
 	    List<Long> timestamps = new ArrayList<Long>();
 	    timestamps.add((long)5);
 	    timestamps.add((long)15);
-	    whereConditions.put("operators", operators);
-	    whereConditions.put("timestamps",timestamps);
-	    whereConditions.put("join", "and");
-	    expectedHashMap.put("timestamps", whereConditions.get("timestamps"));
-	    expectedHashMap.put("operators", whereConditions.get("operators"));
-	    expectedHashMap.put("join", whereConditions.get("join"));
+	    expectedHashMap.put("timestamps", timestamps);
+	    expectedHashMap.put("operators", operators);
+	    expectedHashMap.put("join", "and");
 		expectedHashMap.put("series", "MySeries");
 		expectedHashMap.put("action", "delete");
 		
