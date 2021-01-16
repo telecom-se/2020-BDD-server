@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
-@ActiveProfiles(profiles = "test_query_controller")
+@ActiveProfiles(profiles = "mockup_data")
 class QueryControllerDeleteTests {
 
     private final String seriesInt32 = "seriesInt32";
