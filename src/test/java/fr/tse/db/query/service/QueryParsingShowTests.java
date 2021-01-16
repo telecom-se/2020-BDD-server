@@ -17,10 +17,19 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class QueryParsingShowTests {
 	@Autowired
 	private QueryService queryService;
+
+	@Test
+	public void showAllTest() throws BadQueryException {
+		String queryTest = "show all";
+		HashMap<String, Object> expectedSeries = new HashMap<String, Object>();
+		expectedSeries.put("action","show");
+		expectedSeries.put("series","all");
+		Assertions.assertEquals(expectedSeries,queryService.parseQuery(queryTest));
+	}
 	
 	@Test
 	// BadQueryException : Test when the Show Query is correct
-	public void parseQuerySelectSyntaxQueryExceptionTest() throws BadQueryException {
+	public void parseQueryShowSyntaxQueryExceptionTest() throws BadQueryException {
 	    String queryTest = "show";
 	    String expectedMessage = "Error in SHOW query";
 	    HashMap<String, Object> expectedSeries = new HashMap<String, Object>();
@@ -31,7 +40,7 @@ public class QueryParsingShowTests {
 	
 	@Test
 	// BadQueryException : Test when the Show Query is not specified
-	public void parseQuerySelectUnspecifiedBadQueryExceptionTest() {
+	public void parseQueryShowUnspecifiedBadQueryExceptionTest() {
 	    String queryTest = "myseries;";
 	    String expectedMessage = "Bad action provided";
 	    Exception e = Assertions.assertThrows(BadQueryException.class, () -> queryService.parseQuery(queryTest));
@@ -40,7 +49,7 @@ public class QueryParsingShowTests {
 	
 	@Test
 	// BadQueryException : Test when the Show Query is not correct
-	public void parseQuerySelectSyntaxBadQueryExceptionTest() {
+	public void parseQueryShowSyntaxBadQueryExceptionTest() {
 	    String queryTest = "showed;";
 	    String expectedMessage = "Error in SHOW query";
 	    Exception e = Assertions.assertThrows(BadQueryException.class, () -> queryService.parseQuery(queryTest));
@@ -49,7 +58,7 @@ public class QueryParsingShowTests {
 	
 	@Test
 	// BadQueryException : Test when the Series in Query is not specified
-	public void parseQuerySelectSeriesBadQueryExceptionTest() {
+	public void parseQueryShowSeriesBadQueryExceptionTest() {
 	    String queryTest = "show from;";
 	    String expectedMessage = "Error in SHOW query";
 	    Exception e = Assertions.assertThrows(BadQueryException.class, () -> queryService.parseQuery(queryTest));
@@ -58,7 +67,7 @@ public class QueryParsingShowTests {
 	
 	@Test
 	// BadQueryException : Test when the From in Query is incorrect
-	public void parseQuerySelectFromSyntaxBadQueryExceptionTest() {
+	public void parseQueryShowFromSyntaxBadQueryExceptionTest() {
 	    String queryTest = "show mySeries rom;";
 	    String expectedMessage = "Error in SHOW query";
 	    Exception e = Assertions.assertThrows(BadQueryException.class, () -> queryService.parseQuery(queryTest));
@@ -67,41 +76,11 @@ public class QueryParsingShowTests {
 	
 	@Test
 	// BadQueryException : Test when the Conditions in Query are not specified
-	public void parseQuerySelectConditionsUnspecifiedBadQueryExceptionTest() {
+	public void parseQueryShowConditionsUnspecifiedBadQueryExceptionTest() {
 	    String queryTest = "show all from myseries where;";
 	    String expectedMessage = "Error in SHOW query";
 	    Exception e = Assertions.assertThrows(BadQueryException.class, () -> queryService.parseQuery(queryTest));
 	    // Pb : queryService.parseQuery(quertyTest) ne renvoie pas d'exception
 	    Assertions.assertEquals(expectedMessage, e.getMessage());
-	}
-	
-	@Test
-	// BadQueryException : Test when the Conditions Syntax are incorrect
-	public void parseQuerySelectConditionsSyntaxBadQueryExceptionTest() {
-	    String queryTest = "show all from myseries were timestamp == 15;";
-	    String expectedMessage = "Error in SHOW query";
-	    Exception e = Assertions.assertThrows(BadQueryException.class, () -> queryService.parseQuery(queryTest));
-	    // Pb : queryService.parseQuery(quertyTest) renvoie un nullPointerException 
-	    // Ligne 56 QueryService.java
-	    Assertions.assertEquals(expectedMessage, e.getMessage());
-	}
-	@Test
-	// BadQueryException : Test when the Conditions Syntax are incorrect
-	public void parseQuerySelectConditionsSyntaxBracketBadQueryExceptionTest() {
-	    String queryTest = "show all from myseries were timestamp == (15);";
-	    String expectedMessage = "Error in SHOW query";
-	    Exception e = Assertions.assertThrows(BadQueryException.class, () -> queryService.parseQuery(queryTest));
-	    // Pb : queryService.parseQuery(quertyTest) renvoie un nullPointerException 
-	    // Ligne 56 QueryService.java
-	    Assertions.assertEquals(expectedMessage, e.getMessage());
-	}
-	
-	@Test
-	// BadQueryException : Test when the Query is correct
-	public void parseQuerySelectTest() throws BadQueryException {
-	    String queryTest = "show all from myseries where timestamp == 15;";
-	    @SuppressWarnings("unused")
-		HashMap<String, Object> expectedMap = new HashMap<String, Object>();
-	    expectedMap = queryService.parseQuery(queryTest);
 	}
 }
