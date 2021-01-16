@@ -8,6 +8,7 @@ import fr.tse.db.storage.request.Requests;
 import fr.tse.db.storage.request.RequestsImpl;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,14 +25,16 @@ public class QueryService {
     
     // TODO A mettre dans un fichier constante
     public List<String> typeList = Arrays.asList(new String[]{"int32", "int64", "float32"});
-    
-    
-    QueryService() {
-    }
 
+    /**
+     * This function is first called by the controller and delegates the parsing and then handle the result by calling
+     * the storage functions depending on the conditions provided
+     * @param query the query to parse and proceed
+     * @return The hashMap with all the information
+     * @throws Exception
+     */
     public HashMap<String, Object> handleQuery(String query) throws Exception {
         String[] commands = query.toLowerCase().split("\\s*;\\s*");
-        System.out.println(commands.length + " command(s) found");
         HashMap<String, Object> result = this.parseQuery(commands[0]);
         HashMap<String, Object> resultMap = new HashMap<>();
         switch(result.get("action").toString()) {
@@ -97,9 +100,12 @@ public class QueryService {
                 List<String> operators = result.get("operators") != null ? (List<String>) result.get("operators") : null;
                 List<Long> timestamps = result.get("timestamps") != null ? (List<Long>) result.get("timestamps") : null;
                 String join = result.get("join") != null ? result.get("join").toString(): null;
+                // Check if conditions were provided
                 if (operators == null || operators.isEmpty() || timestamps == null || timestamps.isEmpty()) {
                     request.deleteAllPoints(series);
                 } else
+
+                // Check conditions the same way as the SELECT method
                 if(join == null) {
                     handleOperatorsCondition("delete", operators.get(0), series, timestamps.get(0));
                 } else if(join.equals("and")) {
@@ -118,26 +124,32 @@ public class QueryService {
             
             	// Get the list of pairs <Timestamp, Value>
             	ArrayList<String[]> pairs = (ArrayList<String[]>) result.get("pairs");
-            	
-            	Series seriesTemp = new Series(serieName, series.getType());
 
-            	// For each pair in pairs list
-            	for(String[] pair : pairs) {
-            		// Get pair timestamp
-            		Long timestamp = Long.parseLong(pair[0]);
-            		
-                	// According to the value type
-                	if(series.getType() == Int32.class) {
-                		Int32 value = new Int32(Integer.parseInt(pair[1]));
-                    	seriesTemp.addPoint(timestamp, value);
-                	}else if(series.getType() == Int64.class) {
-                		Int64 value = new Int64(Long.parseLong(pair[1]));
-                    	seriesTemp.addPoint(timestamp, value);
-                	}else if(series.getType() == Float32.class) {
-                		Float32 value = new Float32(Float.parseFloat(pair[1]));
-                    	seriesTemp.addPoint(timestamp, value);
-                	}
-            	}
+            	// TODO Pierre
+            	Series seriesTemp = new SeriesUnComp(serieName, series.getType());
+
+            	try{
+                    // For each pair in pairs list
+                    for(String[] pair : pairs) {
+                        // Get pair timestamp
+                        Long timestamp = Long.parseLong(pair[0]);
+
+                        // According to the value type
+                        if(series.getType() == Int32.class) {
+                            Int32 value = new Int32(Integer.parseInt(pair[1]));
+                            seriesTemp.addPoint(timestamp, value);
+                        }else if(series.getType() == Int64.class) {
+                            Int64 value = new Int64(Long.parseLong(pair[1]));
+                            seriesTemp.addPoint(timestamp, value);
+                        }else if(series.getType() == Float32.class) {
+                            Float32 value = new Float32(Float.parseFloat(pair[1]));
+                            seriesTemp.addPoint(timestamp, value);
+                        }
+                    }
+                }catch (NumberFormatException exc){
+            	    throw new WrongSeriesValueTypeException(seriesTemp.getType(),seriesTemp.getType());
+                }
+
             	
             	// Insert serie in serie
             	request.insertValue(serieName, seriesTemp);
@@ -145,7 +157,25 @@ public class QueryService {
             	return null;
             }
             case "show": {
-                return null;
+                String series = result.get("series").toString();
+                if(series.equals("all")) {
+                    Map<String, String> data = request.showAllSeries();
+                    ArrayList<HashMap<String, String>> returnedArray = new ArrayList<>();
+                    for (Map.Entry<String, String> entry : data.entrySet()) {
+                        String name = entry.getKey();
+                        String value = entry.getValue();
+                        HashMap<String, String> current = new HashMap<>();
+                        current.put("name", name);
+                        current.put("type", value);
+                        returnedArray.add(current);
+                    }
+                    resultMap.put("info", returnedArray);
+                } else {
+                    // TODO selection of series
+                    //resultMap.put("info", request.showSeries(series));
+                }
+
+                return resultMap;
             }
             case "drop": {
                 String series = result.get("series").toString();
@@ -168,7 +198,7 @@ public class QueryService {
         Pattern p = Pattern.compile("^(create|update|insert|select|delete|drop|show)");
         Matcher m = p.matcher(command);
         if(!m.find()) {
-            throw new BadQueryException("Bad action provided");
+            throw new BadQueryException(BadQueryException.ERROR_MESSAGE_BAD_ACTION);
         }
         switch (m.group(1)) {
             case "select": {
@@ -206,21 +236,16 @@ public class QueryService {
 
                 // Check if regex matchs the command and respect two entities
                 if(!selectMatcher.find() || selectMatcher.groupCount() < 2) {
-                    throw new BadQueryException("Error in CREATE query");
+                    throw new BadQueryException(BadQueryException.ERROR_MESSAGE_CREATE_GENERAL);
                 }
 
                 // Get the name and the type given in the command
                 String name = selectMatcher.group(1);
                 String type = selectMatcher.group(2);
-
-                // Check name or type contains one or more spaces
-                if(name.contains(" ")) {
-                    throw new BadQueryException("Error in CREATE query (space in name)");
-                }
                 
                 // Check if type exist
                 if (!typeList.contains(type)) {
-                    throw new BadQueryException("Error in CREATE query (type not exist)");
+                    throw new BadQueryException(BadQueryException.ERROR_MESSAGE_CREATE_IN_TYPE);
                 }
 
                 // Check the name and type synthax
@@ -228,7 +253,7 @@ public class QueryService {
                 Matcher selectMatcherSynthaxName = selectPatternSynthax.matcher(name);
 
                 if (!selectMatcherSynthaxName.matches()) {
-                    throw new BadQueryException("Error in CREATE query (special characters not allowed in name)");
+                    throw new BadQueryException(BadQueryException.ERROR_MESSAGE_CREATE_IN_NAME_SPECIAL_CHARACTERS);
                 }
                 
                 // Insert in hashmap the action, the serie name and the type
@@ -241,7 +266,7 @@ public class QueryService {
                 Pattern selectPattern = Pattern.compile("^insert\\s+into\\s+(.*?)\\s+values\\s+\\(\\((.*?)\\)\\)\\s*$");
                 Matcher selectMatcher = selectPattern.matcher(command);
                 if(!selectMatcher.find() || selectMatcher.group(1).isEmpty() || selectMatcher.group(2).isEmpty()) {
-                    throw new BadQueryException("Error in INSERT query");
+                    throw new BadQueryException(BadQueryException.ERROR_MESSAGE_INSERT_GENERAL);
                 };
                 result.put("action", "insert");
                 String series = selectMatcher.group(1);
@@ -252,13 +277,13 @@ public class QueryService {
                 for (String splitedValue : splitedValues) {
                     String[] pair = splitedValue.split(",\\s*");
                     if (pair.length != 2) {
-                        throw new BadQueryException("Error in inserted values");
+                        throw new BadQueryException(BadQueryException.ERROR_MESSAGE_INSERT_IN_VALUES);
                     }
                     try {
                         Integer.parseInt(pair[0]);
                         Float.parseFloat(pair[1]);
                     } catch (NumberFormatException nfe) {
-                        throw new BadQueryException("Wrong type provided for insert");
+                        throw new BadQueryException(BadQueryException.ERROR_MESSAGE_INSERT_IN_TYPE);
                     }
                     pairs.add(pair);
                 }
@@ -269,10 +294,10 @@ public class QueryService {
                 Pattern deletePattern = Pattern.compile("^delete\\s+from\\s*(.*?)((?:\\s*where\\s*)(.*?))?$");
                 Matcher deleteMatcher = deletePattern.matcher(command);
                 if(!deleteMatcher.find()) {
-                    throw new BadQueryException("Error in query");
+                    throw new BadQueryException(BadQueryException.ERROR_MESSAGE_DELETE_GENERAL_1);
                 };
                 if(deleteMatcher.group(1).isEmpty()) {
-                    throw new BadQueryException("Incorrect series name provided");
+                    throw new BadQueryException(BadQueryException.ERROR_MESSAGE_DELETE_IN_NAME);
                 }
                 if(deleteMatcher.group(2) != null && !deleteMatcher.group(2).isEmpty()) {
                     String conditions = deleteMatcher.group(2);
@@ -289,7 +314,7 @@ public class QueryService {
                 Pattern selectPattern = Pattern.compile("^drop\\s+(.*?)\\s*$");
                 Matcher selectMatcher = selectPattern.matcher(command);
                 if(!selectMatcher.find() || selectMatcher.group(1).isEmpty()) {
-                    throw new BadQueryException("Error in query");
+                    throw new BadQueryException(BadQueryException.ERROR_MESSAGE_DELETE_GENERAL_1);
                 };
                 result.put("action", "drop");
                 result.put("series", selectMatcher.group(1));
@@ -306,7 +331,7 @@ public class QueryService {
                 break;
             }
             default: {
-                throw new BadQueryException("Error in query action");
+                throw new BadQueryException(BadQueryException.ERROR_MESSAGE_BAD_ACTION);
             }
         }
         return result;
@@ -315,7 +340,7 @@ public class QueryService {
     public HashMap<String, Object> parseConditions(String conditions) throws BadQueryException {
         String[] splitConditions = conditions.split("(and|or)");
         if(splitConditions.length > 2) {
-            throw new BadQueryException("Too many conditions");
+            throw new BadQueryException(BadQueryException.ERROR_MESSAGE_CONDITIONS_TOO_MANY);
         }
         List<Long> timestamps = new ArrayList<>();
         List<String> operators = new ArrayList<>();
@@ -330,7 +355,7 @@ public class QueryService {
             Pattern p = Pattern.compile("timestamp\\s+(<|>|==|<=|>=)\\s+([0-9]+)\\s*");
             Matcher m = p.matcher(conditions);
             if(!m.find()) {
-                throw new BadQueryException("Error in conditions " + i);
+                throw new BadQueryException(BadQueryException.ERROR_MESSAGE_CONDITIONS_GENERAL + i);
             }
             operators.add(m.group(1));
             timestamps.add(Long.parseLong(m.group(2)));

@@ -2,10 +2,15 @@ package fr.tse.db.storage.data;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Map;
 
 import static org.junit.Assert.*;
+
 
 public class SeriesTest {
 
@@ -15,8 +20,8 @@ public class SeriesTest {
 	
 	@Before
 	public void initialize() {
-		this.series = new Series<Int64>("seriesTest", Int64.class);
-		this.series32 = new Series<Int32>("seriesTest32", Int32.class);
+		this.series = new SeriesUnComp<Int64>("seriesTest", Int64.class);
+		this.series32 = new SeriesUnComp<Int32>("seriesTest32", Int32.class);
 	}
 	
 	@Test

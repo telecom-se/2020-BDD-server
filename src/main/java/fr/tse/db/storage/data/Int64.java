@@ -1,5 +1,7 @@
 package fr.tse.db.storage.data;
 
+import java.io.Serializable;
+
 import fr.tse.db.storage.exception.WrongValueTypeException;
 /**
 * This Int64 class encapsulates an int of 64-bits
@@ -41,12 +43,13 @@ public class Int64 implements ValueType<Long> {
 	}
 	
 	public ValueType sum(ValueType i) throws WrongValueTypeException{
+		Int64 res = new Int64(0L);
 		if (i instanceof Int64) {
-			this.val+= ((Int64) i).getVal();
+			res.setVal(this.getVal() + ((Int64) i).getVal());
 		} else {
-			throw new WrongValueTypeException(this.getClass(),i.getClass());
+			throw new WrongValueTypeException(this.getClass(), i.getClass());
 		}
-		return new Int64(val);
+		return res;
 	}
 
 	public float divide(int denom) {

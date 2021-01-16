@@ -1,27 +1,30 @@
 package fr.tse.db.storage.request;
 
+import fr.tse.db.storage.data.*;
+import fr.tse.db.storage.exception.EmptySeriesException;
+import fr.tse.db.storage.exception.SeriesAlreadyExistsException;
+import fr.tse.db.storage.exception.SeriesNotFoundException;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import fr.tse.db.storage.data.DataBase;
-import fr.tse.db.storage.data.Int32;
-import fr.tse.db.storage.data.Int64;
-import fr.tse.db.storage.data.Series;
-import fr.tse.db.storage.data.ValueType;
-import fr.tse.db.storage.exception.SeriesAlreadyExistsException;
-import fr.tse.db.storage.exception.SeriesNotFoundException;
-
+@ActiveProfiles("test")
 public class RequestTest {
 
 	// Series for test
-	private Series<Int64> series= new Series<Int64>("seriesTest", Int64.class);
-	private Series<Int32> series32= new Series<Int32>("seriesTest32", Int32.class);
+	private SeriesUnComp<Int64> series= new SeriesUnComp<Int64>("seriesTest", Int64.class);
+	private SeriesUnComp<Int32> series32= new SeriesUnComp<Int32>("seriesTest32", Int32.class);
 	private DataBase database= DataBase.getInstance();
 	Long tmp = (long) 1000000;
 	Long tmp2 =  (long) 1000001;
@@ -35,16 +38,14 @@ public class RequestTest {
 	public void initialize() throws SeriesAlreadyExistsException {
 		req= new RequestsImpl();
 		DataBase database = DataBase.getInstance();
-		try {
-			database.deleteSeries("seriesTest");
-			database.deleteSeries("seriesTest32");
-		}catch(SeriesNotFoundException e) {
-			System.out.println("base not initialised");
+		ArrayList<String> seriesNameList = new ArrayList<>(database.getSeries().keySet());
+		for(String name : seriesNameList){
+			database.deleteSeries(name);
 		}
 		
 
-		series = new Series<Int64>("seriesTest", Int64.class);
-		series32 = new Series<Int32>("seriesTest32", Int32.class);
+		series = new SeriesUnComp<Int64>("seriesTest", Int64.class);
+		series32 = new SeriesUnComp<Int32>("seriesTest32", Int32.class);
 		
 
 		series.addPoint(tmp, val);
@@ -56,7 +57,12 @@ public class RequestTest {
 		database.addSeries(series32);
 	}
 	
-	
+	@Test
+	public void showAllSeriesTest() {
+		Map<String, String> allSeries= req.showAllSeries();
+		assertEquals(2,allSeries.size());
+		assertEquals((new Int64(0L)).getClass().getSimpleName(), allSeries.get("seriesTest"));
+	}
 	
 	@Test
 	public void selectByTimestampTest() throws SeriesNotFoundException  {		
@@ -192,7 +198,7 @@ public class RequestTest {
 		Int64 nuVal = new Int64((long) 696);
 		Map<Long,Int64> m1 = new HashMap<Long, Int64>();
 		m1.put(tmp2, new Int64((long) 696));
-		Series<Int64> nuPoint = new Series<>(null,Int64.class,m1);
+		Series<Int64> nuPoint = new SeriesUnComp<>(null,Int64.class,m1);
 
 		req.insertValue("seriesTest", nuPoint);
 				
@@ -215,9 +221,8 @@ public class RequestTest {
 	
 	@Test()
 	public void deleteSeriesTest() throws SeriesNotFoundException, SeriesAlreadyExistsException{
-		
-		Series<Int64> toDel = new Series<Int64>("toDel", Int64.class);
 
+		SeriesUnComp<Int64> toDel = new SeriesUnComp<Int64>("toDel", Int64.class);
 
 		database.addSeries(toDel);
 
@@ -314,7 +319,7 @@ public class RequestTest {
 		Map<Long,Int64> m1 = new HashMap<Long, Int64>();
 		m1.put(tmp, val1 );
 		m1.put(tmp2, val2);
-		Series<Int64> seriesValues = new Series<>("abc",Int64.class,m1);
+		Series<Int64> seriesValues = new SeriesUnComp<>("abc",Int64.class,m1);
 		
 		Float av= req.average(seriesValues);
 		
@@ -332,11 +337,19 @@ public class RequestTest {
 		m1.put(tmp, val1 );
 		m1.put(tmp2, val2);
 		m1.put(tmp3, val3);
-		Series<Int64> seriesValues = new Series<>("abc",Int64.class,m1);
+		Series<Int64> seriesValues = new SeriesUnComp<>("abc",Int64.class,m1);
 		
 		ValueType min = req.min(seriesValues);
 		
 		assertEquals(10,(long) min.getVal());
+	}
+	
+	@Test(expected = EmptySeriesException.class)
+	public void minTest2() {
+		Map<Long,Int64> m1 = new HashMap<Long, Int64>();
+		Series<Int64> seriesValues = new SeriesUnComp<>("abc",Int64.class,m1);
+
+		ValueType min = req.min(seriesValues);
 	}
 
 	@Test
@@ -349,7 +362,7 @@ public class RequestTest {
 		m1.put(tmp, val1 );
 		m1.put(tmp2, val2);
 		m1.put(tmp3, val3);
-		Series<Int64> seriesValues = new Series<>("abc",Int64.class,m1);
+		Series<Int64> seriesValues = new SeriesUnComp<>("abc",Int64.class,m1);
 		
 		ValueType max = req.max(seriesValues);
 		
@@ -366,7 +379,7 @@ public class RequestTest {
 		m1.put(tmp, val1 );
 		m1.put(tmp2, val2);
 		m1.put(tmp3, val3);
-		Series<Int64> seriesValues = new Series<>("abc",Int64.class,m1);
+		Series<Int64> seriesValues = new SeriesUnComp<>("abc",Int64.class,m1);
 		
 		int count = req.count(seriesValues);
 		
@@ -383,8 +396,7 @@ public class RequestTest {
 		m1.put(tmp, val1 );
 		m1.put(tmp2, val2);
 		m1.put(tmp3, val3);
-		Series<Int64> seriesValues = new Series<>("abc",Int64.class,m1);
-		
+		Series<Int64> seriesValues = new SeriesUnComp<>("abc",Int64.class,m1);
 		ValueType sum = req.sum(seriesValues);
 		
 		assertEquals(60, (long)sum.getVal());
