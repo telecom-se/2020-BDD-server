@@ -9,7 +9,6 @@ import fr.tse.db.storage.exception.WrongValueTypeException;
  * @since 2020-11
  */
 public class Int32 implements ValueType<Integer> {
-
     private Integer val;
 
     public Int32(Integer val) {
@@ -26,13 +25,7 @@ public class Int32 implements ValueType<Integer> {
 
     public int compareTo(ValueType o) {
         if (o instanceof Int32) {
-            if (this.val == ((Int32) o).val) {
-                return 0;
-            } else if (this.val < ((Int32) o).val) {
-                return -1;
-            } else {
-                return 1;
-            }
+            return this.val.compareTo(((Int32) o).val);
         } else {
             throw new WrongValueTypeException(this.getClass(), o.getClass());
         }
@@ -44,15 +37,12 @@ public class Int32 implements ValueType<Integer> {
     }
 
     public ValueType sum(ValueType i) throws WrongValueTypeException {
+        Int32 res = new Int32(0);
         if (i instanceof Int32) {
-            this.val += ((Int32) i).getVal();
+            res.setVal(this.getVal() + ((Int32) i).getVal());
         } else {
             throw new WrongValueTypeException(this.getClass(), i.getClass());
         }
-        return new Int32(val);
-    }
-
-    public float divide(int denom) {
-        return (float) this.val / denom;
+        return res;
     }
 }
