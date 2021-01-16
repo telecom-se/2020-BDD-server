@@ -217,12 +217,12 @@ public class QueryParsingSelectTests {
 	public void handleQuerySelectMinWithMultipleCondition()  {
 		
 		DataBase db = DataBase.getInstance();		
-		Series addedSerie = new SeriesUnComp("myseries1", Int32.class);
-		addedSerie.addPoint(16L, new Int32(3));
-		addedSerie.addPoint(12L,new Int32(1));
-		addedSerie.addPoint(21L,new Int32(2));
-		addedSerie.addPoint(18L,new Int32(4));
-		db.addSeries(addedSerie);
+		Series addedSeries = new SeriesUnComp("myseries1", Int32.class);
+		addedSeries.addPoint(16L, new Int32(3));
+		addedSeries.addPoint(12L,new Int32(1));
+		addedSeries.addPoint(21L,new Int32(2));
+		addedSeries.addPoint(18L,new Int32(4));
+		db.addSeries(addedSeries);
 
 		try {
 		String queryTest3 = "SELECT MIN FROM MySeries1 WHERE TIMESTAMP > 15 AND TIMESTAMP < 20";

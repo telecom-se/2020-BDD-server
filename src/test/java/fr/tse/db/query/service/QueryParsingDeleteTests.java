@@ -236,12 +236,6 @@ class QueryParsingDeleteTests {
 		Assertions.assertEquals(expectedHashMap, returnedHashMap);
 	}
 
-	// ---------------------- [DELETE] [SINGLEQUERY] [OK]
-	
-	
-	
-	// ---------------------- [DELETE] [SINGLEQUERY] 
-	
 	@Test
 	public void parseQuerySingleDeleteSyntax1NoExceptionTest() throws BadQueryException {
 		String seriesName = "TestSerieInt32";
@@ -253,7 +247,6 @@ class QueryParsingDeleteTests {
 		Assertions.assertEquals(hashMap.get("action"), "delete");
 		Assertions.assertEquals(hashMap.get("series"), seriesName);
 	}
-	
 	
 	@Test
 	public void parseQuerySingleDeleteSyntax2NoExceptionTest() throws BadQueryException {
