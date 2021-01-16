@@ -97,7 +97,7 @@ class QueryParsingDeleteTests {
 	// BadQueryException : Unknown boolean operator.
 	public void parseQuerySingleDeleteSyntax8BadQueryExceptionTest() {
 		String query = ACTION + " from MySeries where value > 15 nor timestamp <= 15";
-		String expectedMessage = BadQueryException.ERROR_MESSAGE_DELETE_GENERAL_1;
+		String expectedMessage = BadQueryException.ERROR_MESSAGE_CONDITIONS_GENERAL;
 		
 		Exception e = Assertions.assertThrows(BadQueryException.class, () -> qs.parseQuery(query));
 		Assertions.assertEquals(expectedMessage, e.getMessage());
