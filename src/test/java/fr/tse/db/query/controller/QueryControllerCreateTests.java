@@ -2,7 +2,7 @@ package fr.tse.db.query.controller;
 
 import fr.tse.db.query.error.BadQueryException;
 import org.hamcrest.collection.IsCollectionWithSize;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -19,7 +19,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @SpringBootTest
-@RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
 @ActiveProfiles(profiles = "test_query_controller")
 public class QueryControllerCreateTests {

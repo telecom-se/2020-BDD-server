@@ -6,8 +6,8 @@ import java.util.Set;
 
 import fr.tse.db.storage.data.SeriesUnComp;
 import org.junit.Assert;
-import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,7 +20,6 @@ import fr.tse.db.storage.data.Int32;
 import fr.tse.db.storage.data.Series;
 
 @SpringBootTest
-@RunWith(SpringRunner.class)
 public class QueryParsingSelectTests {
 	
 	@Autowired

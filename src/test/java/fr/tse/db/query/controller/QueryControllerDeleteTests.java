@@ -23,7 +23,6 @@ import fr.tse.db.storage.request.RequestsImpl;
 
 import javax.xml.crypto.Data;
 
-//@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 @ActiveProfiles(profiles = "test_query_controller")

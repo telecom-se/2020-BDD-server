@@ -18,7 +18,6 @@ import fr.tse.db.query.error.BadQueryException;
 import fr.tse.db.query.service.QueryService;
 
 @SpringBootTest
-@RunWith(SpringRunner.class)
 class QueryParsingInsertTests {
 
 	@Autowired

@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 
 @SpringBootTest
-@RunWith(SpringRunner.class)
 class QueryParsingDeleteTests {
 
 	@Autowired

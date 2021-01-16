@@ -14,7 +14,6 @@ import fr.tse.db.query.service.QueryService;
 import java.util.HashMap;
 
 @SpringBootTest
-@RunWith(SpringRunner.class)
 class QueryParsingCreateTests {
 
 	@Autowired
