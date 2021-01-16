@@ -14,13 +14,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class RequestTest {
 
+    private final DataBase database = DataBase.getInstance();
+    private final RequestsImpl req = new RequestsImpl();
     Long tmp = (long) 1000000;
     Long tmp2 = (long) 1000001;
     Long tmp3 = (long) 999999;
     Int64 val = new Int64((long) 658);
     Int32 val32 = new Int32((45));
-    private final DataBase database = DataBase.getInstance();
-    private final RequestsImpl req = new RequestsImpl();
     // Series for test
     private SeriesUncompressed<Int64> series = new SeriesUncompressed<Int64>("seriesTest", Int64.class);
 

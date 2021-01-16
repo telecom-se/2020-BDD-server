@@ -16,17 +16,17 @@ public interface Requests {
      *
      * @return
      */
-    public Map<String, String> showAllSeries();
+    Map<String, String> showAllSeries();
 
     /**
      * Select all values from series
      *
      * @param seriesName series name
      *
-     * @throws SeriesNotFoundException When series with specified name does not exist
      * @return new Series
+     * @throws SeriesNotFoundException When series with specified name does not exist
      */
-    public Series selectSeries(String seriesName) throws SeriesNotFoundException;
+    Series selectSeries(String seriesName) throws SeriesNotFoundException;
 
     /**
      * Select value in series at given timestamp
@@ -37,7 +37,7 @@ public interface Requests {
      * @return new Series with 1 element
      * @throws SeriesNotFoundException When series with specified name does not exist
      */
-    public Series selectByTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException;
+    Series selectByTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException;
 
     /**
      * Select all values with timestamp lower than a value
@@ -48,7 +48,7 @@ public interface Requests {
      * @return new Series
      * @throws SeriesNotFoundException When series with specified name does not exist
      */
-    public Series selectLowerThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException;
+    Series selectLowerThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException;
 
     /**
      * Select all values with timestamp lower or equal than a value
@@ -59,7 +59,7 @@ public interface Requests {
      * @return new Series
      * @throws SeriesNotFoundException When series with specified name does not exist
      */
-    public Series selectLowerOrEqualThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException;
+    Series selectLowerOrEqualThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException;
 
     /**
      * Select all values with timestamp higher than a value
@@ -70,7 +70,7 @@ public interface Requests {
      * @return new Series
      * @throws SeriesNotFoundException When series with specified name does not exist
      */
-    public Series selectHigherThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException;
+    Series selectHigherThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException;
 
     /**
      * Select all values with timestamp higher or equal than a value
@@ -81,7 +81,7 @@ public interface Requests {
      * @return new Series
      * @throws SeriesNotFoundException When series with specified name does not exist
      */
-    public Series selectHigherOrEqualThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException;
+    Series selectHigherOrEqualThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException;
 
     /**
      * Select all values with timestamps between given values (both included)
@@ -93,7 +93,7 @@ public interface Requests {
      * @return new Series
      * @throws SeriesNotFoundException When series with specified name does not exist
      */
-    public Series selectBetweenTimestampBothIncluded(String seriesName, Long timestamp1, Long timestamp2) throws SeriesNotFoundException;
+    Series selectBetweenTimestampBothIncluded(String seriesName, Long timestamp1, Long timestamp2) throws SeriesNotFoundException;
 
     /**
      * Select all values not in between given timestamps
@@ -105,7 +105,7 @@ public interface Requests {
      * @return new Series
      * @throws SeriesNotFoundException
      */
-    public Series selectNotInBetweenTimestampBothIncluded(String seriesName, Long timestamp1, Long timestamp2) throws SeriesNotFoundException;
+    Series selectNotInBetweenTimestampBothIncluded(String seriesName, Long timestamp1, Long timestamp2) throws SeriesNotFoundException;
 
     /**
      * Insert values in a series at given timestamps
@@ -115,7 +115,7 @@ public interface Requests {
      *
      * @throws SeriesNotFoundException When series with specified name does not exist
      */
-    public void insertValue(String seriesName, Series insertedPoints) throws SeriesNotFoundException, WrongSeriesValueTypeException, TimestampAlreadyExistsException;
+    void insertValue(String seriesName, Series insertedPoints) throws SeriesNotFoundException, WrongSeriesValueTypeException, TimestampAlreadyExistsException;
 
     /**
      * Create a series with specified name and specified type
@@ -125,7 +125,7 @@ public interface Requests {
      *
      * @throws SeriesAlreadyExistsException When series already exists
      */
-    public <ValType extends ValueType> void createSeries(String seriesName, Class<ValType> type) throws SeriesAlreadyExistsException;
+    <ValType extends ValueType> void createSeries(String seriesName, Class<ValType> type) throws SeriesAlreadyExistsException;
 
     /**
      * Delete series with specified name
@@ -134,7 +134,7 @@ public interface Requests {
      *
      * @throws SeriesNotFoundException When series with specified name does not exist
      */
-    public void deleteSeries(String seriesName) throws SeriesNotFoundException;
+    void deleteSeries(String seriesName) throws SeriesNotFoundException;
 
     /**
      * Delete value in series with specified timestamp
@@ -144,10 +144,10 @@ public interface Requests {
      *
      * @throws SeriesNotFoundException When series with specified name does not exist
      */
-    public void deleteByTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException;
+    void deleteByTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException;
 
 
-    public void deleteAllPoints(String seriesName) throws SeriesNotFoundException;
+    void deleteAllPoints(String seriesName) throws SeriesNotFoundException;
 
     /**
      * Delete value in series with specified timestamp lower than given
@@ -157,7 +157,7 @@ public interface Requests {
      *
      * @throws SeriesNotFoundException When series with specified name does not exist
      */
-    public void deleteLowerThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException;
+    void deleteLowerThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException;
 
     /**
      * Delete value in series with specified timestamp lower or equal than given
@@ -167,7 +167,7 @@ public interface Requests {
      *
      * @throws SeriesNotFoundException When series with specified name does not exist
      */
-    public void deleteLowerOrEqualThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException;
+    void deleteLowerOrEqualThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException;
 
     /**
      * Delete value in series with specified timestamp higher than given
@@ -177,7 +177,7 @@ public interface Requests {
      *
      * @throws SeriesNotFoundException When series with specified name does not exist
      */
-    public void deleteHigherThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException;
+    void deleteHigherThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException;
 
     /**
      * Delete value in series with specified timestamp higher or equal than given
@@ -187,7 +187,7 @@ public interface Requests {
      *
      * @throws SeriesNotFoundException When series with specified name does not exist
      */
-    public void deleteHigherOrEqualThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException;
+    void deleteHigherOrEqualThanTimestamp(String seriesName, Long timestamp) throws SeriesNotFoundException;
 
     /**
      * Delete all values between boundaries
@@ -198,7 +198,7 @@ public interface Requests {
      *
      * @throws SeriesNotFoundException
      */
-    public void deleteBetweenTimestampBothIncluded(String seriesName, Long timestamp1, Long timestamp2) throws SeriesNotFoundException;
+    void deleteBetweenTimestampBothIncluded(String seriesName, Long timestamp1, Long timestamp2) throws SeriesNotFoundException;
 
     /**
      * Delete all values not in between two boundaries
@@ -209,7 +209,7 @@ public interface Requests {
      *
      * @throws SeriesNotFoundException
      */
-    public void deleteNotInBetweenTimestampBothIncluded(String seriesName, Long timestamp1, Long timestamp2) throws SeriesNotFoundException;
+    void deleteNotInBetweenTimestampBothIncluded(String seriesName, Long timestamp1, Long timestamp2) throws SeriesNotFoundException;
 
     /**
      * Returns average of the values in entry
@@ -219,7 +219,7 @@ public interface Requests {
      * @return average as float
      * @throws EmptySeriesException if collection is empty
      */
-    public float average(Series series) throws EmptySeriesException;
+    float average(Series series) throws EmptySeriesException;
 
     /**
      * Returns min value of the entry
@@ -229,7 +229,7 @@ public interface Requests {
      * @return minimum of collection
      * @throws EmptySeriesException if collection is empty
      */
-    public ValueType min(Series series) throws EmptySeriesException;
+    ValueType min(Series series) throws EmptySeriesException;
 
     /**
      * Returns max value of the entry
@@ -239,7 +239,7 @@ public interface Requests {
      * @return maximum of collection
      * @throws EmptySeriesException if collection is empty
      */
-    public ValueType max(Series series) throws EmptySeriesException;
+    ValueType max(Series series) throws EmptySeriesException;
 
     /**
      * Returns number of entries
@@ -248,7 +248,7 @@ public interface Requests {
      *
      * @return count as int
      */
-    public int count(Series series);
+    int count(Series series);
 
     /**
      * Returns the sum of the entries
@@ -258,5 +258,5 @@ public interface Requests {
      * @return sum of collection
      * @throws EmptySeriesException if collection is empty
      */
-    public ValueType sum(Series series) throws EmptySeriesException;
+    ValueType sum(Series series) throws EmptySeriesException;
 }

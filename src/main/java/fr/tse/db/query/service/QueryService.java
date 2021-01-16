@@ -2,7 +2,10 @@ package fr.tse.db.query.service;
 
 
 import fr.tse.db.query.error.BadQueryException;
-import fr.tse.db.storage.data.*;
+import fr.tse.db.storage.data.Float32;
+import fr.tse.db.storage.data.Int32;
+import fr.tse.db.storage.data.Int64;
+import fr.tse.db.storage.data.Series;
 import fr.tse.db.storage.exception.SeriesNotFoundException;
 import fr.tse.db.storage.exception.WrongSeriesValueTypeException;
 import fr.tse.db.storage.request.Requests;
