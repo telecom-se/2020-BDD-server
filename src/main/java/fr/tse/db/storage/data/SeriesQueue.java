@@ -23,7 +23,7 @@ public class SeriesQueue<ValType extends ValueType> implements Serializable {
     }
 
     /**
-     * Add value at the end of the series
+     * Add a value with specified timestamp at the end of the series
      */
     public void addVal(Long timestamp, ValType value) {
         // last element of comparison
@@ -43,13 +43,12 @@ public class SeriesQueue<ValType extends ValueType> implements Serializable {
     }
 
     /**
-     * return value specified by timestamp or null if the timestamp does not exists.
-     * The String parameter can be "Int32", "Int64" or "Float32"
+     * Return the value associated with the given timestamp, or null if the timestamp does not exist.
      *
-     * @param timestamp
-     * @param valtype
+     * @param timestamp goal timestamp
+     * @param valtype   "Int32", "Int64" or "Float32"
      *
-     * @return
+     * @return The value associated with the given timestamp
      */
     public ValType getVal(long timestamp, String valtype) {
         BitSet goalTimestamp = LongToBitSet(timestamp);
@@ -69,54 +68,46 @@ public class SeriesQueue<ValType extends ValueType> implements Serializable {
     }
 
     /**
-     * remove value specified by timestamp.
+     * Remove the value associated with the given timestamp.
      *
-     * @param timestamp
-     *
-     * @return
+     * @param timestamp goal timestamp
      */
     public void remove(long timestamp) {
-        BitSet timestampBit = LongToBitSet(timestamp);
-
-        BitSet timeItBit = LongToBitSet(top);
-        BitSet valItBit = LongToBitSet(0L);
+        BitSet goalTimestamp = LongToBitSet(timestamp);
+        BitSet lastTimestamp = LongToBitSet(top);
 
         Iterator<DataPointCompressed> I = series.iterator();
-
-        while (I.hasNext() && !timeItBit.equals(timestampBit)) {
-            DataPointCompressed last = I.next();
-            timeItBit.xor(last.getTimestamp());
-            valItBit.xor(last.getValue());
-            if (timeItBit.equals(timestampBit)) {
+        while (I.hasNext()) {
+            DataPointCompressed point = I.next();
+            lastTimestamp.xor(point.getTimestamp());
+            if (lastTimestamp.equals(goalTimestamp)) {
                 I.remove();
-            } else {
-                timeItBit = last.getTimestamp();
-                valItBit = last.getValue();
+                return;
             }
+            lastTimestamp = (BitSet) point.getTimestamp().clone();
         }
     }
 
     /**
-     * return all points from the list as an uncompressed map
-     * The String parameter can be "Int32", "Int64" or "Float32"
+     * Return all points from the series as an uncompressed map
      *
-     * @param valtype
+     * @param valtype "Int32", "Int64" or "Float32"
      *
-     * @return
+     * @return all points from the series
      */
     public Map<Long, ValType> getAllPoints(String valtype) {
-        Map<Long, ValType> AllPoints = new HashMap<>();
+        Map<Long, ValType> allPoints = new HashMap<>();
 
-        BitSet timeItBit = LongToBitSet(top);
-        BitSet valItBit = LongToBitSet(0L);
+        BitSet lastTimestamp = LongToBitSet(top);
+        BitSet lastValue = LongToBitSet(0L);
 
-        for (DataPointCompressed last : series) {
-            timeItBit.xor(last.getTimestamp());
-            valItBit.xor(last.getValue());
-            AllPoints.put(BitSetToLong(timeItBit), (ValType) BitSetToValType(valItBit, valtype));
-            timeItBit = last.getTimestamp();
-            valItBit = last.getValue();
+        for (DataPointCompressed point : series) {
+            lastTimestamp.xor(point.getTimestamp());
+            lastValue.xor(point.getValue());
+            allPoints.put(BitSetToLong(lastTimestamp), (ValType) BitSetToValType(lastValue, valtype));
+            lastTimestamp = (BitSet) point.getTimestamp().clone();
+            lastValue = (BitSet) point.getValue().clone();
         }
-        return AllPoints;
+        return allPoints;
     }
 }

@@ -9,10 +9,8 @@ import static fr.tse.db.storage.data.BitsConverter.LongToBitSet;
 import static fr.tse.db.storage.data.BitsConverter.ValTypeToBitSet;
 
 public class DataPointCompressed implements Serializable {
-    //serie de bits
     @Getter
     private BitSet timestamp;
-    //serie de bits
     @Getter
     private BitSet value;
 
