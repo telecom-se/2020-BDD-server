@@ -10,15 +10,8 @@ import java.util.BitSet;
  */
 public class BitsConverter {
     public static BitSet LongToBitSet(long value) {
-        BitSet bits = new BitSet();
-        int index = 0;
-        while (value != 0L) {
-            if (value % 2L != 0) {
-                bits.set(index);
-            }
-            ++index;
-            value = value >>> 1;
-        }
+    	byte longBits = ((Number) value).byteValue();
+    	BitSet bits = BitSet.valueOf(new byte[]{longBits});
         return bits;
     }
 
@@ -31,42 +24,8 @@ public class BitsConverter {
     }
 
     public static BitSet ValTypeToBitSet(ValueType value) {
-        // hack
-        String cl = value.getVal().getClass().getSimpleName();
-        BitSet bits = new BitSet();
-        int index = 0;
-
-        switch (cl) {
-            // Case Float32
-            case "Float":
-                byte floatBits = ((Number) value.getVal()).byteValue();
-                bits = BitSet.valueOf(new byte[]{floatBits});
-                break;
-            // Case Int32
-            case "Integer":
-                int valInt = ((Int32) value).getVal();
-                while (valInt != 0) {
-                    if (valInt % 2 != 0) {
-                        bits.set(index);
-                    }
-                    ++index;
-                    valInt = valInt >>> 1;
-                }
-                break;
-            // Case Int64
-            case "Long":
-                long valLong = ((Int64) value).getVal();
-                while (valLong != 0L) {
-                    if (valLong % 2L != 0) {
-                        bits.set(index);
-                    }
-                    ++index;
-                    valLong = valLong >>> 1;
-                }
-                break;
-            default:
-                throw new IllegalArgumentException("Type not supported");
-        }
+         byte floatBits = ((Number) value.getVal()).byteValue();
+         BitSet bits = BitSet.valueOf(new byte[]{floatBits});
         return bits;
     }
 
@@ -83,6 +42,8 @@ public class BitsConverter {
         for (int i = 0; i < bits.length(); ++i) {
             value += bits.get(i) ? (1 << i) : 0;
         }
+        System.out.println(bits);
+
         return new Int32(value);
     }
 
@@ -92,7 +53,8 @@ public class BitsConverter {
     }
 
     public static ValueType BitSetToValType(BitSet val, String className) {
-        switch (className) {
+        System.out.println(val);
+    	switch (className) {
             case "Int64":
                 return BitSetToInt64(val);
             case "Int32":
@@ -102,5 +64,6 @@ public class BitsConverter {
             default:
                 return null;
         }
+
     }
 }

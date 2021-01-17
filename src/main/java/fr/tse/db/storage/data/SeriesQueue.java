@@ -13,16 +13,16 @@ import static fr.tse.db.storage.data.BitsConverter.*;
  * @author remi huguenot
  */
 public class SeriesQueue<ValType extends ValueType> implements Serializable {
-    private final LinkedList<DataPointCompressed> series;
+    private final ArrayList<DataPointCompressed> series;
     private final long top;
 
     public SeriesQueue(long top) {
         super();
         this.top = top;
-        series = new LinkedList<>();
+        series = new ArrayList<>();
     }
 
-    public LinkedList<DataPointCompressed> getSeries() {
+    public ArrayList<DataPointCompressed> getSeries() {
         return series;
     }
 
@@ -36,7 +36,7 @@ public class SeriesQueue<ValType extends ValueType> implements Serializable {
         // last element of comparison
         DataPointCompressed last = series.isEmpty() ?
                 new DataPointCompressed(top)
-                : series.getLast();
+                : series.get(series.size()-1);
 
         //change data into bitsets
         BitSet newTime = LongToBitSet(key);
@@ -59,32 +59,38 @@ public class SeriesQueue<ValType extends ValueType> implements Serializable {
      * @return
      */
     public ValType getVal(long timestamp, String valtype) {
-        BitSet timestampBit = LongToBitSet(timestamp);
+        
+    	//System.out.println(timestamp);
+    	BitSet timestampBit = LongToBitSet(timestamp);
 
         BitSet timeItBit = LongToBitSet(top);
         BitSet valItBit = LongToBitSet(0L);
-
-        Iterator<DataPointCompressed> I = series.iterator();
-
-        DataPointCompressed last = I.next();
-        timeItBit.xor(last.getTimestamp());
-        valItBit.xor(last.getValue());
-
-        while (I.hasNext() && !timeItBit.equals(timestampBit)) {
-            last = I.next();
+        ValType result = null;
+        //ListIterator<DataPointCompressed> I =  series.listIterator();
+        DataPointCompressed last; 
+        int it = 0;
+        boolean condition = false;
+        while (it<series.size() && !condition) {
+            last = series.get(it);
+           // System.out.println(last.getTimestamp());
             timeItBit.xor(last.getTimestamp());
             valItBit.xor(last.getValue());
-        }
-
-        if (timeItBit.equals(timestampBit)) {
-            return (ValType) BitSetToValType(valItBit, valtype);
-        } else {
-            return null;
-        }
+			if (timeItBit.equals(timestampBit)) {
+				condition = true;
+				result  = (ValType) BitSetToValType(valItBit, valtype);
+			}
+			else{
+				timeItBit = last.getTimestamp();
+				valItBit= last.getValue();
+				it++;
+			}
+		}
+       
+        return result;
     }
 
     /**
-     * remove value speciied by timestamp.
+     * remove value specified by timestamp.
      *
      * @param timestamp
      *
@@ -102,12 +108,14 @@ public class SeriesQueue<ValType extends ValueType> implements Serializable {
             DataPointCompressed last = I.next();
             timeItBit.xor(last.getTimestamp());
             valItBit.xor(last.getValue());
+            if (timeItBit.equals(timestampBit)) {
+                I.remove();
+			}
+			else{
+				timeItBit = last.getTimestamp();
+				valItBit= last.getValue();
+			}   
         }
-
-        if (timeItBit.equals(timestampBit)) {
-            I.remove();
-        }
-
     }
 
     /**
@@ -128,6 +136,8 @@ public class SeriesQueue<ValType extends ValueType> implements Serializable {
             timeItBit.xor(last.getTimestamp());
             valItBit.xor(last.getValue());
             AllPoints.put(BitSetToLong(timeItBit), (ValType) BitSetToValType(valItBit, valtype));
+            timeItBit = last.getTimestamp();
+			valItBit= last.getValue();
         }
         return AllPoints;
     }
