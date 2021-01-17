@@ -35,7 +35,7 @@ public class DataBase implements Serializable {
     }
 
     private DataBase(List<Series> series) {
-        this.series = series.parallelStream().collect(Collectors.toMap(Series::getName, Function.identity()));
+    	this.series = series.parallelStream().collect(Collectors.toMap(ser -> ser.getName(), ser -> ser));
     }
 
     public static DataBase getInstance() {
