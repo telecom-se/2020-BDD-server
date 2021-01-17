@@ -1,45 +1,38 @@
 package fr.tse.db.storage.data;
 
+import lombok.Getter;
+
 import java.io.Serializable;
 import java.util.*;
 
 import static fr.tse.db.storage.data.BitsConverter.*;
 
 /**
- * Intermediary container for SeriesComp that keeps a series of datapoints with delta delta compression.
- *
- * @param <ValType>
- *
- * @author remi huguenot
+ * Intermediary container for {@link SeriesCompressed} that maintains a series of datapoints with delta-delta compression.
  */
 public class SeriesQueue<ValType extends ValueType> implements Serializable {
-    private final ArrayList<DataPointCompressed> series;
+
+    @Getter
+    private final ArrayList<DataPointCompressed> series = new ArrayList<>();
+
     private final long top;
 
     public SeriesQueue(long top) {
         super();
         this.top = top;
-        series = new ArrayList<>();
-    }
-
-    public ArrayList<DataPointCompressed> getSeries() {
-        return series;
     }
 
     /**
-     * add value at the end of the linkedlist
-     *
-     * @param key
-     * @param value
+     * Add value at the end of the series
      */
-    public void addVal(Long key, ValType value) {
+    public void addVal(Long timestamp, ValType value) {
         // last element of comparison
         DataPointCompressed last = series.isEmpty() ?
                 new DataPointCompressed(top)
-                : series.get(series.size()-1);
+                : series.get(series.size() - 1);
 
         //change data into bitsets
-        BitSet newTime = LongToBitSet(key);
+        BitSet newTime = LongToBitSet(timestamp);
         BitSet newVal = ValTypeToBitSet(value);
 
         //compare the values
@@ -59,33 +52,32 @@ public class SeriesQueue<ValType extends ValueType> implements Serializable {
      * @return
      */
     public ValType getVal(long timestamp, String valtype) {
-        
-    	//System.out.println(timestamp);
-    	BitSet timestampBit = LongToBitSet(timestamp);
+
+        //System.out.println(timestamp);
+        BitSet timestampBit = LongToBitSet(timestamp);
 
         BitSet timeItBit = LongToBitSet(top);
         BitSet valItBit = LongToBitSet(0L);
         ValType result = null;
         //ListIterator<DataPointCompressed> I =  series.listIterator();
-        DataPointCompressed last; 
+        DataPointCompressed last;
         int it = 0;
         boolean condition = false;
-        while (it<series.size() && !condition) {
+        while (it < series.size() && !condition) {
             last = series.get(it);
-           // System.out.println(last.getTimestamp());
+            // System.out.println(last.getTimestamp());
             timeItBit.xor(last.getTimestamp());
             valItBit.xor(last.getValue());
-			if (timeItBit.equals(timestampBit)) {
-				condition = true;
-				result  = (ValType) BitSetToValType(valItBit, valtype);
-			}
-			else{
-				timeItBit = last.getTimestamp();
-				valItBit= last.getValue();
-				it++;
-			}
-		}
-       
+            if (timeItBit.equals(timestampBit)) {
+                condition = true;
+                result = (ValType) BitSetToValType(valItBit, valtype);
+            } else {
+                timeItBit = last.getTimestamp();
+                valItBit = last.getValue();
+                it++;
+            }
+        }
+
         return result;
     }
 
@@ -110,11 +102,10 @@ public class SeriesQueue<ValType extends ValueType> implements Serializable {
             valItBit.xor(last.getValue());
             if (timeItBit.equals(timestampBit)) {
                 I.remove();
-			}
-			else{
-				timeItBit = last.getTimestamp();
-				valItBit= last.getValue();
-			}   
+            } else {
+                timeItBit = last.getTimestamp();
+                valItBit = last.getValue();
+            }
         }
     }
 
@@ -137,7 +128,7 @@ public class SeriesQueue<ValType extends ValueType> implements Serializable {
             valItBit.xor(last.getValue());
             AllPoints.put(BitSetToLong(timeItBit), (ValType) BitSetToValType(valItBit, valtype));
             timeItBit = last.getTimestamp();
-			valItBit= last.getValue();
+            valItBit = last.getValue();
         }
         return AllPoints;
     }

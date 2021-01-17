@@ -16,26 +16,26 @@ public interface Series<ValType extends ValueType> {
      *
      * @return String
      */
-    public String getName();
+    String getName();
 
     /**
      * remove all points from the series
      */
-    public void clearPoints();
+    void clearPoints();
 
     /**
      * return the type of stored data
      *
      * @return Class<ValType>
      */
-    public Class<ValType> getType();
+    Class<ValType> getType();
 
     /**
      * return a map off all stored points mapped by their timestamp
      *
      * @return
      */
-    public Map<Long, ValType> getPoints();
+    Map<Long, ValType> getPoints();
 
     /**
      * add specified point to the series
@@ -46,14 +46,14 @@ public interface Series<ValType extends ValueType> {
      * @throws WrongSeriesValueTypeException
      * @throws TimestampAlreadyExistsException
      */
-    public void addPoint(Long key, ValType value) throws WrongSeriesValueTypeException, TimestampAlreadyExistsException;
+    void addPoint(Long key, ValType value) throws WrongSeriesValueTypeException, TimestampAlreadyExistsException;
 
     /**
      * remove specified point from series
      *
      * @param key
      */
-    public void deletePoint(Long key);
+    void deletePoint(Long key);
 
     /**
      * return value of specified timestamp or null if timestamps does not exist
@@ -62,7 +62,7 @@ public interface Series<ValType extends ValueType> {
      *
      * @return
      */
-    public ValType getByTimestamp(Long key);
+    ValType getByTimestamp(Long key);
 
-    public String toString();
+    String toString();
 }

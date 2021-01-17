@@ -7,7 +7,6 @@ import java.util.BitSet;
 
 import static fr.tse.db.storage.data.BitsConverter.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class BitsConverterTest {
@@ -23,8 +22,8 @@ public class BitsConverterTest {
         BitSet BitTwo = new BitSet();
         BitTwo.set(1, true);
 
-        assertTrue(oneBit.equals(BitOne));
-        assertTrue(twoBit.equals(BitTwo));
+        assertEquals(BitOne, oneBit);
+        assertEquals(BitTwo, twoBit);
     }
 
     @Test
@@ -40,8 +39,8 @@ public class BitsConverterTest {
         Long two = BitSetToLong(BitTwo);
 
 
-        assertEquals(new Long(1), one);
-        assertEquals(new Long(2), two);
+        assertEquals(Long.valueOf(1), one);
+        assertEquals(Long.valueOf(2), two);
     }
 
     @Test
@@ -59,9 +58,9 @@ public class BitsConverterTest {
         BitSet BitOne = new BitSet();
         BitOne.set(0, true);
 
-        assertTrue(BitOne.equals(one32Bit));
-        assertTrue(BitOne.equals(one64Bit));
-        assertTrue(BitOne.equals(one32fBit));
+        assertEquals(one32Bit, BitOne);
+        assertEquals(one64Bit, BitOne);
+        assertEquals(one32fBit, BitOne);
 
     }
 
@@ -72,7 +71,7 @@ public class BitsConverterTest {
         BitOne.set(0, true);
         Int64 one = BitSetToInt64(BitOne);
 
-        assertEquals(new Long(1), one.getVal());
+        assertEquals(Long.valueOf(1), one.getVal());
     }
 
     @Test
@@ -82,7 +81,7 @@ public class BitsConverterTest {
         BitOne.set(0, true);
         Int32 one = BitSetToInt32(BitOne);
 
-        assertEquals(new Integer(1), one.getVal());
+        assertEquals(Integer.valueOf(1), one.getVal());
 
     }
 
@@ -102,11 +101,11 @@ public class BitsConverterTest {
         BitOne.set(0, true);
         Int64 ex64 = new Int64(0L);
         Int64 one64 = (Int64) BitSetToValType(BitOne, ex64.getClass().getSimpleName());
-        assertEquals(new Long(1), one64.getVal());
+        assertEquals(Long.valueOf(1), one64.getVal());
 
         Int32 ex32 = new Int32(0);
         Int32 one32 = (Int32) BitSetToValType(BitOne, ex32.getClass().getSimpleName());
-        assertEquals(new Integer(1), one32.getVal());
+        assertEquals(Integer.valueOf(1), one32.getVal());
 
         Float32 ex32f = new Float32(0f);
         Float32 one32f = (Float32) BitSetToValType(BitOne, ex32f.getClass().getSimpleName());
