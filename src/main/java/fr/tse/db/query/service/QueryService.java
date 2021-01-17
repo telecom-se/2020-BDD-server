@@ -284,7 +284,7 @@ public class QueryService {
                 String series = selectMatcher.group(1);
                 result.put("series", series);
                 String values = selectMatcher.group(2);
-                String[] splittedValues = values.split("\\),\\s+\\(");
+                String[] splittedValues = values.split("\\),\\s*\\(");
                 ArrayList<String[]> pairs = new ArrayList<>();
                 for (String splittedValue : splittedValues) {
                     String[] pair = splittedValue.split(",\\s*");

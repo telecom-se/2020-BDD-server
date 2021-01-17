@@ -209,7 +209,7 @@ class QueryParsingInsertTests {
     @Test
     // OK : Multiple insertion.
     public void parseQueryMultipleInsertExample2Test() throws BadQueryException {
-        String query = ACTION + " into MySeries values ((300000,10),(310000,100),(410000,11));";
+        String query = ACTION + " into MySeries values ((300000,10),(310000,100),(410000,11))";
         String[] pair1 = {"300000", "10"};
         String[] pair2 = {"310000", "100"};
         String[] pair3 = {"410000", "11"};
