@@ -13,7 +13,7 @@ import static fr.tse.db.storage.data.BitsConverter.*;
  * @author remi huguenot
  */
 public class SeriesQueue<ValType extends ValueType> implements Serializable {
-    private final LinkedList<DataPointComp> series;
+    private final LinkedList<DataPointCompressed> series;
     private final long top;
 
     public SeriesQueue(long top) {
@@ -22,7 +22,7 @@ public class SeriesQueue<ValType extends ValueType> implements Serializable {
         series = new LinkedList<>();
     }
 
-    public LinkedList<DataPointComp> getSeries() {
+    public LinkedList<DataPointCompressed> getSeries() {
         return series;
     }
 
@@ -34,8 +34,8 @@ public class SeriesQueue<ValType extends ValueType> implements Serializable {
      */
     public void addVal(Long key, ValType value) {
         // last element of comparison
-        DataPointComp last = series.isEmpty() ?
-                new DataPointComp(top)
+        DataPointCompressed last = series.isEmpty() ?
+                new DataPointCompressed(top)
                 : series.getLast();
 
         //change data into bitsets
@@ -46,7 +46,7 @@ public class SeriesQueue<ValType extends ValueType> implements Serializable {
         newTime.xor(last.getTimestamp());
         newVal.xor(last.getValue());
 
-        series.add(new DataPointComp(newTime, newVal));
+        series.add(new DataPointCompressed(newTime, newVal));
     }
 
     /**
@@ -64,9 +64,9 @@ public class SeriesQueue<ValType extends ValueType> implements Serializable {
         BitSet timeItBit = LongToBitSet(top);
         BitSet valItBit = LongToBitSet(0L);
 
-        Iterator<DataPointComp> I = series.iterator();
+        Iterator<DataPointCompressed> I = series.iterator();
 
-        DataPointComp last = I.next();
+        DataPointCompressed last = I.next();
         timeItBit.xor(last.getTimestamp());
         valItBit.xor(last.getValue());
 
@@ -96,10 +96,10 @@ public class SeriesQueue<ValType extends ValueType> implements Serializable {
         BitSet timeItBit = LongToBitSet(top);
         BitSet valItBit = LongToBitSet(0L);
 
-        Iterator<DataPointComp> I = series.iterator();
+        Iterator<DataPointCompressed> I = series.iterator();
 
         while (I.hasNext() && !timeItBit.equals(timestampBit)) {
-            DataPointComp last = I.next();
+            DataPointCompressed last = I.next();
             timeItBit.xor(last.getTimestamp());
             valItBit.xor(last.getValue());
         }
@@ -124,7 +124,7 @@ public class SeriesQueue<ValType extends ValueType> implements Serializable {
         BitSet timeItBit = LongToBitSet(top);
         BitSet valItBit = LongToBitSet(0L);
 
-        for (DataPointComp last : series) {
+        for (DataPointCompressed last : series) {
             timeItBit.xor(last.getTimestamp());
             valItBit.xor(last.getValue());
             AllPoints.put(BitSetToLong(timeItBit), (ValType) BitSetToValType(valItBit, valtype));

@@ -60,7 +60,14 @@ public class QueryService {
                 }
                 // Add all the series to response
                 if (function.contains("all")) {
-                    resultMap.put("values", seriesResult);
+                    List<Map<String, Object>> res = new ArrayList<>();
+                    for (Object entry : seriesResult.getPoints().entrySet()) {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("timestamp", ((Map.Entry<Long, ValueType>) entry).getKey());
+                        map.put("value", ((Map.Entry<Long, ValueType>) entry).getValue().getVal());
+                        res.add(map);
+                    }
+                    resultMap.put("values", res);
                 }
                 // Add minimum to response
                 if (function.contains("min")) {
@@ -72,7 +79,7 @@ public class QueryService {
                 }
                 // Add average to response
                 if (function.contains("average") || function.contains("avg")) {
-                    resultMap.put("average", request.average(seriesResult));
+                    resultMap.put("avg", request.average(seriesResult));
                 }
                 // Add sum to response
                 if (function.contains("sum")) {
@@ -157,7 +164,7 @@ public class QueryService {
             }
             case "show": {
                 String series = result.get("series").toString();
-                if (series.equals("all")) {
+                if (series.equalsIgnoreCase("all")) {
                     Map<String, String> data = request.showAllSeries();
                     ArrayList<HashMap<String, String>> returnedArray = new ArrayList<>();
                     for (Map.Entry<String, String> entry : data.entrySet()) {
@@ -268,7 +275,7 @@ public class QueryService {
                 break;
             }
             case "insert": {
-                Pattern selectPattern = Pattern.compile("^insert\\s+into\\s+(.*?)\\s+values\\s+\\(\\((.*?)\\)\\)\\s*$", Pattern.CASE_INSENSITIVE);
+                Pattern selectPattern = Pattern.compile("^insert\\s+into\\s+(.*?)\\s+values\\s*\\(\\((.*?)\\)\\)\\s*$", Pattern.CASE_INSENSITIVE);
                 Matcher selectMatcher = selectPattern.matcher(command);
                 if (!selectMatcher.find() || selectMatcher.group(1).isEmpty() || selectMatcher.group(2).isEmpty()) {
                     throw new BadQueryException(BadQueryException.ERROR_MESSAGE_INSERT_GENERAL);
@@ -326,9 +333,9 @@ public class QueryService {
                 break;
             }
             case "show": {
-                Pattern selectPattern = Pattern.compile("^show\\s+(.*?)\\s*$", Pattern.CASE_INSENSITIVE);
-                Matcher selectMatcher = selectPattern.matcher(command);
-                if (!selectMatcher.find() || !selectMatcher.group(1).equals("all")) {
+                Pattern showPattern = Pattern.compile("^show\\s+(.*?)\\s*$", Pattern.CASE_INSENSITIVE);
+                Matcher selectMatcher = showPattern.matcher(command);
+                if (!selectMatcher.find() || !selectMatcher.group(1).equalsIgnoreCase("all")) {
                     throw new BadQueryException(BadQueryException.ERROR_MESSAGE_SHOW_GENERAL);
                 }
                 result.put("action", "show");

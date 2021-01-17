@@ -19,6 +19,15 @@ public class QueryParsingShowTests {
     }
 
     @Test
+    public void showAllUppercaseTest() throws BadQueryException {
+        String queryTest = "SHOW ALL";
+        HashMap<String, Object> expectedSeries = new HashMap<>();
+        expectedSeries.put("action", "show");
+        expectedSeries.put("series", "ALL");
+        Assertions.assertEquals(expectedSeries, queryService.parseQuery(queryTest));
+    }
+
+    @Test
     // BadQueryException : Test when the Show Query is correct
     public void parseQueryShowSyntaxQueryExceptionTest() {
         String queryTest = "show";

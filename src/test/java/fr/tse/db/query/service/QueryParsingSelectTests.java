@@ -8,12 +8,11 @@ import fr.tse.db.storage.data.SeriesUncompressed;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.*;
 
 public class QueryParsingSelectTests {
 
-        private final QueryService queryService = new QueryService();
+    private final QueryService queryService = new QueryService();
 
     @Test
     // BadQueryException : Test when the Select Query is correct
@@ -131,8 +130,8 @@ public class QueryParsingSelectTests {
             HashMap<String, Object> response = queryService.handleQuery(queryTest);
 
             Assertions.assertNotNull(response.get("values"));
-            Series seriesResult = (Series) response.get("values");
-            Assertions.assertEquals("MySeries1", seriesResult.getName());
+            ArrayList<Map<String, Object>> res = (ArrayList<Map<String, Object>>) response.get("values");
+            Assertions.assertEquals(0, res.size());
 
             db.deleteSeries("MySeries1");
         } catch (Exception e) {
@@ -154,18 +153,37 @@ public class QueryParsingSelectTests {
             String queryTest = "SELECT ALL FROM MySeries1 WHERE TIMESTAMP == 15";
             HashMap<String, Object> response = queryService.handleQuery(queryTest);
             Assertions.assertNotNull(response.get("values"));
-            HashMap<Long, Int32> points = (HashMap<Long, Int32>) ((Series) response.get("values")).getPoints();
+            ArrayList<Map<String, Object>> res = (ArrayList<Map<String, Object>>) response.get("values");
 
-            Assertions.assertEquals(1, points.size());
-            Assertions.assertNotNull(points.get(15L));
+            Assertions.assertEquals(1, res.size());
+            Assertions.assertEquals(3, res.get(0).get("value"));
             db.deleteSeries("MySeries1");
 
         } catch (Exception e) {
             db.deleteSeries("MySeries1");
             Assertions.fail(e.getMessage());
         }
+    }
 
+    @Test
+    public void handleQuerySelectWhereCondition() throws Exception {
+        DataBase db = DataBase.getInstance();
+        Series addedSerie = new SeriesUncompressed("MySeries1", Int32.class);
+        addedSerie.addPoint(12L, new Int32(12));
+        addedSerie.addPoint(15L, new Int32(15));
+        addedSerie.addPoint(17L, new Int32(17));
+        addedSerie.addPoint(18L, new Int32(18));
+        addedSerie.addPoint(19L, new Int32(19));
+        db.addSeries(addedSerie);
 
+        String queryTest = "SELECT ALL FROM MySeries1 WHERE TIMESTAMP >= 15";
+        HashMap<String, Object> response = queryService.handleQuery(queryTest);
+        Assertions.assertNotNull(response.get("values"));
+        ArrayList<Map<String, Object>> res = (ArrayList<Map<String, Object>>) response.get("values");
+
+        Assertions.assertEquals(4, res.size());
+        Assertions.assertEquals(15, res.stream().min(Comparator.comparing((Map<String, Object> e) -> ((Long) e.get("timestamp")))).get().get("value"));
+        db.deleteSeries("MySeries1");
     }
 
     @Test

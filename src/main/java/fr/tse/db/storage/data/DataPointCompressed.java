@@ -8,7 +8,7 @@ import java.util.BitSet;
 import static fr.tse.db.storage.data.BitsConverter.LongToBitSet;
 import static fr.tse.db.storage.data.BitsConverter.ValTypeToBitSet;
 
-public class DataPointComp implements Serializable {
+public class DataPointCompressed implements Serializable {
     //serie de bits
     @Getter
     private BitSet timestamp;
@@ -16,18 +16,18 @@ public class DataPointComp implements Serializable {
     @Getter
     private BitSet value;
 
-    public DataPointComp(BitSet timestamp, BitSet value) {
+    public DataPointCompressed(BitSet timestamp, BitSet value) {
         super();
         this.timestamp = timestamp;
         this.value = value;
     }
 
-    public DataPointComp(long timestamp, ValueType value) {
+    public DataPointCompressed(long timestamp, ValueType value) {
         this.timestamp = LongToBitSet(timestamp);
         this.value = ValTypeToBitSet(value);
     }
 
-    public DataPointComp(long timestamp) {
+    public DataPointCompressed(long timestamp) {
         this.timestamp = LongToBitSet(timestamp);
         this.value = LongToBitSet(0L);
     }

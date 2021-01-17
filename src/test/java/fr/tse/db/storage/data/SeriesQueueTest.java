@@ -19,7 +19,7 @@ public class SeriesQueueTest {
 
         SeriesQueue<Int32> Ser = new SeriesQueue<Int32>(0L);
 
-        LinkedList<DataPointComp> list = Ser.getSeries();
+        LinkedList<DataPointCompressed> list = Ser.getSeries();
 
 
         assertEquals(0, list.size());
