@@ -52,33 +52,20 @@ public class SeriesQueue<ValType extends ValueType> implements Serializable {
      * @return
      */
     public ValType getVal(long timestamp, String valtype) {
+        BitSet goalTimestamp = LongToBitSet(timestamp);
+        BitSet lastTimestamp = LongToBitSet(top);
+        BitSet lastValue = LongToBitSet(0L);
 
-        //System.out.println(timestamp);
-        BitSet timestampBit = LongToBitSet(timestamp);
-
-        BitSet timeItBit = LongToBitSet(top);
-        BitSet valItBit = LongToBitSet(0L);
-        ValType result = null;
-        //ListIterator<DataPointCompressed> I =  series.listIterator();
-        DataPointCompressed last;
-        int it = 0;
-        boolean condition = false;
-        while (it < series.size() && !condition) {
-            last = series.get(it);
-            // System.out.println(last.getTimestamp());
-            timeItBit.xor(last.getTimestamp());
-            valItBit.xor(last.getValue());
-            if (timeItBit.equals(timestampBit)) {
-                condition = true;
-                result = (ValType) BitSetToValType(valItBit, valtype);
-            } else {
-                timeItBit = last.getTimestamp();
-                valItBit = last.getValue();
-                it++;
+        for (DataPointCompressed point : series) {
+            lastTimestamp.xor(point.getTimestamp());
+            if (lastTimestamp.equals(goalTimestamp)) {
+                lastValue.xor(point.getValue());
+                return (ValType) BitSetToValType(lastValue, valtype);
             }
+            lastTimestamp = (BitSet) point.getTimestamp().clone();
+            lastValue = (BitSet) point.getValue().clone();
         }
-
-        return result;
+        return null;
     }
 
     /**
