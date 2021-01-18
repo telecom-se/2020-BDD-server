@@ -1,6 +1,7 @@
 package fr.tse.db.storage.data;
 
 import fr.tse.db.storage.exception.WrongValueTypeException;
+import lombok.Data;
 
 /**
  * This Float32 class encapsulates a float of 32-bits
@@ -8,19 +9,12 @@ import fr.tse.db.storage.exception.WrongValueTypeException;
  * @author Valentin, Alexandre, Youssef
  * @since 2020-11
  */
+@Data
 public class Float32 implements ValueType<Float> {
 
     private Float val;
 
     public Float32(Float val) {
-        this.val = val;
-    }
-
-    public Float getVal() {
-        return val;
-    }
-
-    public void setVal(Float val) {
         this.val = val;
     }
 

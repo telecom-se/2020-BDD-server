@@ -13,17 +13,21 @@ public class BitsConverterTest {
 
     @Test
     public void LongToBitSetTest() {
+        BitSet bs1 = new BitSet();
+        bs1.set(0, true);
+        BitSet bs2 = new BitSet();
+        bs2.set(1, true);
+        BitSet bs2000 = new BitSet();
+        bs2000.set(4, true);
+        bs2000.set(6, true);
+        bs2000.set(7, true);
+        bs2000.set(8, true);
+        bs2000.set(9, true);
+        bs2000.set(10, true);
 
-        BitSet oneBit = LongToBitSet(1L);
-        BitSet BitOne = new BitSet();
-        BitOne.set(0, true);
-
-        BitSet twoBit = LongToBitSet(2L);
-        BitSet BitTwo = new BitSet();
-        BitTwo.set(1, true);
-
-        assertEquals(BitOne, oneBit);
-        assertEquals(BitTwo, twoBit);
+        assertEquals(bs1, LongToBitSet(1L));
+        assertEquals(bs2, LongToBitSet(2L));
+        assertEquals(bs2000, LongToBitSet(2000L));
     }
 
     @Test
@@ -55,13 +59,21 @@ public class BitsConverterTest {
         BitSet one64Bit = ValTypeToBitSet(one64);
         BitSet one32fBit = ValTypeToBitSet(one32f);
 
-        BitSet BitOne = new BitSet();
-        BitOne.set(0, true);
+        BitSet bs1 = new BitSet();
+        bs1.set(0, true);
 
-        assertEquals(one32Bit, BitOne);
-        assertEquals(one64Bit, BitOne);
-        assertEquals(one32fBit, BitOne);
+        BitSet bsFloat1 = new BitSet();
+        bsFloat1.set(0, true);
+        bsFloat1.set(1, true);
+        bsFloat1.set(2, true);
+        bsFloat1.set(3, true);
+        bsFloat1.set(4, true);
+        bsFloat1.set(5, true);
+        bsFloat1.set(15, true);
 
+        assertEquals(bs1, one32Bit);
+        assertEquals(bs1, one64Bit);
+        assertEquals(bsFloat1, one32fBit);
     }
 
     @Test
@@ -87,16 +99,20 @@ public class BitsConverterTest {
 
     @Test
     public void BitSetToFloat32Test() {
-        BitSet BitOne = new BitSet();
-        BitOne.set(0, true);
-        Float32 one = BitSetToFloat32(BitOne);
+        BitSet bsFloat1 = new BitSet();
+        bsFloat1.set(0, true);
+        bsFloat1.set(1, true);
+        bsFloat1.set(2, true);
+        bsFloat1.set(3, true);
+        bsFloat1.set(4, true);
+        bsFloat1.set(5, true);
+        bsFloat1.set(15, true);
 
-        assertEquals(new Float(1), one.getVal());
+        assertEquals(new Float32(1.f), BitSetToFloat32(bsFloat1));
     }
 
     @Test
     public void BitSetToValTypeTest() {
-
         BitSet BitOne = new BitSet();
         BitOne.set(0, true);
         Int64 ex64 = new Int64(0L);
@@ -107,8 +123,17 @@ public class BitsConverterTest {
         Int32 one32 = (Int32) BitSetToValType(BitOne, ex32.getClass().getSimpleName());
         assertEquals(Integer.valueOf(1), one32.getVal());
 
-        Float32 ex32f = new Float32(0f);
-        Float32 one32f = (Float32) BitSetToValType(BitOne, ex32f.getClass().getSimpleName());
+
+        BitSet bsFloat1 = new BitSet();
+        bsFloat1.set(0, true);
+        bsFloat1.set(1, true);
+        bsFloat1.set(2, true);
+        bsFloat1.set(3, true);
+        bsFloat1.set(4, true);
+        bsFloat1.set(5, true);
+        bsFloat1.set(15, true);
+        Float32 ex32f = new Float32(1.f);
+        Float32 one32f = (Float32) BitSetToValType(bsFloat1, ex32f.getClass().getSimpleName());
         assertEquals(new Float(1), one32f.getVal());
     }
 }

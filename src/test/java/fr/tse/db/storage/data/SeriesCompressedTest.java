@@ -24,7 +24,7 @@ public class SeriesCompressedTest {
         ser32.addPoint(1L, new Int32(1));
         ser32.addPoint(2L, new Int32(2));
         ser64.addPoint(1L, new Int64(1L));
-        ser64.addPoint(2L, new Int64(2L));
+        ser64.addPoint(2000L, new Int64(2L));
 
         Map<Long, Int32> map32 = ser32.getPoints();
         Map<Long, Int64> map64 = ser64.getPoints();
@@ -35,7 +35,7 @@ public class SeriesCompressedTest {
 
         assertEquals(2, map64.size());
         assertEquals(1L, map64.get(1L).getVal());
-        assertEquals(2L, map64.get(2L).getVal());
+        assertEquals(2L, map64.get(2000L).getVal());
     }
 
     @Test

@@ -1,5 +1,6 @@
 package fr.tse.db.storage.data;
 
+import java.nio.ByteBuffer;
 import java.util.BitSet;
 
 /**
@@ -10,8 +11,21 @@ import java.util.BitSet;
  */
 public class BitsConverter {
     public static BitSet LongToBitSet(long value) {
-        byte longBits = ((Number) value).byteValue();
-        return BitSet.valueOf(new byte[]{longBits});
+        return BitSet.valueOf(new long[]{value});
+    }
+
+    public static BitSet ValTypeToBitSet(ValueType value) {
+        switch (value.getClass().getSimpleName()) {
+            case "Int64":
+                return LongToBitSet((Long) value.getVal());
+            case "Int32":
+                return LongToBitSet((Integer) value.getVal());
+            case "Float32":
+                Float f = (Float) value.getVal();
+                return BitSet.valueOf(ByteBuffer.allocate(4).putFloat(f).array());
+            default:
+                throw new IllegalArgumentException("Cannot convert from value type " + value.getClass().getSimpleName());
+        }
     }
 
     public static long BitSetToLong(BitSet bits) {
@@ -20,11 +34,6 @@ public class BitsConverter {
             value += bits.get(i) ? (1L << i) : 0L;
         }
         return value;
-    }
-
-    public static BitSet ValTypeToBitSet(ValueType value) {
-        byte floatBits = ((Number) value.getVal()).byteValue();
-        return BitSet.valueOf(new byte[]{floatBits});
     }
 
     public static Int64 BitSetToInt64(BitSet bits) {
@@ -44,8 +53,8 @@ public class BitsConverter {
     }
 
     public static Float32 BitSetToFloat32(BitSet bits) {
-        byte[] byteArr = bits.toByteArray();
-        return new Float32(((Byte) byteArr[0]).floatValue());
+        float f = ByteBuffer.wrap(ByteBuffer.allocate(4).put(bits.toByteArray()).array()).getFloat();
+        return new Float32(f);
     }
 
     public static ValueType BitSetToValType(BitSet val, String className) {
