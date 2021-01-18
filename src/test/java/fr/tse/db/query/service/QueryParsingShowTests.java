@@ -3,15 +3,11 @@ package fr.tse.db.query.service;
 import fr.tse.db.query.error.BadQueryException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.HashMap;
 
-@SpringBootTest
 public class QueryParsingShowTests {
-    @Autowired
-    private QueryService queryService;
+        private final QueryService queryService = new QueryService();
 
     @Test
     public void showAllTest() throws BadQueryException {
@@ -19,6 +15,15 @@ public class QueryParsingShowTests {
         HashMap<String, Object> expectedSeries = new HashMap<>();
         expectedSeries.put("action", "show");
         expectedSeries.put("series", "all");
+        Assertions.assertEquals(expectedSeries, queryService.parseQuery(queryTest));
+    }
+
+    @Test
+    public void showAllUppercaseTest() throws BadQueryException {
+        String queryTest = "SHOW ALL";
+        HashMap<String, Object> expectedSeries = new HashMap<>();
+        expectedSeries.put("action", "show");
+        expectedSeries.put("series", "ALL");
         Assertions.assertEquals(expectedSeries, queryService.parseQuery(queryTest));
     }
 

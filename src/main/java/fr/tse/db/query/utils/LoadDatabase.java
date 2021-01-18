@@ -16,7 +16,7 @@ import java.util.ArrayList;
 @Slf4j
 public class LoadDatabase {
     @Bean
-    @Profile("test_query_controller")
+    @Profile("mockup_data")
     CommandLineRunner initTestDatabase() {
         return args -> {
             initSeries();
@@ -27,13 +27,13 @@ public class LoadDatabase {
         this.clearSeries();
         /*
         create 3 series :
-        _"seriesint32" type Int32
+        _"seriesInt32" type Int32
         _"seriesInt64" type Int64
         _"seriesFloat32" type Float32
          */
-        Series seriesInt32 = new SeriesUncompressed("seriesint32", Int32.class);
-        Series seriesInt64 = new SeriesUncompressed("seriesint64", Int64.class);
-        Series seriesFloat32 = new SeriesUncompressed("seriesfloat32", Float32.class);
+        Series seriesInt32 = new SeriesUncompressed("seriesInt32", Int32.class);
+        Series seriesInt64 = new SeriesUncompressed("seriesInt64", Int64.class);
+        Series seriesFloat32 = new SeriesUncompressed("seriesFloat32", Float32.class);
         // Populate those series with 5 data points :
         seriesInt32.addPoint(1L, new Int32(2));
         seriesInt32.addPoint(2L, new Int32(4));
@@ -58,7 +58,7 @@ public class LoadDatabase {
         db.addSeries(seriesInt32);
         db.addSeries(seriesInt64);
         db.addSeries(seriesFloat32);
-        log.info("Database populated");
+        log.info("Database populated with mockup data");
     }
 
     private void clearSeries() {

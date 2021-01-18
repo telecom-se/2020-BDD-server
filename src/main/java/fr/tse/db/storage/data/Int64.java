@@ -1,6 +1,7 @@
 package fr.tse.db.storage.data;
 
 import fr.tse.db.storage.exception.WrongValueTypeException;
+import lombok.Data;
 
 /**
  * This Int64 class encapsulates an int of 64-bits
@@ -8,18 +9,11 @@ import fr.tse.db.storage.exception.WrongValueTypeException;
  * @author Valentin, Alexandre, Youssef
  * @since 2020-11
  */
+@Data
 public class Int64 implements ValueType<Long> {
     private Long val;
 
     public Int64(Long val) {
-        this.val = val;
-    }
-
-    public Long getVal() {
-        return val;
-    }
-
-    public void setVal(Long val) {
         this.val = val;
     }
 

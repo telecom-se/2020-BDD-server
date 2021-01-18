@@ -1,6 +1,7 @@
 package fr.tse.db.storage.data;
 
 import fr.tse.db.storage.exception.WrongValueTypeException;
+import lombok.Data;
 
 /**
  * This Int32 class encapsulates an int of 32-bits
@@ -8,18 +9,11 @@ import fr.tse.db.storage.exception.WrongValueTypeException;
  * @author Valentin, Alexandre, Youssef
  * @since 2020-11
  */
+@Data
 public class Int32 implements ValueType<Integer> {
     private Integer val;
 
     public Int32(Integer val) {
-        this.val = val;
-    }
-
-    public Integer getVal() {
-        return val;
-    }
-
-    public void setVal(Integer val) {
         this.val = val;
     }
 

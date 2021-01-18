@@ -21,28 +21,21 @@ public class SeriesCompressedTest {
         ser32 = new SeriesCompressed<>("SERIE32", Int32.class);
         ser64 = new SeriesCompressed<>("SERIE64", Int64.class);
 
-        p32 = new Int32(1);
-        p64 = new Int64(1L);
-
-        ser32.addPoint(1L, p32);
-        p32.setVal(2);
-        ser32.addPoint(2L, p32);
-
-        ser64.addPoint(1L, p64);
-        p64.setVal(2L);
-        ser64.addPoint(2000L, p64);
+        ser32.addPoint(1L, new Int32(1));
+        ser32.addPoint(2L, new Int32(2));
+        ser64.addPoint(1L, new Int64(1L));
+        ser64.addPoint(2000L, new Int64(2L));
 
         Map<Long, Int32> map32 = ser32.getPoints();
         Map<Long, Int64> map64 = ser64.getPoints();
 
         assertEquals(2, map32.size());
-        assertEquals(Integer.valueOf(1), map32.get(1L).getVal());
-        assertEquals(Integer.valueOf(2), map32.get(2L).getVal());
-
+        assertEquals(1, map32.get(1L).getVal());
+        assertEquals(2, map32.get(2L).getVal());
 
         assertEquals(2, map64.size());
-        assertEquals(1L, (long) map64.get(1L).getVal());
-        assertEquals(2L, (long) map64.get(2000L).getVal());
+        assertEquals(1L, map64.get(1L).getVal());
+        assertEquals(2L, map64.get(2000L).getVal());
     }
 
     @Test
