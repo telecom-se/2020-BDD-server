@@ -1,8 +1,27 @@
 # Projet Advanced database 2020
 
+Ce projet Java Maven implémente le backend.
+
+### Lancer pour le déploiement
+
+```
+mvn spring-boot:run
+```
+
+### Lancer avec des données bouchon
+
+```
+mvn spring-boot:run -Dspring-boot.run.profiles=mockup_data
+```
+
+### Test
+
+Cadriciel JUnit 5
+
 ## Membres
 
 ### Chef de projet
+
 * Pierre Giraud
 
 ### Storage
