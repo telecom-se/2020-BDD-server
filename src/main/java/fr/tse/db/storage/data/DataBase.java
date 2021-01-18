@@ -8,7 +8,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -35,7 +34,7 @@ public class DataBase implements Serializable {
     }
 
     private DataBase(List<Series> series) {
-    	this.series = series.parallelStream().collect(Collectors.toMap(ser -> ser.getName(), ser -> ser));
+        this.series = series.parallelStream().collect(Collectors.toMap(ser -> ser.getName(), ser -> ser));
     }
 
     public static DataBase getInstance() {

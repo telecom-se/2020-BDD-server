@@ -1,5 +1,6 @@
 package fr.tse.db.storage.data;
 
+import java.nio.ByteBuffer;
 import java.util.BitSet;
 
 /**
@@ -10,16 +11,21 @@ import java.util.BitSet;
  */
 public class BitsConverter {
     public static BitSet LongToBitSet(long value) {
-        BitSet bits = new BitSet();
-        int index = 0;
-        while (value != 0L) {
-            if (value % 2L != 0) {
-                bits.set(index);
-            }
-            ++index;
-            value = value >>> 1;
+        return BitSet.valueOf(new long[]{value});
+    }
+
+    public static BitSet ValTypeToBitSet(ValueType value) {
+        switch (value.getClass().getSimpleName()) {
+            case "Int64":
+                return LongToBitSet((Long) value.getVal());
+            case "Int32":
+                return LongToBitSet((Integer) value.getVal());
+            case "Float32":
+                Float f = (Float) value.getVal();
+                return BitSet.valueOf(ByteBuffer.allocate(4).putFloat(f).array());
+            default:
+                throw new IllegalArgumentException("Cannot convert from value type " + value.getClass().getSimpleName());
         }
-        return bits;
     }
 
     public static long BitSetToLong(BitSet bits) {
@@ -28,46 +34,6 @@ public class BitsConverter {
             value += bits.get(i) ? (1L << i) : 0L;
         }
         return value;
-    }
-
-    public static BitSet ValTypeToBitSet(ValueType value) {
-        // hack
-        String cl = value.getVal().getClass().getSimpleName();
-        BitSet bits = new BitSet();
-        int index = 0;
-
-        switch (cl) {
-            // Case Float32
-            case "Float":
-                byte floatBits = ((Number) value.getVal()).byteValue();
-                bits = BitSet.valueOf(new byte[]{floatBits});
-                break;
-            // Case Int32
-            case "Integer":
-                int valInt = ((Int32) value).getVal();
-                while (valInt != 0) {
-                    if (valInt % 2 != 0) {
-                        bits.set(index);
-                    }
-                    ++index;
-                    valInt = valInt >>> 1;
-                }
-                break;
-            // Case Int64
-            case "Long":
-                long valLong = ((Int64) value).getVal();
-                while (valLong != 0L) {
-                    if (valLong % 2L != 0) {
-                        bits.set(index);
-                    }
-                    ++index;
-                    valLong = valLong >>> 1;
-                }
-                break;
-            default:
-                throw new IllegalArgumentException("Type not supported");
-        }
-        return bits;
     }
 
     public static Int64 BitSetToInt64(BitSet bits) {
@@ -79,7 +45,7 @@ public class BitsConverter {
     }
 
     public static Int32 BitSetToInt32(BitSet bits) {
-        Integer value = 0;
+        int value = 0;
         for (int i = 0; i < bits.length(); ++i) {
             value += bits.get(i) ? (1 << i) : 0;
         }
@@ -87,8 +53,8 @@ public class BitsConverter {
     }
 
     public static Float32 BitSetToFloat32(BitSet bits) {
-        byte[] byteArr = bits.toByteArray();
-        return new Float32(((Byte) byteArr[0]).floatValue());
+        float f = ByteBuffer.wrap(ByteBuffer.allocate(4).put(bits.toByteArray()).array()).getFloat();
+        return new Float32(f);
     }
 
     public static ValueType BitSetToValType(BitSet val, String className) {
