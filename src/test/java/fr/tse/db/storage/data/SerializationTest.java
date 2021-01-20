@@ -15,7 +15,7 @@ public class SerializationTest {
 
         DataBase db = DataBase.getInstance();
 
-        Series s = new SeriesUncompressed<>("seriesTest", Int64.class);
+        Series s = new SeriesUncompressed<>("seriesTest2", Int64.class);
         Long tmp = (long) 1000000;
         Int64 val = new Int64((long) 658);
         s.addPoint(tmp, val);
@@ -29,6 +29,6 @@ public class SerializationTest {
 
         DataBase db2 = (DataBase) ois.readObject();
 
-        Assertions.assertEquals(db.getByName("seriesTest").getName(), db2.getByName("seriesTest").getName());
+        Assertions.assertEquals(db.getByName("seriesTest2").getName(), db2.getByName("seriesTest2").getName());
     }
 }
